@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------
+// User
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  nickname  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  image     String
+
+  members  Member[]
+  comments Comment[]
+}
+
+//--------------------------------------------------------------------
+
+model Member {
+  id        Int      @id @default(autoincrement())
+  role      String?
+  joinedAt  DateTime
+  status    Status   @map("status")
+  user_id   Int
+  users     User     @relation(fields: [user_id], references: [id])
+  tasks     Task[]
+  projects  Project  @relation(fields: [projectId], references: [id])
+  projectId Int
+}
+
+enum status {
+  pending
+  accepted
+  rejected
+}
+
+//--------------------------------------------------------------------
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  task_id   Int
+  user_id   Int
+  tasks     Task      @relation(fields: [task_id], references: [id])
+  users     User     @relation(fields: [user_id], references: [id])
+}
+
+//--------------------------------------------------------------------
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  tasks       Task[]
+  members     Member[]
+}
+
+//--------------------------------------------------------------------
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  start_year  Int
+  start_month Int
+  start_day   Int
+  end_year    Int
+  end_month   Int
+  end_date    Int
+  taskStatus  Status   @map("status")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project_id  Int
+  member_id   Int
+  projects    Project      @relation(fields: [project_id], references: [id])
+  members     Member       @relation(fields: [member_id], references: [id]) 
+  comments    Comment[]
+  attachments Attachment[]
+  subtasks    Subtask[]
+  tags        Tag[]
+}
+
+enum Status {
+  todo
+  inprogress
+  done
+}
+
+//--------------------------------------------------------------------
+model Tag {
+  id   Int     @id @default(autoincrement())
+  name String?
+
+  task_id Int
+  tasks   Task @relation(fields: [task_id], references: [id])
+}
+
+//--------------------------------------------------------------------
+
+model Subtask {
+  id           Int      @id @default(autoincrement())
+  task_id       Int
+  tasks         Task  @relation(fields: [task_id], references: [id])
+  title        String
+  is_completed Boolean
+  created_at   DateTime
+  updated_at   DateTime
+}
+
+//--------------------------------------------------------------------
+
+model Attachment {
+  id          Int      @id @default(autoincrement())
+  url         String?
+  name        String?
+  uploaded_at DateTime
+  task_id     Int
+  tasks       Task     @relation(fields: [task_id], references: [id])
+}
