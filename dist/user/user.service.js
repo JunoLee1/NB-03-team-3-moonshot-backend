@@ -1,4 +1,4 @@
-import prisma from "../lib/prisma";
+import prisma from "../lib/prisma.js";
 export default class UserService {
     async getuUserInfoById({ num_id, email, nickname }) {
         const user_id = num_id;

@@ -1,6 +1,5 @@
-import prisma from "../lib/prisma.js";
+import prisma from "../utils/prisma.js";
 import { IUserDTO } from "./user.controller.js";
-
 export default class UserService {
     
     async getuUserInfoById({num_id, email, nickname}:{num_id:number,email: string,nickname: string}):Promise<IUserDTO |null>{
