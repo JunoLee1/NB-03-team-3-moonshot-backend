@@ -1,4 +1,4 @@
-import prisma from "../utils/prisma.js";
+import prisma from "../lib/prisma.js";
 import { IUserDTO } from "./user.controller.js";
 export default class UserService {
     

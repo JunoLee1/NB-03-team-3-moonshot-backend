@@ -1,5 +1,5 @@
 import express from "express";
-import type {Request,Response} from "express";
+import type {Request,Response, NextFunction} from "express";
 import UserController from "./user.controller.js"
 const router = express.Router();
 // 유저 정보 조회하기 API
@@ -9,20 +9,20 @@ const router = express.Router();
 // to do : 팀원과 상담후  req 핸들러 미들웨어에서 작성후 쓰기'
 
 const userController = new UserController()
-router.get("/me",async(req: Request, res:Response)=>
-    userController.userInfoController(req, res)
+router.get("/me",async(req: Request, res:Response, next:NextFunction)=>
+    userController.userInfoController(req, res, next)
 )
 
 // 유저 정보 수정하기 API
 // 클라이언트의 정보가 존재하는지 확인 
 
-router.patch("/me",async(req: Request, res:Response)=>{
-    userController.userUpdateController(req, res)
+router.patch("/me",async(req: Request, res:Response, next:NextFunction)=>{
+    userController.userUpdateController(req, res, next)
 })
 
 // 해당 유저가 참여중인 모든 프로젝트의 할일 목록 조회 API
-router.get("/me/projects",async(req: Request, res:Response)=>{
-    userController.findUsedrProjectsController(req, res)
+router.get("/me/projects",async(req: Request, res:Response, next:NextFunction)=>{
+    userController.findUsedrProjectsController(req, res, next)
 })
 
 export default router;
