@@ -5,8 +5,8 @@ const router = express.Router();
 // 유저 정보 조회하기 API
 //  클라이언트에게서 받은 요청을 컨트롤러로 보내기
 // 해당 유저가 맞는지 아닌지 확인 하는 로직작성
-// to do : 팀원과 상담후 error 핸들러 미들웨어에 작성후 쓰기 
-// to do : 팀원과 상담후  req 핸들러 미들웨어에서 작성후 쓰기'
+// error 핸들러 미들웨어에 작성후 쓰기 
+
 
 const userController = new UserController()
 router.get("/me",async(req: Request, res:Response, next:NextFunction)=>
