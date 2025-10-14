@@ -16,7 +16,7 @@ export const validateInviteMember = (
   try {
     inviteMemberSchema.parse(req.body);
     next();
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       res.status(400).json({
         message: "Validation error",

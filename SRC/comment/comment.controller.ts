@@ -7,7 +7,7 @@ export default class CommentController {
   // POST /tasks/:taskId/comments - 댓글 생성
   async createComment(req: Request, res: Response, next: NextFunction) {
     try {
-      const task_id = parseInt(req.params.taskId);
+      const task_id = parseInt(req.params.taskId as string);
       const { content } = req.body;
       // TODO: 인증 미들웨어에서 user_id 가져오기 (현재는 임시로 body에서 받음)
       const user_id = req.body.user_id;
@@ -27,7 +27,7 @@ export default class CommentController {
   // GET /tasks/:taskId/comments - 댓글 목록 조회
   async getCommentsByTaskId(req: Request, res: Response, next: NextFunction) {
     try {
-      const task_id = parseInt(req.params.taskId);
+      const task_id = parseInt(req.params.taskId as string);
       // TODO: 인증 미들웨어에서 user_id 가져오기
       const user_id = parseInt(req.query.user_id as string);
 
@@ -42,7 +42,7 @@ export default class CommentController {
   // PATCH /comments/:commentId - 댓글 수정
   async updateComment(req: Request, res: Response, next: NextFunction) {
     try {
-      const comment_id = parseInt(req.params.commentId);
+      const comment_id = parseInt(req.params.commentId as string);
       const { content } = req.body;
       // TODO: 인증 미들웨어에서 user_id 가져오기
       const user_id = req.body.user_id;
@@ -58,7 +58,7 @@ export default class CommentController {
   // DELETE /comments/:commentId - 댓글 삭제
   async deleteComment(req: Request, res: Response, next: NextFunction) {
     try {
-      const comment_id = parseInt(req.params.commentId);
+      const comment_id = parseInt(req.params.commentId as string);
       // TODO: 인증 미들웨어에서 user_id 가져오기
       const user_id = req.body.user_id;
 
