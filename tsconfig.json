@@ -1,7 +1,7 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    "rootDir": "./src",
+    "rootDir": "src",
     "outDir": "./dist",
 
     // Environment Settings
@@ -44,6 +44,6 @@
     "esModuleInterop": true,
     //"forceConsistentCasingInFileNames": true
   },
-  "include": ["SRC/**/*.ts", "prisma/seed.js"],
+  "include": ["src/**/*.ts", "prisma/seed.js"],
   "exclude": ["prisma/seed.js"]
 }
