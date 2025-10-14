@@ -1,9 +1,9 @@
 import UserService from "./user.service.js";
-import HttpError from "../lib/errorHandler.js";
+import HttpError from "../lib/httpError.js";
 const userService = new UserService();
 export default class UserController {
     async findDuplicateUserController(req, res, next) {
-        const { id } = req.params;
+        const { id } = req.body;
         try {
             const user_id = Number(id);
             if (typeof user_id !== "number" && user_id > 0) {
@@ -16,8 +16,10 @@ export default class UserController {
         }
     }
     async userInfoController(req, res, next) {
-        const { id, nickname, email } = req.body;
         try {
+            const { id } = req.params;
+            console.log("id", id);
+            const { nickname, email } = req.body;
             const unique_check = await userService.getuUserInfoById({
                 num_id: Number(id),
                 email,
