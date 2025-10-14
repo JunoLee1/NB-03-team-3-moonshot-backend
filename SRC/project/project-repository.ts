@@ -1,21 +1,5 @@
 import { Prisma, PrismaClient, status } from '@prisma/client';
-
-// 요청 body 타입 정의
-export interface CreateProjectDto {
-    name: string;
-    description: string;
-}
-
-// 응답 타입 정의
-export interface ProjectResponseDto {
-    id: number;
-    name: string; 
-    description: string;
-    memberCount: number;
-    todoCount: number;
-    inProgressCount: number;
-    doneCount: number;
-}
+import { CreateProjectDto, ProjectResponseDto } from './project-dto.js';
 
 export class ProjectRepository {
     constructor(private prisma: PrismaClient) {}
