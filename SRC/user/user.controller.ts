@@ -22,7 +22,7 @@ export default class UserController {
       const { nickname, email } = req.body;//validation 미들웨어에서 req.body에 nickname, email 확인후 넣어주기
       console.log("nickname, email", nickname, email);// ❌ undefined 오류
       const unique_check = await userService.getuUserInfoById({
-        num_id: Number(id),
+        numId: Number(id),
         email,
         nickname,
       });
@@ -30,7 +30,7 @@ export default class UserController {
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       }
-      const num_id = Number(id);
+      const numId = Number(id);
       if (typeof nickname !== "string")
         throw new HttpError(400, "해당 유저의 닉네임은 문자열이어야합니다");
       if (typeof email !== "string" && email.includes("@"))
@@ -38,14 +38,14 @@ export default class UserController {
           400,
           "해당 유저의 이메일은 문자열이어야하고 이메일 형삭이 아니어야합니다"
         );
-      if (typeof num_id !== "number" && num_id > 0)
+      if (typeof numId !== "number" && numId > 0)
         throw new HttpError(
           400,
           "해당 유저의 인덱스는 0보다 큰정수이 어야합니다"
         );
 
       const userInfo = await userService.getuUserInfoById({
-        num_id,
+        numId,
         email,
         nickname,
       });
@@ -62,19 +62,19 @@ export default class UserController {
     try {
       const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
       const unique_check = await userService.getuUserInfoById({
-        num_id: Number(id),
+        numId: Number(id),
         email: String(rawEmail),
         nickname: String(rawNickname),
       });
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       }
-      const num_id = Number(id);
+      const numId = Number(id);
       const nickname = String(rawNickname);
       const email = String(rawEmail);
 
       const updatedUser = await userService.updatedUser({
-        num_id,
+        numId,
         email,
         nickname,
       });
@@ -94,8 +94,8 @@ export default class UserController {
   ) {
     const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
     try {
-      const user_id = Number(id);
-      const projects = await userService.findUserProjects({ user_id });
+      const userId = Number(id);
+      const projects = await userService.findUserProjects({ userId });
       return res.json({
         success: true,
         data: projects,

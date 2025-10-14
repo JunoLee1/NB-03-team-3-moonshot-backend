@@ -2,8 +2,8 @@ import prisma from "../lib/prisma.js";
 import { IUserDTO } from "./user.controller.js";
 export default class UserService {
     
-    async getuUserInfoById({num_id, email, nickname}:{num_id:number,email: string,nickname: string}):Promise<IUserDTO |null>{
-        const user_id = num_id
+    async getuUserInfoById({numId, email, nickname}:{numId:number,email: string,nickname: string}):Promise<IUserDTO |null>{
+        const user_id = numId
         const userInfo = await prisma.user.findUnique({
             where: {id:user_id},
             select:{
@@ -14,11 +14,11 @@ export default class UserService {
          })
          return userInfo
     }
-    async  updatedUser({num_id, nickname, email}:{num_id:number,nickname: string, email: string}):Promise<IUserDTO |null>{
-        const user_id = num_id
+    async  updatedUser({numId, nickname, email}:{numId:number,nickname: string, email: string}):Promise<IUserDTO |null>{
+        const userId = numId
 
         const updatedUser = await prisma.user.update({
-            where: {id:user_id},
+            where: {id:userId},
             data:{
                 nickname:nickname,
                 email:email
@@ -27,10 +27,10 @@ export default class UserService {
         return updatedUser
         
     }
-    async findUserProjects({user_id}:{user_id:number}):Promise<any>{
+    async findUserProjects({userId}:{userId:number}):Promise<any>{
         const projects = await prisma.project.findMany({
             where:{
-                id:user_id
+                id:userId
             },
             include:{
                 tasks: true,
