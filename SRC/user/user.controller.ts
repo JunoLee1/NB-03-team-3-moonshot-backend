@@ -17,7 +17,7 @@ export default class UserController {
     res: Response,
     next: NextFunction
   ) {
-    const { id } = req.params;
+    const { id } = req.body;
     try {
       const user_id = Number(id);
       if (typeof user_id !== "number" && user_id > 0) {
@@ -29,13 +29,22 @@ export default class UserController {
     }
   }
   async userInfoController(req: Request, res: Response, next: NextFunction) {
-    const { id, nickname, email } = req.body;
     try {
+      console.log("userInfoController의 req.params:", req.params);
+      //const user = req.user
+      const { id } = req.params;// 인증 미들웨어에서 req.body에 id넣어주기
+      // ❌ undefined 오류
+      console.log("id", id);
+      const { nickname, email } = req.body;//validation 미들웨어에서 req.body에 nickname, email 확인후 넣어주기
+      console.log("nickname, email", nickname, email);// ❌ undefined 오류
       const unique_check = await userService.getuUserInfoById({
         num_id: Number(id),
         email,
         nickname,
       });
+
+// User/me
+      // prune
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       }

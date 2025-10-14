@@ -9,9 +9,10 @@ const router = express.Router();
 
 
 const userController = new UserController()
-router.get("/me",async(req: Request, res:Response, next:NextFunction)=>
+router.get("/me",async(req: Request, res:Response, next:NextFunction)=>{
+    console.log("요청옴", req.params, req.body );
     userController.userInfoController(req, res, next)
-)
+})
 
 // 유저 정보 수정하기 API
 // 클라이언트의 정보가 존재하는지 확인 

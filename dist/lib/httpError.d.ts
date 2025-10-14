@@ -4,4 +4,4 @@ declare class HttpError extends Error {
     constructor(status: number, message: string);
 }
 export default HttpError;
-//# sourceMappingURL=errorHandler.d.ts.map
+//# sourceMappingURL=httpError.d.ts.map

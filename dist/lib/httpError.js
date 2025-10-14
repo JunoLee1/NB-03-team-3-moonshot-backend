@@ -8,4 +8,4 @@ class HttpError extends Error {
     }
 }
 export default HttpError;
-//# sourceMappingURL=errorHandler.js.map
+//# sourceMappingURL=httpError.js.map
