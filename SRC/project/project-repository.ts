@@ -1,0 +1,62 @@
+import { Prisma, PrismaClient, status } from '@prisma/client';
+
+// 요청 body 타입 정의
+export interface CreateProjectDto {
+    name: string;
+    description: string;
+}
+
+// 응답 타입 정의
+export interface ProjectResponseDto {
+    id: number;
+    name: string; 
+    description: string;
+    memberCount: number;
+    todoCount: number;
+    inProgressCount: number;
+    doneCount: number;
+}
+
+export class ProjectRepository {
+    constructor(private prisma: PrismaClient) {}
+    
+    /**
+     * @param userId 프로젝트를 생성한 유저의 ID
+     * @param CreateProjectDto 프로젝트의 이름과 설명
+     * @returns 생성된 프로젝트 정보와 카운트 값
+     */
+    createProject = async( userId: number, createProjectDto: CreateProjectDto): Promise<ProjectResponseDto> => {
+        const newProject = await this.prisma.$transaction(async (tx) => {
+            // 프로젝트 생성
+            const project = await tx.project.create ({
+                data: {
+                    name: createProjectDto.name,
+                    description: createProjectDto.description,
+                },
+            });
+
+            // 생성자를 프로젝트의 멤버로 추가 
+            await tx.member.create({
+                data: {
+                    user_id: userId,
+                    projectId: project.id, // 스키마 수정 필요 projectId -> project_id
+                    joinedAt: new Date(),
+                    status: status.accepted, // 스키마 수정 필요, member.status가 Status, 이름 변경이 좋아보임
+                },
+            });
+
+            return project;
+        });
+
+        // 요구사항을 충족하는 응답 객체 구성 및 반환, 추후 서비스 레이어에서 처리하는게 적합하다고 생각됨
+        return {
+            id: newProject.id,
+            name: newProject.name,
+            description: newProject.description,
+            memberCount: 1, // 생성 시 멤버는 생성자 1명
+            todoCount: 0,
+            inProgressCount: 0,
+            doneCount: 0,
+        };
+    };
+}
