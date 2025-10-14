@@ -30,13 +30,27 @@ export default class UserService {
     async findUserProjects({user_id}:{user_id:number}):Promise<any>{
         const projects = await prisma.project.findMany({
             where:{
-            id:user_id
+                id:user_id
             },
             include:{
-            tasks: true,
-            members:true
+                tasks: true,
+                members:true
             }
       })
         return projects 
+    }
+    async findUserTasks({taskId, userId}:{ taskId :string, userId:number}):Promise<any>{
+        // const user_id = req.user.id
+        const num_taskId = Number(taskId)
+        const tasks= await prisma.task.findMany({
+            where:{
+                id: num_taskId,
+                user_id: userId 
+            },
+            include:{
+                subtasks:true
+            }
+        })
+        return tasks
     }
 }

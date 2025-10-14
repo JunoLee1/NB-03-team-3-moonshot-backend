@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import UserService from "./user.service.js";
 import HttpError from "../lib/httpError.js";
+import prisma from "../lib/prisma.js";
 
 export interface IUserDTO {
   id: number;
@@ -12,27 +13,10 @@ export interface IUserDTO {
 
 const userService = new UserService();
 export default class UserController {
-  async findDuplicateUserController(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    const { id } = req.body;
-    try {
-      const user_id = Number(id);
-      if (typeof user_id !== "number" && user_id > 0) {
-        throw new HttpError(400, "Bad request");
-      }
-      return res.json({ success: true, message: "사용가능한 아이디입니다" });
-    } catch (error) {
-      next(error);
-    }
-  }
   async userInfoController(req: Request, res: Response, next: NextFunction) {
     try {
       console.log("userInfoController의 req.params:", req.params);
-      //const user = req.user
-      const { id } = req.params;// 인증 미들웨어에서 req.body에 id넣어주기
+      const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
       // ❌ undefined 오류
       console.log("id", id);
       const { nickname, email } = req.body;//validation 미들웨어에서 req.body에 nickname, email 확인후 넣어주기
@@ -42,8 +26,6 @@ export default class UserController {
         email,
         nickname,
       });
-
-// User/me
       // prune
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
@@ -76,8 +58,9 @@ export default class UserController {
     }
   }
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
-    const { id, nickname: rawNickname, email: rawEmail } = req.body;
+    const { nickname: rawNickname, email: rawEmail } = req.body;
     try {
+      const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
       const unique_check = await userService.getuUserInfoById({
         num_id: Number(id),
         email: String(rawEmail),
@@ -89,15 +72,7 @@ export default class UserController {
       const num_id = Number(id);
       const nickname = String(rawNickname);
       const email = String(rawEmail);
-      if (typeof rawNickname !== "string") {
-        throw new HttpError(400, "문자열이어야합니다");
-      }
-      if (typeof rawEmail !== "string") {
-        throw new HttpError(400, "문자열이어야합니다");
-      }
-      if (typeof num_id !== "number" && num_id > 0) {
-        throw new HttpError(400, "인덱스는 0보다 큰정수이 어야합니다");
-      }
+
       const updatedUser = await userService.updatedUser({
         num_id,
         email,
@@ -117,16 +92,41 @@ export default class UserController {
     res: Response,
     next: NextFunction
   ) {
-    const { id } = req.params;
+    const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
     try {
       const user_id = Number(id);
-      if (typeof user_id !== "number" && user_id > 0) {
-        throw new HttpError(400, "Bad request");
-      }
       const projects = await userService.findUserProjects({ user_id });
       return res.json({
         success: true,
         data: projects,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+  async findUserTasksController(req: Request, res: Response, next: NextFunction) {
+    const { id:userId } = req.user // 인증 미들웨어에서 req.user id넣어주기
+    try {
+      const taskIdRaw = req.query.task_id;
+      if(typeof taskIdRaw !== "string" && isNaN(Number(taskIdRaw))){
+        throw new HttpError(404, "Bad request");
+      }
+      const validatedTask = await prisma.task.findUnique({
+        where: { id: Number(taskIdRaw) },
+      });
+      if (!validatedTask) {
+        throw new HttpError(404, "존재하지 않는 태스크입니다");
+      }
+      const string_task = req.query.task_id;
+      
+      if (typeof string_task !== "string") {
+        throw new HttpError(404, "Bad request");
+      }
+      const taskId = String(string_task);
+      const result = await userService.findUserTasks({ taskId: taskId, userId : Number(userId)});
+      return res.json({
+        success: true,
+        data: result,
       });
     } catch (error) {
       next(error);
