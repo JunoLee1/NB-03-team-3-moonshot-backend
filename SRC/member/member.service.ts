@@ -1,3 +1,4 @@
+import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
 
 export interface InviteMemberDTO {
@@ -115,7 +116,7 @@ export default class MemberService {
     });
 
     if (!invitedUser) {
-      throw new Error("User with this email not found");
+      throw new HttpError(400, "User with this email not found");
     }
 
     const existingMember = await prisma.member.findFirst({
@@ -126,7 +127,7 @@ export default class MemberService {
     });
 
     if (existingMember) {
-      throw new Error("User is already a member or has been invited");
+      throw new HttpError(400, "User is already a member of this project");
     }
 
     const member = await prisma.member.create({
@@ -173,7 +174,7 @@ export default class MemberService {
     }
 
     if (member.status === "accepted") {
-      throw new Error("Invitation has already been accepted");
+      throw new HttpError(400,"Invitation has already been accepted")
     }
 
     const updatedMember = await prisma.member.update({
@@ -203,7 +204,7 @@ export default class MemberService {
     });
 
     if (!project) {
-      throw new Error("Project not found");
+      throw new HttpError(404, "Project not found");//throw new Error("Project not found");
     }
 
     // 프로젝트 소유자만 제외 가능
@@ -215,6 +216,7 @@ export default class MemberService {
       },
     });
 
+    
     if (!removerMember) {
       throw new Error("Only project owner can remove members");
     }
@@ -227,12 +229,12 @@ export default class MemberService {
     });
 
     if (!memberToRemove) {
-      throw new Error("Member not found in this project");
+       throw new HttpError(404,"Member not found in this project")//throw new Error("Member not found in this project");
     }
 
     // 소유자는 제외 불가
     if (memberToRemove.role === "owner") {
-      throw new Error("Cannot remove project owner");
+      throw new HttpError(400,"Cannot remove project owner")//throw new Error("Cannot remove project owner");
     }
 
     await prisma.member.delete({
@@ -250,7 +252,8 @@ export default class MemberService {
     });
 
     if (!member) {
-      throw new Error("Invitation not found");
+      throw new HttpError(404,"Invitation not found")
+      //throw new Error("Invitation not found");
     }
 
     // 프로젝트 소유자만 취소 가능
@@ -268,7 +271,8 @@ export default class MemberService {
 
     // pending 상태만 취소 가능
     if (member.status !== "pending") {
-      throw new Error("Can only cancel pending invitations");
+      throw new HttpError(400, "Can only cancel pending invitations")
+      //throw new Error("Can only cancel pending invitations");
     }
 
     await prisma.member.delete({
