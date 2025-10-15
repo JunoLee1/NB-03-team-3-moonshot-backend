@@ -22,7 +22,7 @@ export const validateCreateComment = (
   try {
     createCommentSchema.parse(req.body);
     next();
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       res.status(400).json({
         message: "Validation error",
@@ -43,7 +43,7 @@ export const validateUpdateComment = (
   try {
     updateCommentSchema.parse(req.body);
     next();
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       res.status(400).json({
         message: "Validation error",

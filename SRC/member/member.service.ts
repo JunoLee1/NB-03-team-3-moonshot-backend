@@ -61,7 +61,7 @@ export default class MemberService {
     ]);
 
     const membersWithTaskCount = await Promise.all(
-      members.map(async (member) => {
+      members.map(async (member: typeof members[0]) => {
         const taskCount = await prisma.task.count({
           where: {
             member_id: member.id,
