@@ -4,7 +4,7 @@ import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
 
 export interface IUserDTO {
-  id: number;
+  id: number ;
   nickname: string;
   email: string;
   createdAt?: Date;
@@ -16,21 +16,20 @@ export default class UserController {
   async userInfoController(req: Request, res: Response, next: NextFunction) {
     try {
       console.log("userInfoController의 req.params:", req.params);
-      const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
-      // ❌ undefined 오류
+      const { id } = (req as any).user; // 인증 미들웨어에서 req.query id넣어주기
+    
       console.log("id", id);
       const { nickname, email } = req.body;//validation 미들웨어에서 req.body에 nickname, email 확인후 넣어주기
       console.log("nickname, email", nickname, email);// ❌ undefined 오류
-      const unique_check = await userService.getuUserInfoById({
-        numId: Number(id),
+      const unique_check = await userService.getUserInfoById({
+        id: Number(id),
         email,
         nickname,
       });
       // prune
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
-      }
-      const numId = Number(id);
+      };
       if (typeof nickname !== "string")
         throw new HttpError(400, "해당 유저의 닉네임은 문자열이어야합니다");
       if (typeof email !== "string" && email.includes("@"))
@@ -38,14 +37,14 @@ export default class UserController {
           400,
           "해당 유저의 이메일은 문자열이어야하고 이메일 형삭이 아니어야합니다"
         );
-      if (typeof numId !== "number" && numId > 0)
+      if (typeof id !== "number" && id > 0)
         throw new HttpError(
           400,
           "해당 유저의 인덱스는 0보다 큰정수이 어야합니다"
         );
 
-      const userInfo = await userService.getuUserInfoById({
-        numId,
+      const userInfo = await userService.getUserInfoById({
+        id,
         email,
         nickname,
       });
@@ -60,21 +59,21 @@ export default class UserController {
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
     const { nickname: rawNickname, email: rawEmail } = req.body;
     try {
-      const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
-      const unique_check = await userService.getuUserInfoById({
-        numId: Number(id),
+      const { id } = (req as any).user; // 인증 미들웨어에서 req.query id넣어주기
+      const unique_check = await userService.getUserInfoById({
+        id: Number(id),
         email: String(rawEmail),
         nickname: String(rawNickname),
       });
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       }
-      const numId = Number(id);
+    
       const nickname = String(rawNickname);
       const email = String(rawEmail);
 
       const updatedUser = await userService.updatedUser({
-        numId,
+        id: Number(id),
         email,
         nickname,
       });
@@ -92,7 +91,7 @@ export default class UserController {
     res: Response,
     next: NextFunction
   ) {
-    const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
+    const { id } = (req as any).user; // 인증 미들웨어에서 req.query id넣어주기
     try {
       const userId = Number(id);
       const projects = await userService.findUserProjects({ userId });
@@ -105,7 +104,8 @@ export default class UserController {
     }
   }
   async findUserTasksController(req: Request, res: Response, next: NextFunction) {
-    const { id:userId } = req.user // 인증 미들웨어에서 req.user id넣어주기
+    const { id } = (req as any).user // 인증 미들웨어에서 req.user id넣어주기
+    
     try {
       const taskIdRaw = req.query.task_id;
       if(typeof taskIdRaw !== "string" && isNaN(Number(taskIdRaw))){
@@ -123,7 +123,7 @@ export default class UserController {
         throw new HttpError(404, "Bad request");
       }
       const taskId = String(string_task);
-      const result = await userService.findUserTasks({ taskId: taskId, userId : Number(userId)});
+      const result = await userService.findUserTasks({ taskId: taskId, userId :Number(id)});
       return res.json({
         success: true,
         data: result,

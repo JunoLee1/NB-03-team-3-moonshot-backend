@@ -1,9 +1,17 @@
 import prisma from "../lib/prisma.js";
 import { IUserDTO } from "./user.controller.js";
+
+interface IUser{
+    id: number;
+    nickname: string;
+    email: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
 export default class UserService {
     
-    async getuUserInfoById({numId, email, nickname}:{numId:number,email: string,nickname: string}):Promise<IUserDTO |null>{
-        const user_id = numId
+    async getUserInfoById({id}:IUser):Promise<IUserDTO |null>{
+        const user_id = id
         const userInfo = await prisma.user.findUnique({
             where: {id:user_id},
             select:{
@@ -14,8 +22,8 @@ export default class UserService {
          })
          return userInfo
     }
-    async  updatedUser({numId, nickname, email}:{numId:number,nickname: string, email: string}):Promise<IUserDTO |null>{
-        const userId = numId
+    async  updatedUser({id, nickname, email}:IUser):Promise<IUserDTO |null>{
+        const userId = id
 
         const updatedUser = await prisma.user.update({
             where: {id:userId},
@@ -33,14 +41,13 @@ export default class UserService {
                 id:userId
             },
             include:{
-                tasks: true,
                 members:true
             }
       })
         return projects 
     }
     async findUserTasks({taskId, userId}:{ taskId :string, userId:number}):Promise<any>{
-        // const user_id = req.user.id
+        const user_id = userId
         const num_taskId = Number(taskId)
         const tasks= await prisma.task.findMany({
             where:{
