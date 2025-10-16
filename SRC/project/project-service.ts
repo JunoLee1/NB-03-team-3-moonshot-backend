@@ -103,7 +103,7 @@ export class ProjectService {
      * @param projectBodyDto 수정할 정보 { name, description}
      * @returns 수정된 프로젝트 상세 정보
      */
-    updateProject = async ( userId: number, projectId: number, projectBodyDto: ProjectBodyDto): promise<ProjectResponseDto> => {
+    updateProject = async ( userId: number, projectId: number, projectBodyDto: ProjectBodyDto): Promise<ProjectResponseDto> => {
         try {
             // 수정 전, 프로젝트의 현재 상태를 조회하여 권한 검사에 사용
             const projectData = await this.projectRepository.findProjectById(projectId);
