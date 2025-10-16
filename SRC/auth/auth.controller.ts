@@ -42,7 +42,7 @@ export class AuthController {
             if (typeof rawNickname !== "string" || rawNickname.length < 3) {
                 throw new HttpError(400, "닉네임은 최소 3자 이상이어야 합니다.");
             }
-            const result = await authService.loginService(email,password)
+            const result = await authService.loginService({email,password})
             return res.json(200).json({
                 message:"성공적인 로그인",
                 data: result
@@ -52,5 +52,25 @@ export class AuthController {
         }
     }
 
-    //async siginupController(req:Request, res:Response, next:NextFunction){
+    async siginupController(req:Request, res:Response, next:NextFunction){
+        try {
+            const {password, email, nickname} = req.body;
+
+            const unique_email = await authService.findUserEmail(email)
+            const unique_nickname = await authService.findUniqueNickname(nickname)
+            
+            if (!unique_email) throw new HttpError(400,"이미 존재하는 이메일입니다")
+            if (!unique_nickname) throw new HttpError(400,"이미 존재하는 닉네임입니다")
+
+            const hashedPassword = await bcrypt.hash(password,10)
+            const result = authService.createNewUser({email,password,nickname})
+            return res.status(201).json({
+                message: "성공적인 로그인",
+                ...result
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }
