@@ -44,4 +44,25 @@ export class ProjectRepository {
             doneCount: 0,
         };
     };
+
+    /**
+     * id를 기준으로 프로젝트와 관련된 멤버 및 할 일 목록을 조회함. 응답 객체 구성을 위함
+     * @params projectId 조회할 프로젝트의 id
+     * @returns 프로젝트 정보 또는 null
+     */
+    findProjectById = async (projectId: number) => {
+        return this.prisma.project.findUnique({
+            where: {
+                id: projectId,
+            },
+            include: {
+                members: true,
+                tasks: {
+                    select: {
+                        taskStatus: true,
+                    },
+                },
+            },
+        });
+    };
 }
