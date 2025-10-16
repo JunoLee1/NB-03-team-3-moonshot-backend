@@ -1,7 +1,5 @@
 import express,{ Request, Response, NextFunction } from "express";
-import HttpError from "../lib/httpError.js";
 import { AuthController } from "./auth.controller.js";
-import bcrypt from "bcrypt";
 import { loginAuth, validateRegister } from "./auth.validation.js";
 
 const authController = new AuthController();
