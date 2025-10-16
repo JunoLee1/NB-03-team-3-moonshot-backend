@@ -13,7 +13,12 @@ const projectRouter = (
         .post(
             // 미들웨어 추가 가능
             projectController.createProject,
-        )
+        );
 
+    router
+        .route('/:projectId')
+        .get(
+            projectController.getProjectById,
+        )
         return router;
 };
