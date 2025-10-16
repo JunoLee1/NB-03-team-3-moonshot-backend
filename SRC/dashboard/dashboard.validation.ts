@@ -38,11 +38,7 @@ export const validateKanbanQuery = (
 };
 
 // 캘린더 요청 유효성 검사
-export const validateCalendarQuery = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const validateCalendarQuery = (req: Request, res: Response, next: NextFunction) => {
   try {
     calendarQuerySchema.parse(req.query);
     next();
