@@ -47,8 +47,7 @@ export default class UserService {
         return projects 
     }
     async findUserTasks({taskId, userId}:{ taskId :string, userId:number}):Promise<any>{
-        // const {id} = req.user // TODO : 인증 미들웨어에서 req.query id넣어주기
-        const user_id = userId
+        const {id} = req.user // TODO : 인증 미들웨어에서 req.query id넣어주기
         const num_taskId = Number(taskId)
         const tasks= await prisma.task.findMany({
             where:{

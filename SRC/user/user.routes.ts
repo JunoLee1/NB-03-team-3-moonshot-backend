@@ -1,9 +1,10 @@
 import express from "express";
 import type {Request,Response, NextFunction} from "express";
 import UserController from "./user.controller.js"
-import { validateUser } from "./user.validation.js";
+import { userValidation } from "./user.validation.js";
 import { loginAuth } from "../auth/auth.validation.js";
-import user
+
+
 const router = express.Router();
 // 유저 정보 조회하기 API
 //  클라이언트에게서 받은 요청을 컨트롤러로 보내기
@@ -14,7 +15,7 @@ const router = express.Router();
 const userController = new UserController()
 router.get("/me",
     loginAuth,
-    validateUser,
+    userValidation.validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.userInfoController(req, res, next)
 })
@@ -24,7 +25,7 @@ router.get("/me",
 
 router.patch("/me",
     loginAuth,
-    validateUser,
+    userValidation.validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.userUpdateController(req, res, next)
 })
@@ -32,14 +33,14 @@ router.patch("/me",
 // 해당 유저가 참여중인 모든 프로젝트의 할일 목록 조회 API
 router.get("/me/projects",
     loginAuth,
-    validateUser,
+    userValidation.validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
         
     userController.findUsedrProjectsController(req, res, next)
 })
 router.get("/me/tasks",
     loginAuth,
-    validateUser,
+    userValidation.validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
          const user = (req as any).user as {
             id: number;

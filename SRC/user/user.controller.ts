@@ -104,7 +104,7 @@ export default class UserController {
     }
   }
   async findUserTasksController(req: Request, res: Response, next: NextFunction) {
-    const { id } = (req as any).user // 인증 미들웨어에서 req.user id넣어주기
+    const { id } = req.user // 인증 미들웨어에서 req.user id넣어주기
     
     try {
       const taskIdRaw = req.query.task_id;
