@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ProjectService } from './project-service.js';
-import { CreateProjectDto, ProjectResponseDto } from './project-dto.js';
+import { ProjectBodyDto, ProjectResponseDto } from './project-dto.js';
 
 export class ProjectController {
     constructor(
@@ -13,11 +13,11 @@ export class ProjectController {
             const userId = res.locals.user.id;
 
             // req body에 대한 유효성 검사도 별도 미들웨어로 분리하여 진행하는 것이 좋을 것 같음
-            const createProjectDto: CreateProjectDto = req.body;
+            const projectBodyDto: ProjectBodyDto = req.body;
 
             const newProject = await this.projectService.createProject(
                 userId,
-                createProjectDto,
+                projectBodyDto,
             );
             return res.status(201).json(newProject);
         } catch(error) {

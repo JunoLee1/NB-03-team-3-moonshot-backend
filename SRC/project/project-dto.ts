@@ -1,5 +1,5 @@
 // 요청 body 타입 정의
-export interface CreateProjectDto {
+export interface ProjectBodyDto {
     name: string;
     description: string;
 }

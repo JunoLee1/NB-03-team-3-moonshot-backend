@@ -1,5 +1,5 @@
 import { ProjectRepository } from './project-repository.js';
-import { CreateProjectDto, ProjectResponseDto } from './project-dto.js';
+import { ProjectBodyDto, ProjectResponseDto } from './project-dto.js';
 import { PrismaClient } from '@prisma/client'; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
 import { extend } from 'zod/mini';
 
@@ -22,7 +22,7 @@ class NotFoundException extends Error {
 export class ProjectService {
     constructor(private projectRepository: ProjectRepository, private prisma: PrismaClient,) {}
     
-     createProject = async( userId: number, createProjectDto: CreateProjectDto): Promise<ProjectResponseDto> => {
+     createProject = async( userId: number, projectBodyDto: ProjectBodyDto): Promise<ProjectResponseDto> => {
         try {
             // 유저가 생성한 프로젝트의 개수를 확인
             const projectCount = await this.prisma.member.count({
@@ -40,7 +40,7 @@ export class ProjectService {
             // 레포지토리 호출
             return await this.projectRepository.createProject(
                 userId,
-                createProjectDto,
+                projectBodyDto,
             );
         } catch (error) {
             console.error(error); // 에러 로깅

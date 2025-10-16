@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient, status } from '@prisma/client';
-import { CreateProjectDto, ProjectResponseDto } from './project-dto.js';
+import { ProjectBodyDto, ProjectResponseDto } from './project-dto.js';
 
 export class ProjectRepository {
     constructor(private prisma: PrismaClient) {}
@@ -9,13 +9,13 @@ export class ProjectRepository {
      * @param CreateProjectDto 프로젝트의 이름과 설명
      * @returns 생성된 프로젝트 정보와 카운트 값
      */
-    createProject = async( userId: number, createProjectDto: CreateProjectDto): Promise<ProjectResponseDto> => {
+    createProject = async( userId: number, projectBodyDto: ProjectBodyDto): Promise<ProjectResponseDto> => {
         const newProject = await this.prisma.$transaction(async (tx) => {
             // 프로젝트 생성
             const project = await tx.project.create ({
                 data: {
-                    name: createProjectDto.name,
-                    description: createProjectDto.description,
+                    name: projectBodyDto.name,
+                    description: projectBodyDto.description,
                 },
             });
 
@@ -47,7 +47,7 @@ export class ProjectRepository {
 
     /**
      * id를 기준으로 프로젝트와 관련된 멤버 및 할 일 목록을 조회함. 응답 객체 구성을 위함
-     * @params projectId 조회할 프로젝트의 id
+     * @param projectId 조회할 프로젝트의 id
      * @returns 프로젝트 정보 또는 null
      */
     findProjectById = async (projectId: number) => {
@@ -65,4 +65,11 @@ export class ProjectRepository {
             },
         });
     };
+
+    /**
+     * id를 기준으로 프로젝트의 이름과 설명을 수정하고, 수정된 프로젝트의 상세 정보 반환
+     * @param projectId 수정할 프로젝트의 ID
+     * @param data 수정할 정보 {name, description}
+     * @returns 수정된 프로젝트의 상세 정보 또는 null
+     */
 }
