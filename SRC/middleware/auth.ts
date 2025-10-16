@@ -73,4 +73,7 @@ async function verifyAccessToken(token: string): Promise<VerifyTokenResult>  {
     return { success: true, user: user?.email ? { email: user.email } : undefined };
 }
 
-export default auth_handler
+export default {
+    auth_refresh_token_handler,
+    auth_access_token_handler,
+}
