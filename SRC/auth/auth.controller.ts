@@ -22,9 +22,6 @@ export class AuthController {
         try {
             // 1. 데이터베이스에서 사용자 이메일 및 비밀번호 확인후 토큰 발급
             const{ nickname:rawNickname, email:rawEmail, password:rawPassword } = req.body;
-            if (!rawEmail || !rawPassword) {
-                throw new HttpError(400, "이메일과 비밀번호를 모두 입력해주세요.");
-            }
             const email = rawEmail
             const user = await authService.findUserEmail(email);
 

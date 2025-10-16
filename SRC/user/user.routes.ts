@@ -2,7 +2,7 @@ import express from "express";
 import type {Request,Response, NextFunction} from "express";
 import UserController from "./user.controller.js"
 import { validateUser } from "./user.validation.js";
-import { tempAuth } from "../middleware/tempAuth.js";
+import { loginAuth } from "../auth/auth.validation.js";
 const router = express.Router();
 // 유저 정보 조회하기 API
 //  클라이언트에게서 받은 요청을 컨트롤러로 보내기
@@ -12,10 +12,9 @@ const router = express.Router();
 
 const userController = new UserController()
 router.get("/me",
-    tempAuth,
+    loginAuth,
     validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
-    console.log("요청옴", req.params, req.body );
     userController.userInfoController(req, res, next)
 })
 
@@ -23,33 +22,22 @@ router.get("/me",
 // 클라이언트의 정보가 존재하는지 확인 
 
 router.patch("/me",
-    tempAuth,
+    loginAuth,
     validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
-        const user = req.user as {
-            id: number;
-            email: string;
-            nickname: string;
-            role: string;
-        };
     userController.userUpdateController(req, res, next)
 })
 
 // 해당 유저가 참여중인 모든 프로젝트의 할일 목록 조회 API
 router.get("/me/projects",
-    tempAuth,
+    loginAuth,
     validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
-        const user = req.user as {
-            id: number;
-            email: string;
-            nickname: string;
-            role: string;
-        };
+        
     userController.findUsedrProjectsController(req, res, next)
 })
 router.get("/me/tasks",
-    tempAuth, 
+    loginAuth,
     validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
          const user = (req as any).user as {

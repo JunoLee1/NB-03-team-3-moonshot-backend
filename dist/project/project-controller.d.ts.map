@@ -1,0 +1,1 @@
+{"version":3,"file":"project-controller.d.ts","sourceRoot":"","sources":["../../SRC/project/project-controller.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,YAAY,EAAE,MAAM,SAAS,CAAC;AAC1D,OAAO,EAAE,cAAc,EAAE,MAAM,sBAAsB,CAAC;AAGtD,qBAAa,iBAAiB;IAEtB,OAAO,CAAC,cAAc;gBAAd,cAAc,EAAE,cAAc;IAG1C,aAAa,GAAU,KAAK,OAAO,EAAE,KAAK,QAAQ,EAAE,MAAM,YAAY,6DAgBrE;CACJ"}

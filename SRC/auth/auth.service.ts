@@ -6,7 +6,7 @@ import {JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET} from"../lib/constants
 
 export class AuthService{
     async findUserEmail(email:string):Promise<IUserDTO | null>{
-        if (typeof email !== "string" || ! email.includes("@"))throw new HttpError(400,"올바르지 못한 이메일 형식 ")
+        if (email.includes("@"))throw new HttpError(400,"올바르지 못한 이메일 형식 ")
         const result =  await prisma.user.findUnique({
             where:{
                 email
@@ -15,7 +15,6 @@ export class AuthService{
         return result
     } 
     async findUniqueNickname(nickname:string):Promise<IUserDTO|null>{
-        if(typeof nickname !== "string" || nickname.length < 1) throw new HttpError(401,"nickanme은 2자 이상이어야 합니다")
         const result = await prisma.user.findUnique({
             where:{
                 nickname

@@ -1,0 +1,39 @@
+import { z } from "zod";
+// auth schema
+const authRegisterSchema = z.object({
+    id: z.number().positive().optional(),
+    email: z.string().email(),
+    password: z.string().min(6, "6글자 이상이어야합니다").optional(),
+});
+const authLoginShema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6, "6글자 이상이어야합니다").optional(),
+});
+// handler
+export const validateRegister = (req, res, next) => {
+    try {
+        const result = authRegisterSchema.parse(req.body);
+    }
+    catch (error) {
+        if (error instanceof z.ZodError) {
+            res.status(400).json({ message: "Invalid query parameters", errors: error.errors });
+        }
+        else {
+            next(error);
+        }
+    }
+};
+export const loginAuth = (req, res, next) => {
+    try {
+        const result = authLoginShema.parse(req.body);
+    }
+    catch (error) {
+        if (error instanceof z.ZodError) {
+            res.status(400).json({ message: "Invalid query parameters", errors: error.errors });
+        }
+        else {
+            next(error);
+        }
+    }
+};
+//# sourceMappingURL=auth.validation.js.map
