@@ -33,7 +33,7 @@ export class ProjectController {
 
             const projectId = Number(projectIdParam);
 
-            if (isNaN(projectId)) {
+            if (Number.isNaN(projectId)) {
                 throw new Error('프로젝트는 숫자여야 합니다.');
             }
 
