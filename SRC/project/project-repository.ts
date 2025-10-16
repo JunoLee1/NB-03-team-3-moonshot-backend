@@ -72,4 +72,32 @@ export class ProjectRepository {
      * @param data 수정할 정보 {name, description}
      * @returns 수정된 프로젝트의 상세 정보 또는 null
      */
+    updateProject = async (projectId:number, projectBodyDto:ProjectBodyDto) => {
+        // 트랜잭션을 사용하여 수정과 재조회를 실행
+        return this.prisma.$transaction(async (tx) => {
+            // 프로젝트 정보 수정
+            await tx.project.update({
+                where: { id: projectId },
+                data: {
+                    name: projectBodyDto.name,
+                    description: projectBodyDto.description,
+                },
+            });
+
+            // 수정된 최신 데이터를 상세 조회와 동일한 형태로 다시 조회하여 반환
+            return tx.project.findUnique({
+                where: {
+                    id: projectId,
+                },
+                include: {
+                    members: true,
+                    tasks: {
+                        select: {
+                            taskStatus: true,
+                        },
+                    },
+                },
+            });
+        });
+    };
 }
