@@ -9,6 +9,10 @@ export interface IUserDTO{
     nickname?:string;
     password?:string;
 }
+export interface ILoginDTO{
+    email: string,
+    password:string,
+}
 const authService = new AuthService()
 
 export class AuthController {
@@ -20,24 +24,29 @@ export class AuthController {
             if (!rawEmail || !rawPassword) {
                 throw new HttpError(400, "이메일과 비밀번호를 모두 입력해주세요.");
             }
+            const email = rawEmail
+            const user = await authService.findUserEmail(email);
 
-
-            const unique_email= await authService.findUserEmail(rawEmail);
-
-            if(unique_email === false)throw new HttpError(400," 유효한 이메일 형식이 아닙니다.");
+            if(!user)throw new HttpError(400," 유효한 이메일 형식이 아닙니다.");
 
             if (typeof rawPassword !== "string" || rawPassword.length< 6 ){
                 throw new HttpError(400,"비밀번호는 최소 6자 이상이어야 합니다.");
             }
 
-            const isMatch = bcrypt.compare(rawPassword,user.rawPassword)
+            if(user.password === undefined) throw new HttpError(400,"잘못된 비밀번호가 전달됨" ) 
+            const password = rawPassword
+            const isMatch = await bcrypt.compare(password,user.password)
+            
             if(!isMatch)throw new HttpError(401, "비밀번호가 일치하지 않습니다.");
             
             if (typeof rawNickname !== "string" || rawNickname.length < 3) {
                 throw new HttpError(400, "닉네임은 최소 3자 이상이어야 합니다.");
             }
-            
-            
+            const result = await authService.loginService(email,password)
+            return res.json(200).json({
+                message:"성공적인 로그인",
+                data: result
+            })
         } catch (error) {
             next(error);
         }

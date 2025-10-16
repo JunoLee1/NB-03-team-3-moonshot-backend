@@ -1,15 +1,18 @@
+import HttpError from "../lib/httpError.js"
 import prisma from "../lib/prisma.js"
-import { IUserDTO } from "./auth.controller.js"
+import { IUserDTO, ILoginDTO} from "./auth.controller.js"
 
 export class AuthService{
-      async findUserEmail(email:string):Promise<boolean>{
-        if (typeof email !== "string" || ! email.includes("@"))return false
-        await prisma.user.findUnique({
+    async findUserEmail(email:string):Promise<IUserDTO | null>{
+        if (typeof email !== "string" || ! email.includes("@"))throw new HttpError(400,"올바르지 못한 이메일 형식 ")
+        const result =  await prisma.user.findUnique({
             where:{
                 email
             }
         })
-        return true
+        return result
+    } 
+    async loginService(email:string, password:string):Promise<ILoginDTO>{
+        const result = await prisma.user.find
     }
-    //async loginService(){}
 }
