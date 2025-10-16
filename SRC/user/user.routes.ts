@@ -3,6 +3,7 @@ import type {Request,Response, NextFunction} from "express";
 import UserController from "./user.controller.js"
 import { validateUser } from "./user.validation.js";
 import { loginAuth } from "../auth/auth.validation.js";
+import user
 const router = express.Router();
 // 유저 정보 조회하기 API
 //  클라이언트에게서 받은 요청을 컨트롤러로 보내기

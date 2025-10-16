@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import error_handler from "./middleware/errorMiddle.js";
 import userRouter from "./user/user.routes.js";
+import authRouter from "./auth/auth.routes.js";
 
 const PORT = process.env.PORT || 3000;
 dotenv.config();
@@ -10,9 +11,7 @@ const app = express();
 
 
 app.use("/user", userRouter);
-
-console.log("userRouter type:", typeof userRouter);
-console.log("userRouter content:", userRouter);
+app.use("/auth", authRouter);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
