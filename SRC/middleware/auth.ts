@@ -5,16 +5,34 @@ import prisma from "../lib/prisma.js";
 
 
 /*
-1. cookie -> 수정이 필요
-
-2. 아래는 authorization header 기준으로 작성됨.
+1. cookie: refresh token(만료 기간을 길게, 브라우저에서 쿠키에 저장되기 때문에 적어도 XSS 공격에는 안전)
+2. access token: authorization header(만료 기간을 짧게, 브라우저에서는 local storage에 저장)
 */
 
-function auth_handler( req: Request, res: Response, next: NextFunction){
+async function auth_refresh_token_handler( req: Request, res: Response, next: NextFunction): Promise<void> {
+    // "Bearer <token>"
+    const token: string | undefined = req.cookies["moonshot_refresh_token"];
+    if (!token) {
+        res.status(401).json({ success: false, errors: "Unauthorized" });
+        return;
+    }
+
+    // verify token(jwt.verify 사용해서)
+
+    // exp 검증
+
+    // DB 유저 조회 검증
+    
+
+    next();
+}
+
+async function auth_access_token_handler( req: Request, res: Response, next: NextFunction): Promise<void>{
     // "Bearer <token>"
     const token: string | undefined = req.headers.authorization?.split(' ')[1];
     if (!token) {
-        return res.status(401).json({ success: false, errors: "Unauthorized" });
+        res.status(401).json({ success: false, errors: "Unauthorized" });
+        return;
     }
 
     // TODO: verify token
