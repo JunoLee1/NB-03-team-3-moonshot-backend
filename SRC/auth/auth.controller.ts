@@ -5,7 +5,7 @@ export interface IUserDTO{
     id:number;
     email:string;
     nickname:string;
-    password:string;
+    password?:string;
 }
 
 
@@ -26,6 +26,8 @@ export class AuthController {
             if (typeof rawNickname !== "string" || rawNickname.length < 3) {
                 throw new HttpError(400, "닉네임은 최소 3자 이상이어야 합니다.");
             }
+            
+            
         } catch (error) {
             next(error);
         }
