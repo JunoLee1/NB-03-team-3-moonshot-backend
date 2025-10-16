@@ -15,6 +15,7 @@ console.log("userRouter type:", typeof userRouter);
 console.log("userRouter content:", userRouter);
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(error_handler);
 
