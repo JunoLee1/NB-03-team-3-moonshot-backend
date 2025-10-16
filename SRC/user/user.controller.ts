@@ -59,9 +59,10 @@ export default class UserController {
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
     const { nickname: rawNickname, email: rawEmail } = req.body;
     try {
-      const { id } = (req as any).user; // 인증 미들웨어에서 req.query id넣어주기
+      const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
+      const id = Number(userId)
       const unique_check = await userService.getUserInfoById({
-        id: Number(id),
+        id,
         email: String(rawEmail),
         nickname: String(rawNickname),
       });
@@ -91,7 +92,7 @@ export default class UserController {
     res: Response,
     next: NextFunction
   ) {
-    const { id } = (req as any).user; // 인증 미들웨어에서 req.query id넣어주기
+    const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
     try {
       const userId = Number(id);
       const projects = await userService.findUserProjects({ userId });
@@ -105,7 +106,6 @@ export default class UserController {
   }
   async findUserTasksController(req: Request, res: Response, next: NextFunction) {
     const { id } = req.user // 인증 미들웨어에서 req.user id넣어주기
-    
     try {
       const taskIdRaw = req.query.task_id;
       if(typeof taskIdRaw !== "string" && isNaN(Number(taskIdRaw))){

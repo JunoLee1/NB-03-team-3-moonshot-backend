@@ -34,20 +34,13 @@ router.patch("/me",
 router.get("/me/projects",
     loginAuth,
     userValidation.validateUser,
-    async(req: Request, res:Response, next:NextFunction)=>{
-        
+    async(req: Request, res:Response, next:NextFunction)=>{ 
     userController.findUsedrProjectsController(req, res, next)
 })
 router.get("/me/tasks",
     loginAuth,
     userValidation.validateUser,
     async(req: Request, res:Response, next:NextFunction)=>{
-         const user = (req as any).user as {
-            id: number;
-            email: string;
-            nickname: string;
-            role: string;
-        };
     userController.findUserTasksController(req, res, next)
 })
 

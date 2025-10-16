@@ -24,7 +24,6 @@ export default class UserService {
     }
     async  updatedUser({id, nickname, email}:IUser):Promise<IUserDTO |null>{
         const userId = id
-
         const updatedUser = await prisma.user.update({
             where: {id:userId},
             data:{
@@ -47,7 +46,7 @@ export default class UserService {
         return projects 
     }
     async findUserTasks({taskId, userId}:{ taskId :string, userId:number}):Promise<any>{
-        const {id} = req.user // TODO : 인증 미들웨어에서 req.query id넣어주기
+       // TODO : 인증 미들웨어에서 req.query id넣어주기
         const num_taskId = Number(taskId)
         const tasks= await prisma.task.findMany({
             where:{
