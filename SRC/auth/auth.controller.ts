@@ -8,10 +8,11 @@ export interface IUserDTO{
     email:string;
     nickname?:string;
     password?:string;
-}
+    image?:string
+} 
 export interface ILoginDTO{
     email: string,
-    password:string,
+    password:string
 }
 const authService = new AuthService()
 
@@ -43,7 +44,7 @@ export class AuthController {
                 throw new HttpError(400, "닉네임은 최소 3자 이상이어야 합니다.");
             }
             const result = await authService.loginService({email,password})
-            return res.json(200).json({
+            return res.status(200).json({
                 message:"성공적인 로그인",
                 data: result
             })
@@ -54,16 +55,17 @@ export class AuthController {
 
     async siginupController(req:Request, res:Response, next:NextFunction){
         try {
-            const {password, email, nickname} = req.body;
+            const {password: rawPassword, email:rawEmail, nickname:rawNickname} = req.body;
 
-            const unique_email = await authService.findUserEmail(email)
-            const unique_nickname = await authService.findUniqueNickname(nickname)
+            const unique_email = await authService.findUserEmail(rawEmail)
+            const unique_nickname = await authService.findUniqueNickname(rawNickname)
             
             if (!unique_email) throw new HttpError(400,"이미 존재하는 이메일입니다")
             if (!unique_nickname) throw new HttpError(400,"이미 존재하는 닉네임입니다")
 
-            const hashedPassword = await bcrypt.hash(password,10)
-            const result = authService.createNewUser({email,password,nickname})
+            const hashedPassword = await bcrypt.hash(rawPassword,10)
+           // const [email, password, nickname] = [rawEmail,hashedPassword,rawNickname]
+            const result = await authService.createNewUser({email:rawEmail,password:hashedPassword,nickname:rawNickname})
             return res.status(201).json({
                 message: "성공적인 로그인",
                 ...result

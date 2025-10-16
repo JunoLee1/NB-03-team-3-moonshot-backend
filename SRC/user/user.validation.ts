@@ -1,5 +1,5 @@
 import{ z }from "zod";
-
+import { Request, Response, NextFunction } from "express";
 // 사용자 스키마
 
 const userShema = z.object({

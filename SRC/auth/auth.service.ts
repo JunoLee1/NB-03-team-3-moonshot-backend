@@ -26,16 +26,28 @@ export class AuthService{
 
     async loginService({ email }:ILoginDTO):Promise<{ accessToken: string, refreshToken: string}>{
         const user =  await this.findUserEmail(email)
-        if(!user) throw new Error
+        if(!user) throw new HttpError(401,"이메일이 존재하지 않습니다")
         const userId = user.id
-        if(!userId) throw new Error
+        if(!userId) throw new HttpError(400,"유효하지 않는 인덱스")
 
         const token = this.generateToken(userId)
         return token;
     }
 
-    async createNewUser({email, password, nickname}:IUserDTO):Promise<void>{
-        
+    async createNewUser({email, password, nickname,image}:IUserDTO):Promise<IUserDTO>{
+        const newUser = await prisma.user.create({
+            data:{
+                email,
+                nickname :nickname as string,
+                password : password as string,
+                image : "example.jpg",
+            },
+            include:{
+                tasks:true,
+                comments:true
+            }
+        })
+        return newUser
     }
     generateToken(userId:Number){ 
         const accessToken = jwt.sign({ sub:userId},JWT_ACCESS_TOKEN_SECRET,{
