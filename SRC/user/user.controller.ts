@@ -59,8 +59,9 @@ export default class UserController {
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
     const { nickname: rawNickname, email: rawEmail } = req.body;
     try {
-      const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
-      const id = Number(userId)
+      // 아래 방식으로 넘겨주자 미들웨어에서 넘겨 받자.
+      // const {id: userId, email} = res.locals.user;
+      const id = Number(userId);
       const unique_check = await userService.getUserInfoById({
         id,
         email: String(rawEmail),
