@@ -1,0 +1,1 @@
+{"version":3,"file":"localStrategy.d.ts","sourceRoot":"","sources":["../../../SRC/lib/passport/localStrategy.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,gBAAgB,EAAE,MAAM,cAAc,CAAC;AAEhD,UAAU,aAAa;IACnB,CAAC,KAAK,EAAE,MAAM,EACd,QAAQ,EAAE,MAAM,EAChB,IAAI,EAAE,gBAAgB,GAAG,OAAO,CAAC,IAAI,CAAC,CAAA;CACzC;AACD,eAAO,MAAM,MAAM,EAAE,aAmBpB,CAAA"}
