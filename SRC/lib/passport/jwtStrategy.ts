@@ -6,7 +6,15 @@ import {
     ACCESS_TOKEN_COOKIE_NAME,
     REFRESH_TOKEN_COOKIE_NAME
 } from '../constants.js'
-import { verify } from 'jsonwebtoken'
+import { Request } from 'express'
+import { VerifiedCallback } from "passport-jwt";
+
+interface JwtPayload{
+    sub: number,
+    email?: string,
+    iat?:number,
+    exp?:number
+}
 
 const accessTokenOptions = {
     jwtFromRequest: (req:Request) =>req.cookies[ACCESS_TOKEN_COOKIE_NAME],
@@ -17,11 +25,11 @@ const refreshTokenOptions = {
     jwtFromRequest: (req :Request) =>req.cookies[REFRESH_TOKEN_COOKIE_NAME],
     secretOrKey: JWT_REFRESH_TOKEN_SECRET
 }
-async function jwtVerify(payload,done){
+async function jwtVerify(payload:JwtPayload, done:VerifiedCallback){
     try {
         const user = await prisma.user.findUnique({
-        where: { id: payload.sub }
-        }),
+        where: { id: payload.sub },
+        })
         done(null, user)
     } catch (error) {
         done(error, false)
