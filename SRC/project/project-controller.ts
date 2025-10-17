@@ -77,4 +77,22 @@ export class ProjectController {
       next(error);
     }
   };
+
+  deleteProject = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = res.locals.user.id;
+      const { projectId: projectIdParam } = req.params;
+
+      const projectId = Number(projectIdParam);
+      if (Number.isNaN(projectId)) {
+        throw new Error("프로젝트 ID는 숫자여야 합니다.");
+      }
+
+      await this.projectService.deleteProject(userId, projectId);
+
+      return res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  };
 }

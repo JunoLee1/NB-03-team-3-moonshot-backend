@@ -14,8 +14,9 @@ const projectRouter = (
   );
 
   router
-    .route("/:projectId")
+    .route("/:projectId") // authMiddleware 추가 필요
     .get(projectController.getProjectById)
-    .patch(projectController.updateProject);
+    .patch(projectController.updateProject)
+    .delete(projectController.deleteProject);
   return router;
 };
