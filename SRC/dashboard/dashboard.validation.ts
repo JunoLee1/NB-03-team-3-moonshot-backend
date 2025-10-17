@@ -1,4 +1,3 @@
-// src/dashboard/dashboard.validation.ts
 import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 
