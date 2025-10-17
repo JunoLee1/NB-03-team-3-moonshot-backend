@@ -8,17 +8,24 @@ interface LocalVerifyFn {
     password: string,
     done: VerifiedCallback) :Promise<void>
 }
-const verify: LocalVerifyFn = async(email, password, done) =>{
+export const verify: LocalVerifyFn = async(email, password, done) =>{
+    try{
         const user = await prisma.user.findUnique({
             where: {email}
         })
         if(!user) return done(null, false);
 
-        const validPassword = bcrypt.compare(password,user.password)
+        if(!user.password){
+            return done(null, false)
+        }
+        const validPassword = await bcrypt.compare(password,user.password)
         if(!validPassword){
             return done(null, false)
         }else{
             done(null, user);
         }
+    }catch(error){
+        done(null, false)
+    }
 }
 
