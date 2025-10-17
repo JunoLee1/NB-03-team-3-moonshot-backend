@@ -17,6 +17,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@codemirror/autocomplete": "^6.19.0",
+    "@codemirror/basic-setup": "^0.20.0",
+    "@codemirror/lang-javascript": "^6.2.4",
     "@types/express": "^5.0.3",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
