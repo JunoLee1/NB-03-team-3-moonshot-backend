@@ -1,7 +1,7 @@
 import { ProjectRepository } from "./project-repository.js";
 import { ProjectBodyDto, ProjectResponseDto } from "./project-dto.js";
 import { PrismaClient } from "@prisma/client"; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
-import { extend } from "zod/mini";
+import { extend, merge } from "zod/mini";
 
 // 커스텀 에러 임시, 추후 별도 파일로 분리하는 것이 좋을 것 같음
 class ForbiddenException extends Error {
@@ -170,6 +170,33 @@ export class ProjectService {
         memberCount: memberCount,
         ...taskCounts,
       };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  deleteProject = async (userId: number, projectId: number): Promise<void> => {
+    try {
+      //  권한 검사를 위해 프로젝트의 현재 상태를 조회
+      const projectData = await this.projectRepository.findProjectById(
+        projectId
+      );
+
+      // 프로젝트 존재 여부 확인
+      if (!projectData) {
+        throw new NotFoundException("프로젝트를 찾을 수 없습니다.");
+      }
+
+      // 요청한 사용자가 관리자인지 권한 검사
+      const creator = projectData.members.find(
+        (member) => member.role === "CREATOR"
+      );
+      if (!creator || creator.user_id !== userId) {
+        throw new ForbiddenException("프로젝트를 삭제할 권한이 없습니다.");
+      }
+
+      await this.projectRepository.deleteProjectById(projectId);
     } catch (error) {
       console.error(error);
       throw error;
