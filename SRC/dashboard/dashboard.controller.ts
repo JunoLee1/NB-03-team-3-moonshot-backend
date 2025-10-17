@@ -1,4 +1,3 @@
-// src/dashboard/dashboard.controller.ts
 import { Request, Response, NextFunction } from "express";
 import DashboardService from "./dashboard.service.js";
 
