@@ -9,7 +9,6 @@ dotenv.config();
 
 const app = express();
 
-
 app.use("/user", userRouter);
 app.use("/auth", authRouter);
 
@@ -19,5 +18,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use(error_handler);
 
 app.listen(PORT, () => {
-console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
