@@ -3,14 +3,14 @@ import { IUserDTO } from "./user.controller.js";
 
 interface IUser{
     id: number;
-    nickname: string;
+    nickname: string | null;
     email: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
 export default class UserService {
     
-    async getUserInfoById({id}:IUser):Promise<IUserDTO |null>{
+    async getUserInfoById({id}:IUser):Promise<IUserDTO | null>{
         const user_id = id
         const userInfo = await prisma.user.findUnique({
             where: {id:user_id},
@@ -20,18 +20,30 @@ export default class UserService {
                 nickname:true,
             }
          })
-         return userInfo
+         if (!userInfo) return null;
+
+        return {
+            id: userInfo.id,
+            email: userInfo.email,
+            nickname: userInfo.nickname ?? "",
+        };
     }
     async  updatedUser({id, nickname, email}:IUser):Promise<IUserDTO |null>{
         const userId = id
         const updatedUser = await prisma.user.update({
             where: {id:userId},
             data:{
-                nickname:nickname,
-                email:email
+                id,
+                nickname,
+                email
             }
         })
-        return updatedUser
+        if(!updatedUser) return null
+        return {
+            id: updatedUser.id,
+            email: updatedUser.email,
+            nickname : updatedUser.nickname ?? ""
+        }
         
     }
     async findUserProjects({userId}:{userId:number}):Promise<any>{

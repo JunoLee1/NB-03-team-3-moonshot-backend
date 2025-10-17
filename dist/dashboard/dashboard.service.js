@@ -1,4 +1,3 @@
-// src/dashboard/dashboard.service.ts
 import prisma from "../lib/prisma.js";
 export default class DashboardService {
     /** [1] 칸반용 - 상태별 할 일 조회 */
@@ -19,9 +18,10 @@ export default class DashboardService {
         });
         // 상태별 그룹화
         return tasks.reduce((acc, task) => {
-            if (!acc[task.taskStatus])
-                acc[task.taskStatus] = [];
-            acc[task.taskStatus].push(task);
+            const status = task.taskStatus ?? "todo";
+            if (!acc[status])
+                acc[status] = [];
+            acc[status].push(task);
             return acc;
         }, { todo: [], inprogress: [], done: [] });
     }

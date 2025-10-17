@@ -11,8 +11,8 @@ export default class CommentService {
         users: {
             id: number;
             email: string;
-            nickname: string;
-            image: string;
+            nickname: string | null;
+            image: string | null;
         };
     } & {
         id: number;
@@ -26,8 +26,8 @@ export default class CommentService {
         users: {
             id: number;
             email: string;
-            nickname: string;
-            image: string;
+            nickname: string | null;
+            image: string | null;
         };
     } & {
         id: number;
@@ -41,8 +41,8 @@ export default class CommentService {
         users: {
             id: number;
             email: string;
-            nickname: string;
-            image: string;
+            nickname: string | null;
+            image: string | null;
         };
     } & {
         id: number;

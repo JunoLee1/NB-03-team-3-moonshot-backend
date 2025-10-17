@@ -10,18 +10,31 @@ export default class UserService {
                 nickname: true,
             }
         });
-        return userInfo;
+        if (!userInfo)
+            return null;
+        return {
+            id: userInfo.id,
+            email: userInfo.email,
+            nickname: userInfo.nickname ?? "",
+        };
     }
     async updatedUser({ id, nickname, email }) {
         const userId = id;
         const updatedUser = await prisma.user.update({
             where: { id: userId },
             data: {
-                nickname: nickname,
-                email: email
+                id,
+                nickname,
+                email
             }
         });
-        return updatedUser;
+        if (!updatedUser)
+            return null;
+        return {
+            id: updatedUser.id,
+            email: updatedUser.email,
+            nickname: updatedUser.nickname ?? ""
+        };
     }
     async findUserProjects({ userId }) {
         const projects = await prisma.project.findMany({
@@ -35,8 +48,7 @@ export default class UserService {
         return projects;
     }
     async findUserTasks({ taskId, userId }) {
-        // const {id} = req.user // TODO : 인증 미들웨어에서 req.query id넣어주기
-        const user_id = userId;
+        // TODO : 인증 미들웨어에서 req.query id넣어주기
         const num_taskId = Number(taskId);
         const tasks = await prisma.task.findMany({
             where: {

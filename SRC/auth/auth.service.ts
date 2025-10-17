@@ -36,10 +36,10 @@ export class AuthService{
     async createNewUser({email, password, nickname,image}:IUserDTO):Promise<IUserDTO>{
         const newUser = await prisma.user.create({
             data:{
-                email,
-                nickname :nickname as string,
-                password : password as string,
-                image : "example.jpg",
+                email: email ?? "",
+                nickname :nickname  ?? "",
+                password : password ?? "",
+                image : image ?? ""
             },
             include:{
                 tasks:true,

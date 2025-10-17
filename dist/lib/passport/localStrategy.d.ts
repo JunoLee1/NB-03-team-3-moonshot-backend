@@ -1,4 +1,4 @@
-import { VerifiedCallback } from "passport-jwt";
+type VerifiedCallback = (error: any, user?: any, info?: any) => void;
 interface LocalVerifyFn {
     (email: string, password: string, done: VerifiedCallback): Promise<void>;
 }

@@ -1,4 +1,3 @@
-// src/dashboard/dashboard.routes.ts
 import { Router } from "express";
 import DashboardController from "./dashboard.controller.js";
 import { validateKanbanQuery, validateCalendarQuery } from "./dashboard.validation.js";

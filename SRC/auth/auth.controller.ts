@@ -5,10 +5,10 @@ import bcrypt from "bcrypt";
 
 export interface IUserDTO{
     id?:number;
-    email:string;
-    nickname?:string;
-    password?:string;
-    image?:string
+    email:string | null;
+    nickname:string | null;
+    password?:string | null;
+    image?:string | null
 } 
 export interface ILoginDTO{
     email: string,
@@ -31,7 +31,9 @@ export class AuthController {
                 throw new HttpError(400,"비밀번호는 최소 6자 이상이어야 합니다.");
             }
 
-            if(user.password === undefined) throw new HttpError(400,"잘못된 비밀번호가 전달됨" ) 
+            if (!user.password) {
+                throw new Error("User has no password set");
+            }
             const password = rawPassword
             const isMatch = await bcrypt.compare(password,user.password)
             

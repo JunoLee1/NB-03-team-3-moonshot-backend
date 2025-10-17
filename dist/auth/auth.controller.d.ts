@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 export interface IUserDTO {
     id?: number;
-    email: string;
-    nickname?: string;
-    password?: string;
-    image?: string;
+    email: string | null;
+    nickname: string | null;
+    password?: string | null;
+    image?: string | null;
 }
 export interface ILoginDTO {
     email: string;

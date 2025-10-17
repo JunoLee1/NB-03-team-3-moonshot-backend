@@ -1,4 +1,4 @@
-export interface CreateProjectDto {
+export interface ProjectBodyDto {
     name: string;
     description: string;
 }

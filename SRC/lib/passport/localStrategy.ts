@@ -1,8 +1,7 @@
 import { Strategy as LocalStrategy } from "passport-local";
-import { Passport } from "passport";
-import prisma from"../prisma.js";
-import { VerifiedCallback } from "passport-jwt";
-import bcrypt from "bcrypt"
+import prisma from "../prisma.js";
+type VerifiedCallback = (error: any, user?: any, info?: any) => void;
+import bcrypt from "bcrypt";
 interface LocalVerifyFn {
     (email: string,
     password: string,

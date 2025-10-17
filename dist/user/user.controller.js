@@ -43,9 +43,10 @@ export default class UserController {
     async userUpdateController(req, res, next) {
         const { nickname: rawNickname, email: rawEmail } = req.body;
         try {
-            const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
+            const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
+            const id = Number(userId);
             const unique_check = await userService.getUserInfoById({
-                id: Number(id),
+                id,
                 email: String(rawEmail),
                 nickname: String(rawNickname),
             });

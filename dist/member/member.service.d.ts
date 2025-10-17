@@ -15,8 +15,8 @@ export default class MemberService {
             taskCount: number;
             id: number;
             email: string;
-            nickname: string;
-            image: string;
+            nickname: string | null;
+            image: string | null;
         }[];
         total: number;
         page: number;
@@ -29,8 +29,8 @@ export default class MemberService {
             users: {
                 id: number;
                 email: string;
-                nickname: string;
-                image: string;
+                nickname: string | null;
+                image: string | null;
             };
         } & {
             id: number;
@@ -45,8 +45,8 @@ export default class MemberService {
         users: {
             id: number;
             email: string;
-            nickname: string;
-            image: string;
+            nickname: string | null;
+            image: string | null;
         };
     } & {
         id: number;
