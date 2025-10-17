@@ -103,4 +103,13 @@ export class ProjectRepository {
       });
     });
   };
+
+  /**
+   * @param projectId 삭제할 프로젝트의 ID
+   */
+  deleteProjectById = async (projectId: number) => {
+    return this.prisma.project.delete({
+      where: { id: projectId },
+    });
+  };
 }
