@@ -3,13 +3,13 @@ import { IUserDTO } from "./user.controller.js";
 
 interface IUser{
     id: number;
-    nickname: string | null;
-    email: string;
+    nickname?: string | null;
+    email?: string | null;
     createdAt?: Date;
     updatedAt?: Date;
 }
+
 export default class UserService {
-    
     async getUserInfoById({id}:IUser):Promise<IUserDTO | null>{
         const user_id = id
         const userInfo = await prisma.user.findUnique({
@@ -29,19 +29,18 @@ export default class UserService {
         };
     }
     async  updatedUser({id, nickname, email}:IUser):Promise<IUserDTO |null>{
-        const userId = id
+        const data: any = {};
+        if (nickname !== undefined) data.nickname = nickname;
+        if (email !== undefined) data.email = email;
+
         const updatedUser = await prisma.user.update({
-            where: {id:userId},
-            data:{
-                id,
-                nickname,
-                email
-            }
+            where: {id},
+            data
         })
         if(!updatedUser) return null
         return {
             id: updatedUser.id,
-            email: updatedUser.email,
+            email: updatedUser.email ?? "",
             nickname : updatedUser.nickname ?? ""
         }
         
