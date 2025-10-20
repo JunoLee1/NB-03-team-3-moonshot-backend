@@ -1,8 +1,8 @@
 import { IUserDTO } from "./user.controller.js";
 interface IUser {
     id: number;
-    nickname: string;
-    email: string;
+    nickname?: string | null;
+    email?: string | null;
     createdAt?: Date;
     updatedAt?: Date;
 }

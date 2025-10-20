@@ -1,21 +1,19 @@
-import { IUserDTO, ILoginDTO } from "./auth.controller.js";
+import type { Response } from "express";
+import { AuthUserDTO } from "./auth.controller.js";
 export declare class AuthService {
-    findUserEmail(email: string): Promise<IUserDTO | null>;
-    findUniqueNickname(nickname: string): Promise<IUserDTO | null>;
-    loginService({ email }: ILoginDTO): Promise<{
+    findUserEmail(email: string): Promise<AuthUserDTO | null>;
+    findUniqueNickname(nickname: string): Promise<AuthUserDTO | null>;
+    loginService({ email }: AuthUserDTO): Promise<{
         accessToken: string;
         refreshToken: string;
     }>;
-    createNewUser({ email, password, nickname, image }: IUserDTO): Promise<IUserDTO>;
-    generateToken(userId: Number): {
-        accessToken: string;
-        refreshToken: string;
-    };
+    createNewUser({ email, password, nickname, image }: AuthUserDTO): Promise<AuthUserDTO>;
     verifyAccessToken(token: string): {
         userId: string | (() => string) | undefined;
     };
     verifyRefreshToken(token: string): {
         userId: string | (() => string) | undefined;
     };
+    clearTokenCookies(res: Response): void;
 }
 //# sourceMappingURL=auth.service.d.ts.map

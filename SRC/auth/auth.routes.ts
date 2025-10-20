@@ -1,24 +1,48 @@
-import express,{ Request, Response, NextFunction, RequestHandler } from "express";
-import { AuthController } from "./auth.controller.js";
-import { loginAuth, validateRegister } from "./auth.validation.js";
-import passport  from "../lib/passport/index.js";
+import express from 'express';
+import passport from '../lib/passport/index.js';
+import {AuthController}from './auth.controller.js';
+import { Request,Response,NextFunction } from 'express';
 
-const authController = new AuthController();
+const authController  = new AuthController()
 const router = express.Router();
 
-// POST /auth/login - 로그인
-router.post("/login",
-    loginAuth,
-    passport.authenticate('local', { session: false }),
-    async (req: Request, res: Response, next: NextFunction)=>{
-    authController.loginController(req, res, next)
-});
-//회원가입
-router.post("/register",
-    validateRegister,
-    passport.authenticate('google', { session: false }),
-    async(req: Request, res: Response, next: NextFunction)=>{
-    authController.siginupController(req, res, next)
-});
+// login 
+router.post('/auth',
+    passport.authenticate('local',{session:false}),
+    async (req: Request, res: Response, next: NextFunction) => {
+    authController.loginController.bind(AuthController) // ✅ this 바인딩 + 타입 안전
+  }
 
-export default router;
+)
+
+// register
+router.post('/auth',( req : Request, res:Response, next:NextFunction ) => {
+    authController.registerController(req, res, next)
+})
+
+// refresh
+router.post('/auth/refresh',passport.authenticate("refresh-token"),
+     ( req : Request, res:Response, next:NextFunction ) => {
+         authController.refreshtokenController(req, res, next)
+     })
+,
+// logout
+router.post('/auth/logout',
+    ( req : Request, res:Response, next:NextFunction ) => {
+        authController.logoutController(req, res, next)
+    }
+)
+
+// google get
+router.get('/auth/google',
+    passport.authenticate( "google", {
+        scope :[ 'email', 'profile' ]
+    }))
+
+// google callback
+router.get('/auth/google/callback',passport.authenticate("google", { session:false }), 
+    ( req : Request, res:Response, next:NextFunction ) => {
+    authController.googleCallbackController(req, res, next)
+    })
+
+export default router

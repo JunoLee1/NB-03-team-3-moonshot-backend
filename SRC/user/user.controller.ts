@@ -2,9 +2,10 @@ import type { Request, Response, NextFunction } from "express";
 import UserService from "./user.service.js";
 import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
+import { number } from "zod/v4";
 
 export interface IUserDTO {
-  id: number ;
+  id?: number ;
   nickname: string;
   email: string;
   createdAt?: Date;
@@ -59,6 +60,8 @@ export default class UserController {
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
     const { nickname: rawNickname, email: rawEmail } = req.body;
     try {
+      if(!req.user) throw new HttpError(401,"unauthorization")
+
       const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
       const id = Number(userId)
       const unique_check = await userService.getUserInfoById({
@@ -92,9 +95,9 @@ export default class UserController {
     res: Response,
     next: NextFunction
   ) {
-    const { id } = req.user; // 인증 미들웨어에서 req.query id넣어주기
     try {
-      const userId = Number(id);
+      if(!req.user) throw new HttpError(401,"unauthorization")
+      const userId= req.user.id; // 인증 미들웨어에서 req.query id넣어주기
       const projects = await userService.findUserProjects({ userId });
       return res.json({
         success: true,
@@ -105,6 +108,7 @@ export default class UserController {
     }
   }
   async findUserTasksController(req: Request, res: Response, next: NextFunction) {
+    if(!req.user) throw new HttpError(401,"unauthorization")
     const { id } = req.user // 인증 미들웨어에서 req.user id넣어주기
     try {
       const taskIdRaw = req.query.task_id;

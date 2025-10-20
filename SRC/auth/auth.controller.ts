@@ -1,77 +1,105 @@
 import { Request, Response, NextFunction } from "express";
 import HttpError from "../lib/httpError.js";
 import { AuthService } from "./auth.service.js";
+import { generateToken } from "../lib/generateToken.js";
 import bcrypt from "bcrypt";
+import {
+  NODE_ENV,
+  ACCESS_TOKEN_COOKIE_NAME,
+  REFRESH_TOKEN_COOKIE_NAME,
+} from '../lib/constants.js';
 
-export interface IUserDTO{
-    id?:number;
-    email:string | null;
-    nickname:string | null;
-    password?:string | null;
-    image?:string | null
-} 
-export interface ILoginDTO{
-    email: string,
-    password:string
+export enum ProviderType {
+  LOCAL = "local",
+  GOOGLE = "google"
 }
-const authService = new AuthService()
+export interface AuthUserDTO{
+    id ?: number,
+    email: string ,
+    password:  string| null,
+    nickname?: string |null,
+    image?: string |null,
+    provider?: ProviderType | null,
+    providerId?: string | null
+}
 
-export class AuthController {
-    
-    async loginController(req:Request, res:Response, next:NextFunction){
-        try {
-            // 1. 데이터베이스에서 사용자 이메일 및 비밀번호 확인후 토큰 발급
-            const{ nickname:rawNickname, email:rawEmail, password:rawPassword } = req.body;
-            const email = rawEmail
-            const user = await authService.findUserEmail(email);
+const authService =  new AuthService()
+export class AuthController{
 
-            if(!user)throw new HttpError(400," 유효한 이메일 형식이 아닙니다.");
-
-            if (typeof rawPassword !== "string" || rawPassword.length< 6 ){
-                throw new HttpError(400,"비밀번호는 최소 6자 이상이어야 합니다.");
-            }
-
-            if (!user.password) {
-                throw new Error("User has no password set");
-            }
-            const password = rawPassword
-            const isMatch = await bcrypt.compare(password,user.password)
-            
-            if(!isMatch)throw new HttpError(401, "비밀번호가 일치하지 않습니다.");
-            
-            if (typeof rawNickname !== "string" || rawNickname.length < 3) {
-                throw new HttpError(400, "닉네임은 최소 3자 이상이어야 합니다.");
-            }
-            const result = await authService.loginService({email,password})
-            return res.status(200).json({
-                message:"성공적인 로그인",
-                data: result
-            })
-        } catch (error) {
-            next(error);
-        }
+    // login Controller
+    // DB에서 해당 유저의 이메일/ 비밀번호를 확인후 로그인 
+    async loginController(req:Request, res: Response, next:NextFunction){
+      try {
+        const { email,password } = req.body; 
+        
+        if(!req.user) throw new HttpError(401,"Unauthorized")
+        if(!req.user.id)throw new HttpError(401,"Unauthorized")
+        
+        const{ refreshToken, accessToken } = generateToken(req.user.id);
+       
+        this.setTokenCookies(res, accessToken, refreshToken);
+        if(typeof email !== "string" )throw new HttpError(400,"이메일이 문자열아닙니다") 
+        await authService.loginService({ email, password })
+        return res.status(200).json({
+          message:"성공적인 로그인"
+        })
+      } catch (error) {
+        next(error)
+      }
     }
 
-    async siginupController(req:Request, res:Response, next:NextFunction){
-        try {
-            const {password: rawPassword, email:rawEmail, nickname:rawNickname} = req.body;
-
-            const unique_email = await authService.findUserEmail(rawEmail)
-            const unique_nickname = await authService.findUniqueNickname(rawNickname)
-            
-            if (!unique_email) throw new HttpError(400,"이미 존재하는 이메일입니다")
-            if (!unique_nickname) throw new HttpError(400,"이미 존재하는 닉네임입니다")
-
-            const hashedPassword = await bcrypt.hash(rawPassword,10)
-           // const [email, password, nickname] = [rawEmail,hashedPassword,rawNickname]
-            const result = await authService.createNewUser({email:rawEmail,password:hashedPassword,nickname:rawNickname})
-            return res.status(201).json({
-                message: "성공적인 로그인",
-                ...result
-            })
-        } catch (error) {
-            next(error)
-        }
+    // logout controller
+    //
+    async logoutController(req: Request, res: Response, next:NextFunction){
+      this.clearTokenCookie(res);
+      return res.status(200).send()
     }
 
-}
+    // register controller
+    // 데이터상 생성할 이메일 || nickname의 중복유무를 확인후, 중복 x? 데이터 DB에 보내기
+    async registerController(req: Request, res: Response, next:NextFunction){
+      try {
+         const {email, password, nickname, image} = req.body as {
+          email : unknown;
+          password:unknown;
+          nickname: unknown;
+          image :unknown;
+         }
+         if(
+          typeof email !== "string" ||
+          typeof password !== "string"||
+          typeof nickname !== "string"||
+          typeof image !== "string" 
+         ) throw new HttpError(400, "문자열이어야 합니다")
+          const newUser = await authService.createNewUser({email, password, nickname, image})
+          return res.status(201).json({
+            message:"성공적인 데이터 생성",
+            data: newUser
+          })
+      } catch (error) {
+        next(error)
+      }
+
+    }
+
+    // refreshtoken Controller
+    async refreshtokenController(req: Request, res: Response, next:NextFunction){
+
+    }
+
+    // googleCallback Controller
+    async googleCallbackController(req: Request, res: Response, next:NextFunction){
+
+    }
+
+  setTokenCookies(res: Response, accessToken: string, refreshToken: string) {
+      res.cookie("access_token", accessToken, { httpOnly: true });
+      res.cookie("refresh_token", refreshToken, { httpOnly: true });
+    }
+
+    clearTokenCookie(res:Response){
+      res.clearCookie(ACCESS_TOKEN_COOKIE_NAME)
+      res.clearCookie(REFRESH_TOKEN_COOKIE_NAME)
+    }
+  }
+

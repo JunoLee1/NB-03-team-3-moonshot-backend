@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 export interface IUserDTO {
-    id: number;
+    id?: number;
     nickname: string;
     email: string;
     createdAt?: Date;

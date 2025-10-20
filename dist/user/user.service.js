@@ -19,20 +19,20 @@ export default class UserService {
         };
     }
     async updatedUser({ id, nickname, email }) {
-        const userId = id;
+        const data = {};
+        if (nickname !== undefined)
+            data.nickname = nickname;
+        if (email !== undefined)
+            data.email = email;
         const updatedUser = await prisma.user.update({
-            where: { id: userId },
-            data: {
-                id,
-                nickname,
-                email
-            }
+            where: { id },
+            data
         });
         if (!updatedUser)
             return null;
         return {
             id: updatedUser.id,
-            email: updatedUser.email,
+            email: updatedUser.email ?? "",
             nickname: updatedUser.nickname ?? ""
         };
     }

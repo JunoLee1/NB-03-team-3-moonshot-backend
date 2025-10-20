@@ -1,61 +1,74 @@
 import HttpError from "../lib/httpError.js"
 import prisma from "../lib/prisma.js"
-import { IUserDTO, ILoginDTO} from "./auth.controller.js"
 import jwt from "jsonwebtoken"
-import {JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET} from"../lib/constants.js"
+import type { Response } from "express"
+import {ACCESS_TOKEN_COOKIE_NAME,REFRESH_TOKEN_COOKIE_NAME,JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET} from"../lib/constants.js"
+import { AuthUserDTO, ProviderType } from "./auth.controller.js"
+import { generateToken } from "../lib/generateToken.js"
+
+import bcrypt from "bcrypt";
+import { object } from "zod/v4"
 
 export class AuthService{
-    async findUserEmail(email:string):Promise<IUserDTO | null>{
+    async findUserEmail(email:string):Promise<AuthUserDTO | null>{
         if (email.includes("@"))throw new HttpError(400,"올바르지 못한 이메일 형식 ")
-        const result =  await prisma.user.findUnique({
+        const user =  await prisma.user.findUnique({
             where:{
                 email
-            }
-        })
-        return result
+            },
+        });
+        if(!user) throw new HttpError(400,"")
+        if (user.provider && !Object.values(ProviderType).includes(user.provider as ProviderType)){
+            throw new HttpError(500,"") 
+        }
+        return user as AuthUserDTO
     } 
-    async findUniqueNickname(nickname:string):Promise<IUserDTO|null>{
-        const result = await prisma.user.findUnique({
+    async findUniqueNickname(nickname:string):Promise<AuthUserDTO|null>{
+        const user = await prisma.user.findUnique({
             where:{
                 nickname
             }
         })
-        return result
+        if(!user) throw new HttpError(400,"유저 정보가 존재하지 않습니다")
+        if (user.provider && !Object.values(ProviderType).includes(user.provider as ProviderType)){
+            throw new HttpError(500,"잘못된 Provider") 
+        } 
+        return user as AuthUserDTO;
     }
 
-    async loginService({ email }:ILoginDTO):Promise<{ accessToken: string, refreshToken: string}>{
+    async loginService({ email }:AuthUserDTO):Promise<{ accessToken: string, refreshToken: string}>{
         const user =  await this.findUserEmail(email)
         if(!user) throw new HttpError(401,"이메일이 존재하지 않습니다")
         const userId = user.id
         if(!userId) throw new HttpError(400,"유효하지 않는 인덱스")
 
-        const token = this.generateToken(userId)
+        const token = generateToken(userId)
         return token;
     }
 
-    async createNewUser({email, password, nickname,image}:IUserDTO):Promise<IUserDTO>{
+    async createNewUser({email, password, nickname, image}:AuthUserDTO):Promise<AuthUserDTO>{
+        const salt = await bcrypt.genSalt(10);
+        if(!password) throw new HttpError (400, "비밀번호가 없음")
+        const hashedPassword = await bcrypt.hash(password, salt);
+        const created_password = hashedPassword
         const newUser = await prisma.user.create({
             data:{
                 email: email ?? "",
                 nickname :nickname  ?? "",
-                password : password ?? "",
-                image : image ?? ""
+                password : created_password ?? "",
+                image : image ?? "",
+                
             },
             include:{
                 tasks:true,
                 comments:true
             }
         })
-        return newUser
-    }
-    generateToken(userId:Number){ 
-        const accessToken = jwt.sign({ sub:userId},JWT_ACCESS_TOKEN_SECRET,{
-            expiresIn:"30mins",
-        });
-        const refreshToken = jwt.sign({sub: userId},JWT_REFRESH_TOKEN_SECRET,{
-            expiresIn:"1d"
-        })
-        return {accessToken, refreshToken}
+        if(!newUser) throw new HttpError(400,"유저 정보가 존재하지 않습니다")
+        if (newUser.provider && !Object.values(ProviderType).includes(newUser.provider as ProviderType)){
+            throw new HttpError(500,"잘못된 Provider") 
+        } 
+        return newUser as AuthUserDTO;
     }
 
     verifyAccessToken(token: string){
@@ -66,4 +79,10 @@ export class AuthService{
          const decoded = jwt.verify(token,JWT_REFRESH_TOKEN_SECRET);
         return { userId: decoded.sub };
     }
+
+     clearTokenCookies(res:Response) {
+        res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
+        res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
+    }
+
 }
