@@ -1,24 +1,31 @@
-import{ z }from "zod";
-import { Request, Response, NextFunction } from "express";
-// 사용자 스키마
-export class userValidation {
-    private static userShema = z.object({
-        id: z.number().int().positive().optional(),
-        email: z.string().email("이메일 형식이 아닙니다"),
-        password:z.string().min(6,"비밀번호는 최소 6자 이상이어야합니다"),
-        nickname:z.string().min(2).max(20)
-    })
+// SRC/validations/user.validation.ts
+import { z } from "zod";
 
-    // 사용자 생성 유효성 검사 미들웨어
-    static  validateUser = (req:any, res:any, next:any) => {
-        const result = this.userShema.safeParse(req.body);
-        if(!result.success){
-            return res.status(400).json({
-                message:"Validation error",
-                errors:result.error
-            });
-        }
-        req.validatedData = result.data;
-        next();
-    }
-}
+
+// Define the schema once
+export const userInfoSchema = z.object({
+  id: z.number().int().positive().optional(),
+  email: z.string().email("이메일 형식이 아닙니다."),
+  password: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다."),
+  nickname: z.string().min(2, "닉네임은 최소 2자 이상").max(20, "닉네임은 최대 20자 이하여야 합니다."),
+  image: z.string().optional(),
+});
+
+export const updateUserSchema = z.object({
+    email: z.string().email("이메일 형식이 아닙니다."),
+    image: z.string().optional(),
+})
+
+export const  findUserTasksSchema = z.object({
+    from:z.string().datetime().optional(),
+    to:z.string().datetime().optional(),
+    project_id :z.number().positive("양의 정수여야 합니다"),
+    status:z.enum(["todo", "inprogress", "done"]).optional(),
+    keyword:z.string().optional()
+})
+export const findUserProjectsSchema= z.object({
+    page:z.number().positive().min(1, "1보다 크거나 같아야 합니다").max(99,"100 미만 이어야합니다"),
+    skip:z.number().positive().min(10, "10이상 합니다").max(99,"100 미만 이어야합니다") ,
+})
+// Infer the DTO type
+export type UserDTO = z.infer<typeof userInfoSchema>;

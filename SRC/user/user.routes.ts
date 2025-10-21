@@ -1,7 +1,8 @@
 import express from "express";
 import type {Request,Response, NextFunction} from "express";
 import UserController from "./user.controller.js"
-import { userValidation } from "./user.validation.js";
+import { userInfoSchema, updateUserSchema, findUserTasksSchema, findUserProjectsSchema } from "../user/user.validation.js";
+import {validateBody,validateParam, validateQuery } from"../middleware/validationMiddle.js"
 import { loginAuth } from "../auth/auth.validation.js";
 import passport from "../lib/passport/index.js"
 
@@ -16,7 +17,7 @@ const router = express.Router();
 const userController = new UserController()
 router.get("/me",
     loginAuth,
-    userValidation.validateUser,
+    validateBody(userInfoSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.userInfoController(req, res, next)
@@ -27,7 +28,7 @@ router.get("/me",
 
 router.patch("/me",
     loginAuth,
-    userValidation.validateUser,
+    validateBody(updateUserSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.userUpdateController(req, res, next)
@@ -36,14 +37,14 @@ router.patch("/me",
 // 해당 유저가 참여중인 모든 프로젝트의 할일 목록 조회 API
 router.get("/me/projects",
     loginAuth,
-    userValidation.validateUser,
+    validateParam(findUserProjectsSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{ 
     userController.findUsedrProjectsController(req, res, next)
 })
 router.get("/me/tasks",
     loginAuth,
-    userValidation.validateUser,
+    validateParam(findUserTasksSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.findUserTasksController(req, res, next)

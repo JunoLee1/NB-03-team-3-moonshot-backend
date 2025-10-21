@@ -5,9 +5,6 @@ import prisma from "../lib/prisma.js";
 import { FindUserTaskParam } from "./user.user_dto.js";
 
 
-
-
-
 const userService = new UserService();
 export default class UserController {
   async userInfoController(req: Request, res: Response, next: NextFunction) {
@@ -85,7 +82,7 @@ export default class UserController {
     next: NextFunction
   ) {
     try {
-      const { page, limit } = req.query;
+      const { page, limit } = req.params;
       const pageNum = Number(page) || 1
       const limitNum = Number(limit) || 10
       const take = limitNum
@@ -120,7 +117,7 @@ export default class UserController {
   }
 
   async findUserTasksController(req: Request, res: Response, next: NextFunction) {
-    const {from, to, project_id, assignee, keyword, status} = req.query;
+    const {from, to, project_id, assignee, keyword, status} = req.params;
     const validStatus = ['todo', 'inprogress', 'done'] as const;
     const statusValue = validStatus.includes(status as any)
       ? (status as 'todo' | 'inprogress' | 'done')
