@@ -60,7 +60,7 @@ export interface TaskResponseDto {
 
 // 할 일 목록 조회 시 사용하는 쿼리 파라미터 DTO
 
-export interface TaskQueryDtop {
+export interface TaskQueryDto {
   page?: number;
   limit?: number;
   status?: TaskStatusType;
