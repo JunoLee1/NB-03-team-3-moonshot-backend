@@ -124,8 +124,8 @@ model Subtask {
   tasks        Task     @relation(fields: [task_id], references: [id])
   title        String
   is_completed Boolean
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  created_at   DateTime
+  updated_at   DateTime
 }
 
 //--------------------------------------------------------------------
