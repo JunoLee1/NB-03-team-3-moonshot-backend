@@ -22,9 +22,9 @@ export interface TaskBodyDto {
 // 할 일 담당자 정보 DTO
 export interface AssigneeDto {
   id: number;
-  name: string;
+  name: string | null;
   email: string;
-  profileImage: string;
+  profileImage: string | null;
 }
 
 // 할 일 태그 정보 DTO
