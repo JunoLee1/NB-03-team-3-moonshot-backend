@@ -58,7 +58,6 @@ export class AuthService {
                 image: image ?? "",
             },
             include: {
-                tasks: true,
                 comments: true
             }
         });

@@ -60,7 +60,7 @@ export default class UserController {
     }
     async findUsedrProjectsController(req, res, next) {
         try {
-            const { page, limit } = req.query;
+            const { page, limit } = req.params;
             const pageNum = Number(page) || 1;
             const limitNum = Number(limit) || 10;
             const take = limitNum;
@@ -91,7 +91,7 @@ export default class UserController {
         }
     }
     async findUserTasksController(req, res, next) {
-        const { from, to, project_id, assignee, keyword, status } = req.query;
+        const { from, to, project_id, assignee, keyword, status } = req.params;
         const validStatus = ['todo', 'inprogress', 'done'];
         const statusValue = validStatus.includes(status)
             ? status

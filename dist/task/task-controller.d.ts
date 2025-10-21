@@ -5,5 +5,6 @@ export declare class TaskController {
     constructor(taskService: TaskService);
     createTask: (req: Request, res: Response, next: NextFunction) => Promise<Response<any, Record<string, any>> | undefined>;
     getTasks: (req: Request, res: Response, next: NextFunction) => Promise<Response<any, Record<string, any>> | undefined>;
+    getTaskById: (req: Request, res: Response, next: NextFunction) => Promise<Response<any, Record<string, any>> | undefined>;
 }
 //# sourceMappingURL=task-controller.d.ts.map

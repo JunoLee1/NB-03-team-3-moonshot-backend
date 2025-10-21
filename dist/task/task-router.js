@@ -1,6 +1,7 @@
 import express from "express";
 // 추후 인증 미들웨어 import
-const taskRouter = (taskController) => {
+// 프로젝트 중첩 라우터 (/projects/:projectId/tasks' 처리)
+export const nestedTaskRouter = (taskController) => {
     const router = express.Router({ mergeParams: true });
     router
         .route("/")
@@ -10,5 +11,10 @@ const taskRouter = (taskController) => {
         .get(taskController.getTasks);
     return router;
 };
-export default taskRouter;
+// 메인 라우터, 중첩 라우터와 함께 app.ts에 임포트하여 다른 경로에 연결
+export const mainRouter = (taskController) => {
+    const router = express.Router();
+    router.route("/:taskId").get(taskController.getTaskById);
+    return router;
+};
 //# sourceMappingURL=task-router.js.map

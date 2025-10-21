@@ -122,5 +122,34 @@ export class TaskRepository {
         ]);
         return { data: tasks, total: total };
     };
+    /**
+     * ID를 기준으로 할 일의 상세 정보를 조회
+     * 응답 DTO 구성을 위해 담당자, 태그, 첨부파일을 포함
+     * 권한 검사를 위해 할 일이 속한 프로젝트의 모든 멤버 목록을 포함
+     * @param taskId 조회할 할 일의 ID
+     * @returns 할 일 상세 정보 또는 null
+     */
+    findTaskById = async (taskId) => {
+        return this.prisma.task.findUnique({
+            where: { id: taskId },
+            include: {
+                // 응답 DTO 구성을 위한 데이터
+                members: {
+                    include: {
+                        // 담당자 정보
+                        users: true,
+                    },
+                },
+                tags: true,
+                attachments: true,
+                // 권한 검사를 위한 데이터
+                projects: {
+                    include: {
+                        members: true,
+                    },
+                },
+            },
+        });
+    };
 }
 //# sourceMappingURL=task-repository.js.map

@@ -19,5 +19,12 @@ export declare class TaskService {
      * @returns { data: TaskResponseDto[], total: number }
      */
     getTasks: (userId: number, projectId: number, query: any) => Promise<TaskListResponseDto>;
+    /**
+     * 할 일 상세 조회
+     * @param userId 요청한 사용자의 ID
+     * @param taskId 조회할 할 일의 ID
+     * @returns 가공된 할 일의 상세 정보
+     */
+    getTaskById: (userId: number, taskId: number) => Promise<TaskResponseDto>;
 }
 //# sourceMappingURL=task-service.d.ts.map

@@ -13,9 +13,9 @@ export interface TaskBodyDto {
 }
 export interface AssigneeDto {
     id: number;
-    name: string;
+    name: string | null;
     email: string;
-    profileImage: string;
+    profileImage: string | null;
 }
 export interface TagDto {
     id: number;
