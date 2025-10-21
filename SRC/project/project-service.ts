@@ -1,7 +1,6 @@
 import { ProjectRepository } from "./project-repository.js";
 import { ProjectBodyDto, ProjectResponseDto } from "./project-dto.js";
 import { PrismaClient } from "@prisma/client"; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
-import { extend, merge } from "zod/mini";
 
 // 커스텀 에러 임시, 추후 별도 파일로 분리하는 것이 좋을 것 같음
 class ForbiddenException extends Error {
