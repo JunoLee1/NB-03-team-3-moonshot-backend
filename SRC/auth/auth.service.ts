@@ -60,7 +60,6 @@ export class AuthService{
                 
             },
             include:{
-                tasks:true,
                 comments:true
             }
         })
