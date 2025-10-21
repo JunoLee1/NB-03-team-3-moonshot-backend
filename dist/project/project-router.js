@@ -1,6 +1,6 @@
 import express from "express";
 // 추후 인증 및 필요한 미들웨어 추가예정
-const projectRouter = (projectController
+const projectRouter = (projectController, taskRouter
 // 미들웨어 추가
 ) => {
     const router = express.Router();
@@ -12,6 +12,10 @@ const projectRouter = (projectController
         .get(projectController.getProjectById)
         .patch(projectController.updateProject)
         .delete(projectController.deleteProject);
+    // /:projectId/tasks 경로로 들어오는 요청은 할 일 생성 및 할 일 목록 조회임
+    // 주입받은 taskRouter가 처리할 수 있도록 연결
+    router.use("/:projectId/tasks", taskRouter);
     return router;
 };
+export default projectRouter;
 //# sourceMappingURL=project-router.js.map
