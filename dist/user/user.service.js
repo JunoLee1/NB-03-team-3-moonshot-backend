@@ -41,10 +41,15 @@ export default class UserService {
             image: updatedUser.image ?? ""
         };
     }
-    async findUserProjects({ userId }) {
+    async findUserProjects({ skip, take, order, order_by, userId }) {
         const projects = await prisma.project.findMany({
             where: {
-                id: userId
+                id: userId,
+            },
+            skip,
+            take,
+            orderBy: {
+                [order_by || "created_at"]: order || "asc"
             },
             include: {
                 members: true
@@ -52,19 +57,27 @@ export default class UserService {
         });
         return projects;
     }
-    async findUserTasks({ taskId, userId }) {
-        // TODO : 인증 미들웨어에서 req.query id넣어주기
-        const num_taskId = Number(taskId);
+    async findUserTasks({ from, to, project_id, assignee, keyword, status, userId }) {
         const tasks = await prisma.task.findMany({
             where: {
-                id: num_taskId,
-                user_id: userId
+                projects: {
+                    members: {
+                        some: {
+                            user_id: userId
+                        }
+                    },
+                },
+                AND: [
+                    from ? { createdAt: { gte: from } } : {},
+                    to ? { createdAt: { lte: to } } : {},
+                    project_id ? { project_id } : {},
+                    assignee ? { member_id: assignee } : {},
+                    status ? { taskStatus: status } : {},
+                    keyword ? { title: { contains: keyword, mode: 'insensitive' } } : {}
+                ],
             },
-            include: {
-                subtasks: true
-            }
+            include: { projects: true }
         });
-        return tasks;
     }
 }
 //# sourceMappingURL=user.service.js.map

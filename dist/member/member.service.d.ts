@@ -34,11 +34,11 @@ export default class MemberService {
             };
         } & {
             id: number;
-            user_id: number;
             status: import("@prisma/client").$Enums.status;
+            projectId: number;
+            user_id: number;
             role: string | null;
             joinedAt: Date;
-            projectId: number;
         };
     }>;
     acceptInvitation(member_id: number, user_id: number): Promise<{
@@ -50,11 +50,11 @@ export default class MemberService {
         };
     } & {
         id: number;
-        user_id: number;
         status: import("@prisma/client").$Enums.status;
+        projectId: number;
+        user_id: number;
         role: string | null;
         joinedAt: Date;
-        projectId: number;
     }>;
     removeMember(project_id: number, member_user_id: number, remover_id: number): Promise<{
         message: string;

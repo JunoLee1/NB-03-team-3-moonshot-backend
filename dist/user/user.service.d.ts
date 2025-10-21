@@ -1,22 +1,12 @@
-import { IUserDTO } from "./user.controller.js";
-interface IUser {
-    id: number;
-    nickname?: string | null;
-    email?: string | null;
-    image?: string | null;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
+import { IUser, findUserProjects, FindUserTaskParam, IUserDTO } from "./user.user_dto.js";
 export default class UserService {
     getUserInfoById({ id }: IUser): Promise<IUserDTO | null>;
     updatedUser({ id, nickname, email, image }: IUser): Promise<IUserDTO | null>;
-    findUserProjects({ userId }: {
+    findUserProjects({ skip, take, order, order_by, userId }: findUserProjects & {
         userId: number;
     }): Promise<any>;
-    findUserTasks({ taskId, userId }: {
-        taskId: string;
+    findUserTasks({ from, to, project_id, assignee, keyword, status, userId }: FindUserTaskParam & {
         userId: number;
     }): Promise<any>;
 }
-export {};
 //# sourceMappingURL=user.service.d.ts.map

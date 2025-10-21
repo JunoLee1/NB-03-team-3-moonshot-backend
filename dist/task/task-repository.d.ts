@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { TaskBodyDto } from "./task-dto.js";
+import { TaskBodyDto, TaskQueryDto } from "./task-dto.js";
 export declare class TaskRepository {
     private prisma;
     constructor(prisma: PrismaClient);
@@ -25,28 +25,29 @@ export declare class TaskRepository {
             };
         } & {
             id: number;
-            user_id: number;
             status: import("@prisma/client").$Enums.status;
+            projectId: number;
+            user_id: number;
             role: string | null;
             joinedAt: Date;
-            projectId: number;
         };
         attachments: {
-            id: number;
             name: string | null;
-            task_id: number;
+            id: number;
             url: string | null;
+            task_id: number;
             uploaded_at: Date;
         }[];
         tags: {
-            id: number;
             name: string | null;
+            id: number;
             task_id: number;
         }[];
     } & {
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        project_id: number;
         title: string;
         content: string;
         start_year: number;
@@ -56,9 +57,65 @@ export declare class TaskRepository {
         end_month: number;
         end_date: number;
         taskStatus: import("@prisma/client").$Enums.Status;
-        user_id: number;
-        project_id: number;
         member_id: number;
     }) | null>;
+    /**
+     * 프로젝트의 할 일 목록을 필터링, 정렬, 페이지네이션하여 조회합니다.
+     * @param projectId 조회할 프로젝트의 ID
+     * @param options 파싱된 쿼리 옵션 (TaskQueryDto)
+     * @returns { data: task[], total: number }
+     */
+    getTasks: (projectId: number, options: TaskQueryDto) => Promise<{
+        data: ({
+            members: {
+                users: {
+                    id: number;
+                    email: string;
+                    nickname: string | null;
+                    password: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    image: string | null;
+                    provider: string | null;
+                    providerId: string | null;
+                };
+            } & {
+                id: number;
+                status: import("@prisma/client").$Enums.status;
+                projectId: number;
+                user_id: number;
+                role: string | null;
+                joinedAt: Date;
+            };
+            attachments: {
+                name: string | null;
+                id: number;
+                url: string | null;
+                task_id: number;
+                uploaded_at: Date;
+            }[];
+            tags: {
+                name: string | null;
+                id: number;
+                task_id: number;
+            }[];
+        } & {
+            id: number;
+            createdAt: Date;
+            updatedAt: Date;
+            project_id: number;
+            title: string;
+            content: string;
+            start_year: number;
+            start_month: number;
+            start_day: number;
+            end_year: number;
+            end_month: number;
+            end_date: number;
+            taskStatus: import("@prisma/client").$Enums.Status;
+            member_id: number;
+        })[];
+        total: number;
+    }>;
 }
 //# sourceMappingURL=task-repository.d.ts.map

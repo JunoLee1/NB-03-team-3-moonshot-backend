@@ -42,4 +42,17 @@ export interface TaskResponseDto {
     createdAt: Date;
     updatedAt: Date;
 }
+export interface TaskQueryDto {
+    page?: number;
+    limit?: number;
+    status?: TaskStatusType;
+    assignee?: number;
+    keyword?: string;
+    order?: "asc" | "desc";
+    order_by?: "created_at" | "name" | "end_date";
+}
+export interface TaskListResponseDto {
+    data: TaskResponseDto[];
+    total: number;
+}
 //# sourceMappingURL=task-dto.d.ts.map

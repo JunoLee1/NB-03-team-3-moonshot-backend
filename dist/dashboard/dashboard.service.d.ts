@@ -6,13 +6,14 @@ export default class DashboardService {
             role: string | null;
         };
         projects: {
-            id: number;
             name: string;
+            id: number;
         };
     } & {
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        project_id: number;
         title: string;
         content: string;
         start_year: number;
@@ -22,8 +23,6 @@ export default class DashboardService {
         end_month: number;
         end_date: number;
         taskStatus: import("@prisma/client").$Enums.Status;
-        user_id: number;
-        project_id: number;
         member_id: number;
     })[]>>;
     /** [2] 캘린더용 - 월별 할 일 조회 */
@@ -33,13 +32,14 @@ export default class DashboardService {
             role: string | null;
         };
         projects: {
-            id: number;
             name: string;
+            id: number;
         };
     } & {
         id: number;
         createdAt: Date;
         updatedAt: Date;
+        project_id: number;
         title: string;
         content: string;
         start_year: number;
@@ -49,8 +49,6 @@ export default class DashboardService {
         end_month: number;
         end_date: number;
         taskStatus: import("@prisma/client").$Enums.Status;
-        user_id: number;
-        project_id: number;
         member_id: number;
     })[]>;
 }

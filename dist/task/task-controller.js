@@ -27,5 +27,24 @@ export class TaskController {
             next(error);
         }
     };
+    getTasks = async (req, res, next) => {
+        try {
+            // 인증된 사용자 ID 가져오기
+            const userId = res.locals.user.id;
+            // URL 경로 파라미터 가져오기 및 검증
+            const { projectId: projectIdParam } = req.params;
+            const projectId = Number(projectIdParam);
+            if (Number.isNaN(projectId)) {
+                throw new Error("프로젝트 ID는 숫자여야 합니다.");
+            }
+            // Request Query 데이터 가져오기
+            const query = req.query;
+            const tasksResponse = await this.taskService.getTasks(userId, projectId, query);
+            return res.status(200).json(tasksResponse);
+        }
+        catch (error) {
+            next(error);
+        }
+    };
 }
 //# sourceMappingURL=task-controller.js.map

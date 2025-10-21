@@ -15,22 +15,22 @@ export declare class ProjectRepository {
      * @returns 프로젝트 정보 또는 null
      */
     findProjectById: (projectId: number) => Promise<({
+        members: {
+            id: number;
+            status: import("@prisma/client").$Enums.status;
+            projectId: number;
+            user_id: number;
+            role: string | null;
+            joinedAt: Date;
+        }[];
         tasks: {
             taskStatus: import("@prisma/client").$Enums.Status;
         }[];
-        members: {
-            id: number;
-            user_id: number;
-            status: import("@prisma/client").$Enums.status;
-            role: string | null;
-            joinedAt: Date;
-            projectId: number;
-        }[];
     } & {
+        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
         description: string;
     }) | null>;
     /**
@@ -40,32 +40,32 @@ export declare class ProjectRepository {
      * @returns 수정된 프로젝트의 상세 정보 또는 null
      */
     updateProject: (projectId: number, projectBodyDto: ProjectBodyDto) => Promise<({
+        members: {
+            id: number;
+            status: import("@prisma/client").$Enums.status;
+            projectId: number;
+            user_id: number;
+            role: string | null;
+            joinedAt: Date;
+        }[];
         tasks: {
             taskStatus: import("@prisma/client").$Enums.Status;
         }[];
-        members: {
-            id: number;
-            user_id: number;
-            status: import("@prisma/client").$Enums.status;
-            role: string | null;
-            joinedAt: Date;
-            projectId: number;
-        }[];
     } & {
+        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
         description: string;
     }) | null>;
     /**
      * @param projectId 삭제할 프로젝트의 ID
      */
     deleteProjectById: (projectId: number) => Promise<{
+        name: string;
         id: number;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
         description: string;
     }>;
 }

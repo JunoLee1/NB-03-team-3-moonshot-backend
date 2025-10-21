@@ -1,12 +1,4 @@
 import type { Request, Response, NextFunction } from "express";
-export interface IUserDTO {
-    id: number;
-    nickname: string;
-    email: string;
-    image: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
 export default class UserController {
     userInfoController(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
     userUpdateController(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;

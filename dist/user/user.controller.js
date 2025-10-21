@@ -60,10 +60,27 @@ export default class UserController {
     }
     async findUsedrProjectsController(req, res, next) {
         try {
+            const { page, limit } = req.query;
+            const pageNum = Number(page) || 1;
+            const limitNum = Number(limit) || 10;
+            const take = limitNum;
+            const skip = (pageNum - 1) * take;
             if (!req.user?.id)
                 throw new HttpError(401, "unauthorization"); // 인증 미들웨어에서 req.query id넣어주기
+            const v_order = [`asc`, `desc`];
+            const v_order_by = [`created_at`, `name`];
+            function isOrder(value) {
+                return v_order.includes(value);
+            }
+            function isOrderBy(value) {
+                return v_order_by.includes(value);
+            }
+            const orderQuery = req.query.order;
+            const orderByQuery = req.query.order_by;
+            const order = isOrder(orderQuery) ? orderQuery : "asc";
+            const order_by = isOrderBy(orderByQuery) ? orderByQuery : `created_at`;
             const userId = req.user.id;
-            const projects = await userService.findUserProjects({ userId });
+            const projects = await userService.findUserProjects({ skip, take, order, order_by, userId });
             return res.json({
                 success: true,
                 data: projects,
@@ -74,27 +91,42 @@ export default class UserController {
         }
     }
     async findUserTasksController(req, res, next) {
-        if (!req.user?.id)
+        const { from, to, project_id, assignee, keyword, status } = req.query;
+        const validStatus = ['todo', 'inprogress', 'done'];
+        const statusValue = validStatus.includes(status)
+            ? status
+            : undefined;
+        const filters = {
+            from: from ? new Date(from) : undefined,
+            to: to ? new Date(to) : undefined,
+            project_id: project_id ? Number(project_id) : undefined,
+            status: status,
+            assignee: assignee ? Number(assignee) : undefined,
+            keyword: keyword ? keyword : undefined,
+        };
+        if (!req.user)
             throw new HttpError(401, "unauthorization");
         // 인증 미들웨어에서 req.user id넣어주기
         const userId = req.user.id;
+        if (!userId)
+            throw new HttpError(401, "unauthorization");
         try {
-            const taskIdRaw = req.query.task_id;
-            if (typeof taskIdRaw !== "string" && isNaN(Number(taskIdRaw))) {
+            const raw_ProjectId = req.query.project_id;
+            if (typeof raw_ProjectId !== "string" && isNaN(Number(raw_ProjectId))) {
                 throw new HttpError(404, "Bad request");
             }
+            const projectId = Number(raw_ProjectId);
             const validatedTask = await prisma.task.findUnique({
-                where: { id: Number(taskIdRaw) },
+                where: { id: projectId },
             });
             if (!validatedTask) {
-                throw new HttpError(404, "존재하지 않는 태스크입니다");
+                throw new HttpError(404, "존재하지 않는 project입니다");
             }
-            const string_task = req.query.task_id;
-            if (typeof string_task !== "string") {
+            const string_project = req.query.projectId;
+            if (typeof string_project !== "string") {
                 throw new HttpError(404, "Bad request");
             }
-            const taskId = String(string_task);
-            const result = await userService.findUserTasks({ taskId: taskId, userId: Number(userId) });
+            const result = await userService.findUserTasks({ ...filters, userId });
             return res.json({
                 success: true,
                 data: result,
