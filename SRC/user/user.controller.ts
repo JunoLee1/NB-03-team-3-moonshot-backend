@@ -8,6 +8,7 @@ export interface IUserDTO {
   id: number ;
   nickname: string;
   email: string;
+  image: string
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -17,8 +18,7 @@ export default class UserController {
   async userInfoController(req: Request, res: Response, next: NextFunction) {
     try {
       // 인증 미들웨어에서 req.query id넣어주기
-      const { id, nickname, email } = req.body as {
-        id :unknown,
+      const { nickname, email } = req.body as {
         nickname: unknown,
         email:unknown,
       } ;//validation 미들웨어에서 req.body에 nickname, email 확인후 넣어주기
@@ -29,53 +29,50 @@ export default class UserController {
       if (typeof nickname !== "string")
         throw new HttpError(400, "해당 유저의 닉네임은 문자열이어야합니다");
 
-      const unique_check = await userService.getUserInfoById({
-        id: Number(id),
-        email,
-        nickname,
-      });
+      if(!req.user?.id) throw new HttpError(401,"unauthorization")
+
+      const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
+      const id = Number(userId)
+
+      const unique_check = await userService.getUserInfoById({ id });
+
       // prune
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       };
      
-      
-      const userInfo = await userService.getUserInfoById({
-        id:Number(id),
-        email,
-        nickname,
-      });
+      const userInfo = await userService.getUserInfoById({ id});
       return res.json({
         success: true,
         data: userInfo,
       });
+
     } catch (error) {
       next(error);
     }
   }
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
-    const { nickname: rawNickname, email: rawEmail } = req.body;
+    const { email,password, image } = req.body as {
+      email :string,
+      password: string,
+      image: string,
+    };
     try {
       if(!req.user?.id) throw new HttpError(401,"unauthorization")
 
       const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
       const id = Number(userId)
-      const nickname = String(rawNickname);
-      const email = String(rawEmail);
       const unique_check = await userService.getUserInfoById({
-        id,
-        email: String(rawEmail),
-        nickname: String(rawNickname),
+        id
       });
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       }
      
-
       const updatedUser = await userService.updatedUser({
-        id: Number(id),
+        id,
         email,
-        nickname,
+        image
       });
       return res.status(200).json({
         success: true,

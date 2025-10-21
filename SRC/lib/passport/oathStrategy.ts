@@ -18,7 +18,7 @@ export const googleStrategy = new GoogleStrategy(
         passReqToCallback: false , // ⚡ 필수
 
     } as any,
-    async ( accessToken,refreshToken,profile, cb ) => {
+    async ( accessToken,refreshToken,profile, cb, ) => {
         const user = await prisma.user.findFirst({
             where:{
                 provider:"google",
@@ -32,7 +32,7 @@ export const googleStrategy = new GoogleStrategy(
                 provider: 'google',
                 providerId: profile.id,
                 email: profile.displayName || profile.id,
-                password: null,
+                password: null
             }
         })
         return cb(null, newUser)

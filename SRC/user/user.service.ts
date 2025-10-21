@@ -5,6 +5,7 @@ interface IUser{
     id: number;
     nickname?: string | null;
     email?: string | null;
+    image?:string | null;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -18,6 +19,7 @@ export default class UserService {
                 id:true,
                 email:true,
                 nickname:true,
+                image: true
             }
          })
          if (!userInfo) return null;
@@ -26,13 +28,14 @@ export default class UserService {
             id: userInfo.id,
             email: userInfo.email,
             nickname: userInfo.nickname ?? "",
+            image: userInfo.image ?? ""
         };
     }
-    async  updatedUser({id, nickname, email}:IUser):Promise<IUserDTO |null>{
+    async  updatedUser({id, nickname, email, image}:IUser):Promise<IUserDTO |null>{
         const data: any = {};
         if (nickname !== undefined) data.nickname = nickname;
         if (email !== undefined) data.email = email;
-
+        if(image !== undefined) data.image = image;
         const updatedUser = await prisma.user.update({
             where: {id},
             data
@@ -41,7 +44,8 @@ export default class UserService {
         return {
             id: updatedUser.id,
             email: updatedUser.email ?? "",
-            nickname : updatedUser.nickname ?? ""
+            nickname : updatedUser.nickname ?? "",
+            image: updatedUser.image ?? ""
         }
         
     }
