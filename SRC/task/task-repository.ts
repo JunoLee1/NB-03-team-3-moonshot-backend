@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { TaskBodyDto } from "./task-dto.js";
+import { Prisma, PrismaClient } from "@prisma/client";
+import { TaskBodyDto, TaskQueryDto } from "./task-dto.js";
 
 export class TaskRepository {
   constructor(private prisma: PrismaClient) {}
@@ -71,5 +71,79 @@ export class TaskRepository {
         },
       });
     });
+  };
+
+  /**
+   * 프로젝트의 할 일 목록을 필터링, 정렬, 페이지네이션하여 조회합니다.
+   * @param projectId 조회할 프로젝트의 ID
+   * @param options 파싱된 쿼리 옵션 (TaskQueryDto)
+   * @returns { data: task[], total: number }
+   */
+  getTasks = async (projectId: number, options: TaskQueryDto) => {
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      assignee,
+      keyword,
+      order = "desc",
+      order_by = "created_at",
+    } = options;
+
+    // 페이지네이션 옵션 계산
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    // 필터링, 검색을 위한 WHERE 절 동적 생성
+    const where: Prisma.TaskWhereInput = {
+      project_id: projectId, // 해당 프로젝트 ID로 필터링
+    };
+    if (status) {
+      where.taskStatus = status; // 상태 필터
+    }
+    if (assignee) {
+      where.member_id = assignee; // 담당자 필터
+    }
+    if (keyword) {
+      where.title = { contains: keyword, mode: "insensitive" }; // 제목 검색 (대소문자 무시)
+    }
+
+    // 정렬을 위한 ORDER BY 절 동적 생성
+    const orderByMap = {
+      created_at: "createdAt",
+      name: "title",
+      end_date: "end_date",
+    };
+    // DTO에서 받은 값을 키로 사용하여 실제 필드명 찾기
+    const orderByField = orderByMap[order_by] || "createdAt";
+    const orderBy: Prisma.TaskOrderByWithRelationInput = {
+      [orderByField]: order,
+    };
+
+    // INCLUDE 절
+    const include = {
+      members: { include: { users: true } }, // 담당자
+      tags: true,
+      attachments: true,
+    };
+
+    // 트랜잭션으로 테이터와 총 개수를 한번에 조회
+    const [tasks, total] = await this.prisma.$transaction([
+      // 쿼리 1: 실제 데이터 조회(페이지네이션 적용)
+      this.prisma.task.findMany({
+        where,
+        include,
+        orderBy,
+        skip,
+        take,
+      }),
+
+      // 쿼리 2: 총 개수 조회 (페이지네이션 미적용)
+      this.prisma.task.count({
+        where,
+      }),
+    ]);
+
+    return { data: tasks, total: total };
   };
 }
