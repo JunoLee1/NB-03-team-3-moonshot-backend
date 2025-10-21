@@ -2,24 +2,12 @@ import type { Request, Response, NextFunction } from "express";
 import UserService from "./user.service.js";
 import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
+import { FindUserTaskParam } from "./user.user_dto.js";
 
 
-export interface IUserDTO {
-  id: number ;
-  nickname: string;
-  email: string;
-  image: string
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-export interface FindUserTaskParam{
-  from: Date | undefined;
-  to: Date | undefined;
-  project_id: number | undefined;
-  status: `todo` | `in_progress` | `done` | undefined;
-  assignee: number | undefined;
-  keyword: string| undefined;
-}
+
+
+
 const userService = new UserService();
 export default class UserController {
   async userInfoController(req: Request, res: Response, next: NextFunction) {
@@ -48,7 +36,7 @@ export default class UserController {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       };
      
-      const userInfo = await userService.getUserInfoById({ id});
+      const userInfo = await userService.getUserInfoById({ id });
       return res.json({
         success: true,
         data: userInfo,
@@ -58,6 +46,7 @@ export default class UserController {
       next(error);
     }
   }
+
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
     const { email,password, image } = req.body as {
       email :string,
@@ -96,9 +85,31 @@ export default class UserController {
     next: NextFunction
   ) {
     try {
+      const { page, limit } = req.query;
+      const pageNum = Number(page) || 1
+      const limitNum = Number(limit) || 10
+      const take = limitNum
+      const skip = (pageNum  - 1) * take
+  
       if(!req.user?.id) throw new HttpError(401,"unauthorization"); // 인증 미들웨어에서 req.query id넣어주기
+      
+      const v_order = [`asc` ,`desc`] as const 
+      const v_order_by = [ `created_at`, `name`] as const
+      function isOrder(value: any): value is 'asc' | 'desc' {
+        return (v_order as readonly string[]).includes(value);
+      }
+
+      function isOrderBy(value: any): value is 'created_at' | 'name' {
+        return (v_order_by as readonly string[]).includes(value);
+      }
+
+      const orderQuery = req.query.order;
+      const orderByQuery = req.query.order_by;
+      const order: "asc" | "desc" = isOrder(orderQuery) ? orderQuery : "asc";
+      const order_by: `created_at`| `name` = isOrderBy(orderByQuery) ? orderByQuery : `created_at` ;
+
       const userId = req.user.id
-      const projects = await userService.findUserProjects({userId});
+      const projects = await userService.findUserProjects({skip, take, order,order_by ,userId});
       return res.json({
         success: true,
         data: projects,
@@ -110,16 +121,15 @@ export default class UserController {
 
   async findUserTasksController(req: Request, res: Response, next: NextFunction) {
     const {from, to, project_id, assignee, keyword, status} = req.query;
-    const validStatus = ['todo', 'in_progress', 'done'] as const;
+    const validStatus = ['todo', 'inprogress', 'done'] as const;
     const statusValue = validStatus.includes(status as any)
-      ? (status as 'todo' | 'in_progress' | 'done')
+      ? (status as 'todo' | 'inprogress' | 'done')
       : undefined;
-
     const filters : FindUserTaskParam = {
       from: from ? new Date(from as string) : undefined,
       to: to ? new Date(to as string) : undefined,
       project_id: project_id ? Number(project_id) : undefined,
-      status: status as 'todo' | 'in_progress' | 'done' | undefined,
+      status: status as 'todo' | 'inprogress' | 'done' | undefined,
       assignee: assignee ? Number(assignee) : undefined,
       keyword: keyword ? (keyword as string) : undefined,
     }

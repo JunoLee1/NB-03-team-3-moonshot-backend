@@ -26,8 +26,6 @@ model User {
 
   provider  String?
   providerId String? 
-
-  tasks    Task[]
   members  Member[]
   comments Comment[]
 }
@@ -92,8 +90,7 @@ model Task {
   taskStatus  Status       @map("status")
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  user_id     Int
-  users       User         @relation(fields: [user_id], references: [id])
+
   project_id  Int
   member_id   Int
   projects    Project      @relation(fields: [project_id], references: [id])

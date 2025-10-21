@@ -1,14 +1,5 @@
 import prisma from "../lib/prisma.js";
-import { FindUserTaskParam, IUserDTO } from "./user.controller.js";
-
-interface IUser{
-    id: number;
-    nickname?: string | null;
-    email?: string | null;
-    image?:string | null;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
+import { IUser, findUserProjects, FindUserTaskParam, IUserDTO } from "./user.user_dto.js";
 
 
 export default class UserService {
@@ -50,10 +41,15 @@ export default class UserService {
         }
         
     }
-    async findUserProjects({userId}:{userId:number}):Promise<any>{
+    async findUserProjects({skip, take, order,order_by, userId}:findUserProjects&{userId:number}):Promise<any>{
         const projects = await prisma.project.findMany({
             where:{
-                id:userId
+                id:userId,
+            },
+            skip,
+            take,
+            orderBy: {
+                [order_by || "created_at"]: order || "asc"
             },
             include:{
                 members:true
@@ -61,17 +57,25 @@ export default class UserService {
       })
         return projects 
     }
-    async findUserTasks({from, to, project_id, assignee, keyword, status,userId}:FindUserTaskParam &{ userId:number}):Promise<any>{
-       // TODO : 인증 미들웨어에서 req.query id넣어주기
+    async findUserTasks({from, to, project_id, assignee, keyword, status, userId}:FindUserTaskParam &{ userId:number}):Promise<any>{
         
         const tasks = await prisma.task.findMany({
             where: {
                 projects: {
-                    
-                members: {
-                     some: { user_id: userId }
-                    }
-                }
+                    members: {
+                        some: { 
+                            user_id: userId 
+                        }
+                    },
+                },
+                AND:[
+                    from ? { createdAt: { gte: from } } : {},
+                    to ? { createdAt: { lte: to } } : {},
+                    project_id ? { project_id } : {},
+                    assignee ? { member_id: assignee } : {},
+                    status ? { taskStatus: status } : {},
+                    keyword ? { title: { contains: keyword, mode: 'insensitive' } } : {}
+                ],
             },
             include: { projects: true }
             });
