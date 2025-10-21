@@ -17,7 +17,7 @@ const userController = new UserController()
 router.get("/me",
     loginAuth,
     userValidation.validateUser,
-    passport.authenticate,
+    passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.userInfoController(req, res, next)
 })
@@ -28,7 +28,7 @@ router.get("/me",
 router.patch("/me",
     loginAuth,
     userValidation.validateUser,
-    passport.authenticate,
+    passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.userUpdateController(req, res, next)
 })
@@ -37,14 +37,14 @@ router.patch("/me",
 router.get("/me/projects",
     loginAuth,
     userValidation.validateUser,
-    passport.authenticate,
+    passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{ 
     userController.findUsedrProjectsController(req, res, next)
 })
 router.get("/me/tasks",
     loginAuth,
     userValidation.validateUser,
-    passport.authenticate,
+    passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.findUserTasksController(req, res, next)
 })
