@@ -7,7 +7,15 @@ import {
   TaskQueryDto,
   TaskListResponseDto,
 } from "./task-dto.js";
-import { PrismaClient, Task } from "@prisma/client"; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
+import {
+  PrismaClient,
+  Prisma,
+  Task,
+  Member,
+  User,
+  Tag,
+  Attachment,
+} from "@prisma/client"; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
 
 // 추후 별도 에러 파일로 분리하는 것이 좋을 거 같음
 class ForbiddenException extends Error {
@@ -24,11 +32,53 @@ class NotFoundException extends Error {
   }
 }
 
+type RawTaskData = Task & {
+  members: Member & { users: User };
+  tags: Tag[];
+  attachments: Attachment[];
+  projects?: { members: Member[] }; // getTaskById에서만 사용됨
+};
+
 export class TaskService {
   constructor(
     private taskRepository: TaskRepository,
     private prisma: PrismaClient
   ) {}
+
+  /**
+   * 레포지토리에서 받은 Raw Task 데이터를 TaskResponseDto로 변환 (포맷팅)
+   * @param rawTaskData 변환할 Raw 데이터
+   * @returns TaskResponseDto
+   */
+  private _transformTaskToDto(rawTaskData: RawTaskData): TaskResponseDto {
+    const assigneeUser = rawTaskData.members.users;
+    const assignee: AssigneeDto | null = assigneeUser
+      ? {
+          id: assigneeUser.id,
+          name: assigneeUser.nickname, // DTO는 name: string | null 임
+          email: assigneeUser.email,
+          profileImage: assigneeUser.image, // DTO는 profileImage: string | null 임
+        }
+      : null;
+
+    return {
+      id: rawTaskData.id,
+      projectId: rawTaskData.project_id,
+      title: rawTaskData.title,
+      startYear: rawTaskData.start_year,
+      startMonth: rawTaskData.start_month,
+      startDay: rawTaskData.start_day,
+      endYear: rawTaskData.end_year,
+      endMonth: rawTaskData.end_month,
+      endDay: rawTaskData.end_date,
+      status: rawTaskData.taskStatus as TaskStatusType,
+      assignee: assignee,
+      tags: rawTaskData.tags,
+      attachments: rawTaskData.attachments,
+      createdAt: rawTaskData.createdAt,
+      updatedAt: rawTaskData.updatedAt,
+    };
+  }
 
   /**
    * @param userId 할 일을 생성하려는 사용자의 ID
