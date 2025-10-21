@@ -145,7 +145,6 @@ export default class UserController {
       if (typeof string_project !== "string") {
         throw new HttpError(404, "Bad request");
       }
-      const taskId = String(string_project);
       const result = await userService.findUserTasks({ ...filters, userId });
       return res.json({
         success: true,
