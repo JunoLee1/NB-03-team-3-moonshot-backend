@@ -64,4 +64,25 @@ export class TaskController {
       next(error);
     }
   };
+
+  getTaskById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // 인증된 사용자 ID 가져오기
+      const userId = res.locals.user.id;
+
+      //경로 파라미터 가져오기 및 검증
+      const { taskId: taskIdParam } = req.params;
+      const taskId = Number(taskIdParam);
+      if (Number.isNaN(taskId)) {
+        throw new Error("할 일 ID는 숫자여야 합니다."); // 추후 BadRequestException
+      }
+
+      const taskDetails = await this.taskService.getTaskById(userId, taskId);
+
+      return res.status(200).json(taskDetails);
+    } catch (error) {
+      // 5. 에러 처리 미들웨어로 전달
+      next(error);
+    }
+  };
 }
