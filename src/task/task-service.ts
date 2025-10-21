@@ -119,35 +119,7 @@ export class TaskService {
         throw new Error("할 일 생성 후 데이터 조회하는데 실패했습니다.");
       }
 
-      // 반환받은 레포지토리 데이터를 최종 응답 형태에 맞게 가공
-      const assigneeUser = rawTaskData.members.users;
-
-      const assignee: AssigneeDto | null = assigneeUser
-        ? {
-            id: assigneeUser.id,
-            name: assigneeUser.nickname,
-            email: assigneeUser.email,
-            profileImage: assigneeUser.image,
-          }
-        : null;
-
-      return {
-        id: rawTaskData.id,
-        projectId: rawTaskData.project_id,
-        title: rawTaskData.title,
-        startYear: rawTaskData.start_year,
-        startMonth: rawTaskData.start_month,
-        startDay: rawTaskData.start_day,
-        endYear: rawTaskData.end_year,
-        endMonth: rawTaskData.end_month,
-        endDay: rawTaskData.end_date,
-        status: rawTaskData.taskStatus as TaskStatusType,
-        assignee: assignee,
-        tags: rawTaskData.tags,
-        attachments: rawTaskData.attachments,
-        createdAt: rawTaskData.createdAt,
-        updatedAt: rawTaskData.updatedAt,
-      };
+      return this._transformTaskToDto(rawTaskData);
     } catch (error) {
       console.error(error);
       throw error;
@@ -215,38 +187,10 @@ export class TaskService {
         options
       );
 
-      // 데이터 가공, createTasks 메서드의 변환로직과 중복, 추후 다른 메서드로 분리하면 좋을 거 같음
-      const taskDtos: TaskResponseDto[] = rawTasks.map((task) => {
-        const assigneeUser = task.members.users;
-        const assignee: AssigneeDto | null = assigneeUser
-          ? {
-              id: assigneeUser.id,
-              name: assigneeUser.nickname,
-              email: assigneeUser.email,
-              profileImage: assigneeUser.image,
-            }
-          : null;
+      const taskDtos: TaskResponseDto[] = rawTasks.map((task) =>
+        this._transformTaskToDto(task)
+      );
 
-        return {
-          id: task.id,
-          projectId: task.project_id,
-          title: task.title,
-          startYear: task.start_year,
-          startMonth: task.start_month,
-          startDay: task.start_day,
-          endYear: task.end_year,
-          endMonth: task.end_month,
-          endDay: task.end_date,
-          status: task.taskStatus as TaskStatusType,
-          assignee: assignee,
-          tags: task.tags,
-          attachments: task.attachments,
-          createdAt: task.createdAt,
-          updatedAt: task.updatedAt,
-        };
-      });
-
-      // 최종 응답 DTO 반환
       return {
         data: taskDtos,
         total: total,
@@ -285,34 +229,7 @@ export class TaskService {
         throw new ForbiddenException("할 일을 조회할 권한이 없습니다.");
       }
 
-      // 응답 형태에 맞게 가공, 추후 리팩토링 예정
-      const assigneeUser = rawTaskData.members.users;
-      const assignee: AssigneeDto | null = assigneeUser
-        ? {
-            id: assigneeUser.id,
-            name: assigneeUser.nickname,
-            email: assigneeUser.email,
-            profileImage: assigneeUser.image,
-          }
-        : null;
-
-      return {
-        id: rawTaskData.id,
-        projectId: rawTaskData.project_id,
-        title: rawTaskData.title,
-        startYear: rawTaskData.start_year,
-        startMonth: rawTaskData.start_month,
-        startDay: rawTaskData.start_day,
-        endYear: rawTaskData.end_year,
-        endMonth: rawTaskData.end_month,
-        endDay: rawTaskData.end_date,
-        status: rawTaskData.taskStatus as TaskStatusType,
-        assignee: assignee,
-        tags: rawTaskData.tags,
-        attachments: rawTaskData.attachments,
-        createdAt: rawTaskData.createdAt,
-        updatedAt: rawTaskData.updatedAt,
-      };
+      return this._transformTaskToDto(rawTaskData);
     } catch (error) {
       console.error(error);
       throw error;
