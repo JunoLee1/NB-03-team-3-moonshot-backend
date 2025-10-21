@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import UserService from "./user.service.js";
 import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
-import { number } from "zod/v4";
+
 
 export interface IUserDTO {
   id: number ;
@@ -12,7 +12,14 @@ export interface IUserDTO {
   createdAt?: Date;
   updatedAt?: Date;
 }
-
+export interface FindUserTaskParam{
+  from: Date | undefined;
+  to: Date | undefined;
+  project_id: number | undefined;
+  status: `todo` | `in_progress` | `done` | undefined;
+  assignee: number | undefined;
+  keyword: string| undefined;
+}
 const userService = new UserService();
 export default class UserController {
   async userInfoController(req: Request, res: Response, next: NextFunction) {
@@ -90,7 +97,6 @@ export default class UserController {
   ) {
     try {
       if(!req.user?.id) throw new HttpError(401,"unauthorization"); // 인증 미들웨어에서 req.query id넣어주기
-      
       const userId = req.user.id
       const projects = await userService.findUserProjects({userId});
       return res.json({
@@ -103,27 +109,44 @@ export default class UserController {
   }
 
   async findUserTasksController(req: Request, res: Response, next: NextFunction) {
-    if(!req.user?.id) throw new HttpError(401,"unauthorization")
+    const {from, to, project_id, assignee, keyword, status} = req.query;
+    const validStatus = ['todo', 'in_progress', 'done'] as const;
+    const statusValue = validStatus.includes(status as any)
+      ? (status as 'todo' | 'in_progress' | 'done')
+      : undefined;
+
+    const filters : FindUserTaskParam = {
+      from: from ? new Date(from as string) : undefined,
+      to: to ? new Date(to as string) : undefined,
+      project_id: project_id ? Number(project_id) : undefined,
+      status: status as 'todo' | 'in_progress' | 'done' | undefined,
+      assignee: assignee ? Number(assignee) : undefined,
+      keyword: keyword ? (keyword as string) : undefined,
+    }
+    if(!req.user) throw new HttpError(401,"unauthorization")
     // 인증 미들웨어에서 req.user id넣어주기
+   
     const userId = req.user.id
+     if(!userId) throw new HttpError(401,"unauthorization")
     try {
-      const taskIdRaw = req.query.task_id;
-      if(typeof taskIdRaw !== "string" && isNaN(Number(taskIdRaw))){
+      const raw_ProjectId = req.query.project_id;
+      if(typeof raw_ProjectId !== "string" && isNaN(Number(raw_ProjectId))){
         throw new HttpError(404, "Bad request");
       }
+      const projectId = Number(raw_ProjectId)
       const validatedTask = await prisma.task.findUnique({
-        where: { id: Number(taskIdRaw) },
+        where: { id:projectId },
       });
       if (!validatedTask) {
-        throw new HttpError(404, "존재하지 않는 태스크입니다");
+        throw new HttpError(404, "존재하지 않는 project입니다");
       }
-      const string_task = req.query.task_id;
+      const string_project = req.query.projectId;
       
-      if (typeof string_task !== "string") {
+      if (typeof string_project !== "string") {
         throw new HttpError(404, "Bad request");
       }
-      const taskId = String(string_task);
-      const result = await userService.findUserTasks({ taskId: taskId, userId :Number(userId)});
+      const taskId = String(string_project);
+      const result = await userService.findUserTasks({ ...filters, userId });
       return res.json({
         success: true,
         data: result,

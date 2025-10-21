@@ -8,6 +8,7 @@ export default class UserService {
                 id: true,
                 email: true,
                 nickname: true,
+                image: true
             }
         });
         if (!userInfo)
@@ -16,14 +17,17 @@ export default class UserService {
             id: userInfo.id,
             email: userInfo.email,
             nickname: userInfo.nickname ?? "",
+            image: userInfo.image ?? ""
         };
     }
-    async updatedUser({ id, nickname, email }) {
+    async updatedUser({ id, nickname, email, image }) {
         const data = {};
         if (nickname !== undefined)
             data.nickname = nickname;
         if (email !== undefined)
             data.email = email;
+        if (image !== undefined)
+            data.image = image;
         const updatedUser = await prisma.user.update({
             where: { id },
             data
@@ -33,7 +37,8 @@ export default class UserService {
         return {
             id: updatedUser.id,
             email: updatedUser.email ?? "",
-            nickname: updatedUser.nickname ?? ""
+            nickname: updatedUser.nickname ?? "",
+            image: updatedUser.image ?? ""
         };
     }
     async findUserProjects({ userId }) {

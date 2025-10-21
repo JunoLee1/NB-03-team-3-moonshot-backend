@@ -1,5 +1,5 @@
 import prisma from "../lib/prisma.js";
-import { IUserDTO } from "./user.controller.js";
+import { FindUserTaskParam, IUserDTO } from "./user.controller.js";
 
 interface IUser{
     id: number;
@@ -9,6 +9,7 @@ interface IUser{
     createdAt?: Date;
     updatedAt?: Date;
 }
+
 
 export default class UserService {
     async getUserInfoById({id}:IUser):Promise<IUserDTO | null>{
@@ -60,18 +61,19 @@ export default class UserService {
       })
         return projects 
     }
-    async findUserTasks({taskId, userId}:{ taskId :string, userId:number}):Promise<any>{
+    async findUserTasks({from, to, project_id, assignee, keyword, status,userId}:FindUserTaskParam &{ userId:number}):Promise<any>{
        // TODO : 인증 미들웨어에서 req.query id넣어주기
-        const num_taskId = Number(taskId)
-        const tasks= await prisma.task.findMany({
-            where:{
-                id: num_taskId,
-                user_id: userId 
+        
+        const tasks = await prisma.task.findMany({
+            where: {
+                projects: {
+                    
+                members: {
+                     some: { user_id: userId }
+                    }
+                }
             },
-            include:{
-                subtasks:true
-            }
-        })
-        return tasks
+            include: { projects: true }
+            });
+        }
     }
-}
