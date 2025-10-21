@@ -1,5 +1,4 @@
 import { Attachment, Task } from "@prisma/client";
-
 // 할 일의 Status 타입 정의
 export type TaskStatusType = "todo" | "inprogress" | "done";
 
