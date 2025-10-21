@@ -57,3 +57,21 @@ export interface TaskResponseDto {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// 할 일 목록 조회 시 사용하는 쿼리 파라미터 DTO
+
+export interface TaskQueryDtop {
+  page?: number;
+  limit?: number;
+  status?: TaskStatusType;
+  assignee?: number; // 담당자의 member-id
+  keyword?: string;
+  order?: "asc" | "desc";
+  order_by?: "created_at" | "name" | "end_date";
+}
+
+// 할 일 목록 조회 시 사용될 최종 Response DTO
+export interface TaskListResponseDto {
+  data: TaskResponseDto[];
+  total: number;
+}
