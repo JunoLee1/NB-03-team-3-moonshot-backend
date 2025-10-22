@@ -32,6 +32,7 @@
   "devDependencies": {
     "@prisma/client": "^6.17.1",
     "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",

@@ -4,7 +4,6 @@ import { AuthService } from "./auth.service.js";
 import { generateToken } from "../lib/generateToken.js";
 import bcrypt from "bcrypt";
 import {
-  NODE_ENV,
   ACCESS_TOKEN_COOKIE_NAME,
   REFRESH_TOKEN_COOKIE_NAME,
 } from '../lib/constants.js';
@@ -49,7 +48,7 @@ export class AuthController{
     }
 
     // logout controller
-    //
+
     async logoutController(req: Request, res: Response, next:NextFunction){
       this.clearTokenCookie(res);
       return res.status(200).send()
