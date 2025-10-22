@@ -6,8 +6,17 @@ import {
   TaskStatusType,
   TaskQueryDto,
   TaskListResponseDto,
+  UpdateTaskBodyDto,
 } from "./task-dto.js";
-import { PrismaClient, Task } from "@prisma/client"; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
+import {
+  PrismaClient,
+  Prisma,
+  Task,
+  Member,
+  User,
+  Tag,
+  Attachment,
+} from "@prisma/client"; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
 
 // 추후 별도 에러 파일로 분리하는 것이 좋을 거 같음
 class ForbiddenException extends Error {
@@ -24,11 +33,53 @@ class NotFoundException extends Error {
   }
 }
 
+type RawTaskData = Task & {
+  members: Member & { users: User };
+  tags: Tag[];
+  attachments: Attachment[];
+  projects?: { members: Member[] }; // getTaskById에서만 사용됨
+};
+
 export class TaskService {
   constructor(
     private taskRepository: TaskRepository,
     private prisma: PrismaClient
   ) {}
+
+  /**
+   * 레포지토리에서 받은 Raw Task 데이터를 TaskResponseDto로 변환 (포맷팅)
+   * @param rawTaskData 변환할 Raw 데이터
+   * @returns TaskResponseDto
+   */
+  private _transformTaskToDto(rawTaskData: RawTaskData): TaskResponseDto {
+    const assigneeUser = rawTaskData.members.users;
+    const assignee: AssigneeDto | null = assigneeUser
+      ? {
+          id: assigneeUser.id,
+          name: assigneeUser.nickname, // DTO는 name: string | null 임
+          email: assigneeUser.email,
+          profileImage: assigneeUser.image, // DTO는 profileImage: string | null 임
+        }
+      : null;
+
+    return {
+      id: rawTaskData.id,
+      projectId: rawTaskData.project_id,
+      title: rawTaskData.title,
+      startYear: rawTaskData.start_year,
+      startMonth: rawTaskData.start_month,
+      startDay: rawTaskData.start_day,
+      endYear: rawTaskData.end_year,
+      endMonth: rawTaskData.end_month,
+      endDay: rawTaskData.end_date,
+      status: rawTaskData.taskStatus as TaskStatusType,
+      assignee: assignee,
+      tags: rawTaskData.tags,
+      attachments: rawTaskData.attachments,
+      createdAt: rawTaskData.createdAt,
+      updatedAt: rawTaskData.updatedAt,
+    };
+  }
 
   /**
    * @param userId 할 일을 생성하려는 사용자의 ID
@@ -69,35 +120,7 @@ export class TaskService {
         throw new Error("할 일 생성 후 데이터 조회하는데 실패했습니다.");
       }
 
-      // 반환받은 레포지토리 데이터를 최종 응답 형태에 맞게 가공
-      const assigneeUser = rawTaskData.members.users;
-
-      const assignee: AssigneeDto | null = assigneeUser
-        ? {
-            id: assigneeUser.id,
-            name: assigneeUser.nickname,
-            email: assigneeUser.email,
-            profileImage: assigneeUser.image,
-          }
-        : null;
-
-      return {
-        id: rawTaskData.id,
-        projectId: rawTaskData.project_id,
-        title: rawTaskData.title,
-        startYear: rawTaskData.start_year,
-        startMonth: rawTaskData.start_month,
-        startDay: rawTaskData.start_day,
-        endYear: rawTaskData.end_year,
-        endMonth: rawTaskData.end_month,
-        endDay: rawTaskData.end_date,
-        status: rawTaskData.taskStatus as TaskStatusType,
-        assignee: assignee,
-        tags: rawTaskData.tags,
-        attachments: rawTaskData.attachments,
-        createdAt: rawTaskData.createdAt,
-        updatedAt: rawTaskData.updatedAt,
-      };
+      return this._transformTaskToDto(rawTaskData);
     } catch (error) {
       console.error(error);
       throw error;
@@ -165,38 +188,10 @@ export class TaskService {
         options
       );
 
-      // 데이터 가공, createTasks 메서드의 변환로직과 중복, 추후 다른 메서드로 분리하면 좋을 거 같음
-      const taskDtos: TaskResponseDto[] = rawTasks.map((task) => {
-        const assigneeUser = task.members.users;
-        const assignee: AssigneeDto | null = assigneeUser
-          ? {
-              id: assigneeUser.id,
-              name: assigneeUser.nickname,
-              email: assigneeUser.email,
-              profileImage: assigneeUser.image,
-            }
-          : null;
+      const taskDtos: TaskResponseDto[] = rawTasks.map((task) =>
+        this._transformTaskToDto(task)
+      );
 
-        return {
-          id: task.id,
-          projectId: task.project_id,
-          title: task.title,
-          startYear: task.start_year,
-          startMonth: task.start_month,
-          startDay: task.start_day,
-          endYear: task.end_year,
-          endMonth: task.end_month,
-          endDay: task.end_date,
-          status: task.taskStatus as TaskStatusType,
-          assignee: assignee,
-          tags: task.tags,
-          attachments: task.attachments,
-          createdAt: task.createdAt,
-          updatedAt: task.updatedAt,
-        };
-      });
-
-      // 최종 응답 DTO 반환
       return {
         data: taskDtos,
         total: total,
@@ -235,34 +230,71 @@ export class TaskService {
         throw new ForbiddenException("할 일을 조회할 권한이 없습니다.");
       }
 
-      // 응답 형태에 맞게 가공, 추후 리팩토링 예정
-      const assigneeUser = rawTaskData.members.users;
-      const assignee: AssigneeDto | null = assigneeUser
-        ? {
-            id: assigneeUser.id,
-            name: assigneeUser.nickname,
-            email: assigneeUser.email,
-            profileImage: assigneeUser.image,
-          }
-        : null;
+      return this._transformTaskToDto(rawTaskData);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 
-      return {
-        id: rawTaskData.id,
-        projectId: rawTaskData.project_id,
-        title: rawTaskData.title,
-        startYear: rawTaskData.start_year,
-        startMonth: rawTaskData.start_month,
-        startDay: rawTaskData.start_day,
-        endYear: rawTaskData.end_year,
-        endMonth: rawTaskData.end_month,
-        endDay: rawTaskData.end_date,
-        status: rawTaskData.taskStatus as TaskStatusType,
-        assignee: assignee,
-        tags: rawTaskData.tags,
-        attachments: rawTaskData.attachments,
-        createdAt: rawTaskData.createdAt,
-        updatedAt: rawTaskData.updatedAt,
-      };
+  /**
+   * ID로 특정 할 일의 정보를 수정
+   * @param userId 요청한 사용자의 ID (권한 검사)
+   * @param taskId
+   * @param updateTaskBodyDto 수정할 정보
+   * @returns 수정된 할 일의 상세 정보
+   */
+  updateTask = async (
+    userId: number,
+    taskId: number,
+    updateTaskBodyDto: UpdateTaskBodyDto
+  ): Promise<TaskResponseDto> => {
+    try {
+      // 검증을 위해 할 일과 프로젝트 멤버 목록 조회
+      const taskData = await this.taskRepository.findTaskById(taskId);
+
+      // 할 일 존재 여부 검증
+      if (!taskData) {
+        throw new NotFoundException("수정하려는 일을 찾을 수 없습니다.");
+      }
+
+      // 권한 검사를 위해 프로젝트 및 멤버 정보 존재 확인 (타입 안정성)
+      if (!taskData.projects || !taskData.projects.members) {
+        throw new Error("권한 검사에 필요한 프로젝트 멤버 정보가 없습니다.");
+      }
+
+      // 요청자가 프로젝트 멤버인지 검증
+      const projectMembers = taskData.projects.members;
+      const isRequesterMember = projectMembers.some(
+        (member) => member.user_id === userId
+      );
+      if (!isRequesterMember) {
+        throw new ForbiddenException("할 일을 수정할 권한이 없습니다.");
+      }
+
+      // DTO에 담당자 관련 정보가 있을 때 새 담당자가 유효한 멤버인지 검증
+      if (updateTaskBodyDto.assigneeId !== undefined) {
+        const isValidAssignee = projectMembers.some(
+          (member) => member.id === updateTaskBodyDto.assigneeId
+        );
+        if (!isValidAssignee) {
+          throw new NotFoundException( // 400 bad request 에러가 적합할 수도 있을 거 같음
+            "지정하려는 담당자가 해당 프로젝트의 멤버가 아닙니다."
+          );
+        }
+      }
+
+      const updateRawTaskData = await this.taskRepository.updateTask(
+        taskId,
+        updateTaskBodyDto
+      );
+
+      // 반환값 검증
+      if (!updateRawTaskData) {
+        throw new Error("할 일 수정 과정에서 예기치 못한 오류가 발생했습니다.");
+      }
+
+      return this._transformTaskToDto(updateRawTaskData);
     } catch (error) {
       console.error(error);
       throw error;

@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { TaskBodyDto, TaskQueryDto } from "./task-dto.js";
+import { TaskBodyDto, TaskQueryDto, UpdateTaskBodyDto } from "./task-dto.js";
 
 export class TaskRepository {
   constructor(private prisma: PrismaClient) {}
@@ -175,6 +175,99 @@ export class TaskRepository {
           },
         },
       },
+    });
+  };
+
+  /**
+   * ID를 기준으로 할 일의 상세 정보를 수정
+   * @param taskid 수정할 할 일의 ID
+   * @param updateTaskBodyDto 수정할 할 일의 정보
+   * @returns 수정된 할 일의 상세 정보
+   */
+  updateTask = async (taskId: number, updateTaskBodyDto: UpdateTaskBodyDto) => {
+    return this.prisma.$transaction(async (tx) => {
+      // tags 필드가 DTO에 포함된 경우에만 삭제 후 생성
+      if (updateTaskBodyDto.tags !== undefined) {
+        await tx.tag.deleteMany({
+          // 기존 태그 삭제
+          where: { task_id: taskId },
+        });
+        if (updateTaskBodyDto.tags.length > 0) {
+          await tx.tag.createMany({
+            // 새 태그 생성
+            data: updateTaskBodyDto.tags.map((tagName) => ({
+              name: tagName,
+              task_id: taskId,
+            })),
+          });
+        }
+      }
+
+      // attachments 필드도 tags와 동일하게 진행
+      if (updateTaskBodyDto.attachments !== undefined) {
+        await tx.attachment.deleteMany({
+          where: { task_id: taskId },
+        });
+        if (updateTaskBodyDto.attachments.length > 0) {
+          await tx.attachment.createMany({
+            data: updateTaskBodyDto.attachments.map((fileUrl) => ({
+              url: fileUrl,
+              task_id: taskId,
+              uploaded_at: new Date(),
+            })),
+          });
+        }
+      }
+
+      // Task 업데이트
+      const dataToUpdate: Prisma.TaskUpdateInput = {};
+
+      if (updateTaskBodyDto.title !== undefined) {
+        dataToUpdate.title = updateTaskBodyDto.title;
+      }
+      if (updateTaskBodyDto.startYear !== undefined) {
+        dataToUpdate.start_year = updateTaskBodyDto.startYear;
+      }
+      if (updateTaskBodyDto.startMonth !== undefined) {
+        dataToUpdate.start_month = updateTaskBodyDto.startMonth;
+      }
+      if (updateTaskBodyDto.startDay !== undefined) {
+        dataToUpdate.start_day = updateTaskBodyDto.startDay;
+      }
+      if (updateTaskBodyDto.endYear !== undefined) {
+        dataToUpdate.end_year = updateTaskBodyDto.endYear;
+      }
+      if (updateTaskBodyDto.endMonth !== undefined) {
+        dataToUpdate.end_month = updateTaskBodyDto.endMonth;
+      }
+      if (updateTaskBodyDto.endDay !== undefined) {
+        dataToUpdate.end_date = updateTaskBodyDto.endDay;
+      }
+      if (updateTaskBodyDto.status !== undefined) {
+        dataToUpdate.taskStatus = updateTaskBodyDto.status;
+      }
+      if (updateTaskBodyDto.assigneeId !== undefined) {
+        dataToUpdate.members = {
+          connect: {
+            id: updateTaskBodyDto.assigneeId, // 위의 방식처럼 코드를 작성하면 prisma에서 외래키를 직접 업로드를 불가하기 때문에 수정
+          },
+        };
+      }
+
+      await tx.task.update({
+        where: { id: taskId },
+        data: dataToUpdate, // 'undefined'가 없는 객체를 전달
+      });
+
+      return tx.task.findUnique({
+        where: { id: taskId },
+        include: {
+          members: { include: { users: true } },
+          tags: true,
+          attachments: true,
+          projects: { include: { members: true } },
+        },
+      });
     });
   };
 }

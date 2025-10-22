@@ -74,3 +74,18 @@ export interface TaskListResponseDto {
   data: TaskResponseDto[];
   total: number;
 }
+
+// 할 일 수정 시 사용될 Request Body DTO
+export interface UpdateTaskBodyDto {
+  title?: string;
+  startYear?: number;
+  startMonth?: number;
+  startDay?: number;
+  endYear?: number;
+  endMonth?: number;
+  endDay?: number;
+  status?: TaskStatusType;
+  assigneeId?: number; // 담당자 변경을 위한 필드
+  tags?: string[];
+  attachments?: string[];
+}
