@@ -2,25 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import HttpError from "../lib/httpError.js";
 import { AuthService } from "./auth.service.js";
 import { generateToken } from "../lib/generateToken.js";
-import bcrypt from "bcrypt";
 import {
   ACCESS_TOKEN_COOKIE_NAME,
   REFRESH_TOKEN_COOKIE_NAME,
 } from '../lib/constants.js';
 
-export enum ProviderType {
-  LOCAL = "local",
-  GOOGLE = "google"
-}
-export interface AuthUserDTO{
-    id ?: number,
-    email: string ,
-    password:  string| null,
-    nickname?: string |null,
-    image?: string |null,
-    provider?: ProviderType | null,
-    providerId?: string | null
-}
 
 const authService =  new AuthService()
 export class AuthController{
@@ -59,17 +45,11 @@ export class AuthController{
     async registerController(req: Request, res: Response, next:NextFunction){
       try {
          const {email, password, nickname, image} = req.body as {
-          email : unknown;
-          password:unknown;
-          nickname: unknown;
-          image :unknown;
+          email : string;
+          password: string;
+          nickname: string;
+          image :string;
          }
-         if(
-          typeof email !== "string" ||
-          typeof password !== "string"||
-          typeof nickname !== "string"||
-          typeof image !== "string" 
-         ) throw new HttpError(400, "문자열이어야 합니다")
           const newUser = await authService.createNewUser({email, password, nickname, image})
           return res.status(201).json({
             message:"성공적인 데이터 생성",
@@ -78,17 +58,33 @@ export class AuthController{
       } catch (error) {
         next(error)
       }
-
     }
 
     // refreshtoken Controller
     async refreshtokenController(req: Request, res: Response, next:NextFunction){
+      try {
+        const user = req.user
+        if (!user) throw new HttpError(401,"unathorized")
+        const {accessToken, refreshToken: newRefreshToken} = generateToken(Number(user.id))
+        this.setTokenCookies(res, accessToken, newRefreshToken);
+        res.status(200).send();
 
+      } catch (error) {
+        next(error)
+      }
     }
 
     // googleCallback Controller
     async googleCallbackController(req: Request, res: Response, next:NextFunction){
-
+      try {
+        const user = req.user
+        if (!user) throw new HttpError(401,"unathorized")
+        const {accessToken, refreshToken} = generateToken(Number(user.id))
+        this.setTokenCookies(res, accessToken,refreshToken);
+        res.status(200).send();
+      } catch (error) {
+         next(error)
+      }
     }
 
   setTokenCookies(res: Response, accessToken: string, refreshToken: string) {

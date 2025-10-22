@@ -3,11 +3,9 @@ import prisma from "../lib/prisma.js"
 import jwt from "jsonwebtoken"
 import type { Response } from "express"
 import {ACCESS_TOKEN_COOKIE_NAME,REFRESH_TOKEN_COOKIE_NAME,JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET} from"../lib/constants.js"
-import { AuthUserDTO, ProviderType } from "./auth.controller.js"
 import { generateToken } from "../lib/generateToken.js"
-
 import bcrypt from "bcrypt";
-import { object } from "zod/v4"
+import { AuthUserDTO, ProviderType } from "./auth.dto.js"
 
 export class AuthService{
     async findUserEmail(email:string):Promise<AuthUserDTO | null>{
@@ -56,8 +54,7 @@ export class AuthService{
                 email: email ?? "",
                 nickname :nickname  ?? "",
                 password : created_password ?? "",
-                image : image ?? "",
-                
+                image : image ?? "",   
             },
             include:{
                 comments:true
@@ -78,10 +75,10 @@ export class AuthService{
          const decoded = jwt.verify(token,JWT_REFRESH_TOKEN_SECRET);
         return { userId: decoded.sub };
     }
-
+/*
      clearTokenCookies(res:Response) {
         res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
         res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
     }
-
+*/
 }
