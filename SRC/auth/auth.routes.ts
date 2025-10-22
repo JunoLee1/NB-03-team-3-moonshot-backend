@@ -26,7 +26,7 @@ router.post("/register", (req: Request, res: Response, next: NextFunction) => {
 
 // refresh
 router.post(
-  "/auth/refresh",
+  "/refresh",
   passport.authenticate("refresh-token"),
   (req: Request, res: Response, next: NextFunction) => {
     authController.refreshtokenController(req, res, next);
@@ -34,7 +34,7 @@ router.post(
 ),
   // logout
   router.post(
-    "/auth/logout",
+    "/logout",
     (req: Request, res: Response, next: NextFunction) => {
       authController.logoutController(req, res, next);
     }
@@ -42,7 +42,7 @@ router.post(
 
 // google get
 router.get(
-  "/auth/google",
+  "/google",
   passport.authenticate("google", {
     scope: ["email", "profile"],
   })
@@ -50,7 +50,7 @@ router.get(
 
 // google callback
 router.get(
-  "/auth/google/callback",
+  "/google/callback",
   passport.authenticate("google", { session: false }),
   (req: Request, res: Response, next: NextFunction) => {
     authController.googleCallbackController(req, res, next);
