@@ -1,8 +1,8 @@
 export interface IUserDTO {
   id: number ;
-  nickname: string;
+  nickname?: string |null;
   email: string;
-  image: string
+  image: string | null ;
   createdAt?: Date;
   updatedAt?: Date;
 }
