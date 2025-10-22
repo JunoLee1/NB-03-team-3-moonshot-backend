@@ -1,16 +1,14 @@
-
 export enum ProviderType {
   LOCAL = "local",
-  GOOGLE = "google"
+  GOOGLE = "google",
 }
 
-
-export interface AuthUserDTO{
-    id ?: number,
-    email: string ,
-    password:  string| null,
-    nickname?: string |null,
-    image?: string |null,
-    provider?: ProviderType | null,
-    providerId?: string | null
+export interface AuthUserDTO {
+  id?: number;
+  email: string;
+  password: string | null;
+  nickname?: string | null;
+  image?: string | null;
+  provider?: ProviderType | null;
+  providerId?: string | null;
 }

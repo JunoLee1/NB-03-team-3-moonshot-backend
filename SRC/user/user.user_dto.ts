@@ -1,8 +1,8 @@
 export interface IUserDTO {
   id: number ;
-  nickname: string;
+  nickname?: string |null;
   email: string;
-  image: string
+  image: string | null ;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -16,7 +16,7 @@ export interface FindUserTaskParam{
   keyword: string| undefined;
 }
 
-export interface findUserProjects{
+export interface findUserProjectsQuery{
   take:number,
   skip:number,
   order?:  `asc` | `desc` ,
