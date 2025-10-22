@@ -6,6 +6,7 @@ import {
   TaskStatusType,
   TaskQueryDto,
   TaskListResponseDto,
+  UpdateTaskBodyDto,
 } from "./task-dto.js";
 import {
   PrismaClient,
@@ -230,6 +231,70 @@ export class TaskService {
       }
 
       return this._transformTaskToDto(rawTaskData);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
+  /**
+   * ID로 특정 할 일의 정보를 수정
+   * @param userId 요청한 사용자의 ID (권한 검사)
+   * @param taskId
+   * @param updateTaskBodyDto 수정할 정보
+   * @returns 수정된 할 일의 상세 정보
+   */
+  updateTask = async (
+    userId: number,
+    taskId: number,
+    updateTaskBodyDto: UpdateTaskBodyDto
+  ): Promise<TaskResponseDto> => {
+    try {
+      // 검증을 위해 할 일과 프로젝트 멤버 목록 조회
+      const taskData = await this.taskRepository.findTaskById(taskId);
+
+      // 할 일 존재 여부 검증
+      if (!taskData) {
+        throw new NotFoundException("수정하려는 일을 찾을 수 없습니다.");
+      }
+
+      // 권한 검사를 위해 프로젝트 및 멤버 정보 존재 확인 (타입 안정성)
+      if (!taskData.projects || !taskData.projects.members) {
+        throw new Error("권한 검사에 필요한 프로젝트 멤버 정보가 없습니다.");
+      }
+
+      // 요청자가 프로젝트 멤버인지 검증
+      const projectMembers = taskData.projects.members;
+      const isRequesterMember = projectMembers.some(
+        (member) => member.user_id === userId
+      );
+      if (!isRequesterMember) {
+        throw new ForbiddenException("할 일을 수정할 권한이 없습니다.");
+      }
+
+      // DTO에 담당자 관련 정보가 있을 때 새 담당자가 유효한 멤버인지 검증
+      if (updateTaskBodyDto.assigneeId !== undefined) {
+        const isValidAssignee = projectMembers.some(
+          (member) => member.id === updateTaskBodyDto.assigneeId
+        );
+        if (!isValidAssignee) {
+          throw new NotFoundException( // 400 bad request 에러가 적합할 수도 있을 거 같음
+            "지정하려는 담당자가 해당 프로젝트의 멤버가 아닙니다."
+          );
+        }
+      }
+
+      const updateRawTaskData = await this.taskRepository.updateTask(
+        taskId,
+        updateTaskBodyDto
+      );
+
+      // 반환값 검증
+      if (!updateRawTaskData) {
+        throw new Error("할 일 수정 과정에서 예기치 못한 오류가 발생했습니다.");
+      }
+
+      return this._transformTaskToDto(updateRawTaskData);
     } catch (error) {
       console.error(error);
       throw error;
