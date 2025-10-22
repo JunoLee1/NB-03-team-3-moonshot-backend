@@ -38,7 +38,7 @@ router.get(
 router.patch(
   "/me",
   validateBody(updateUserSchema),
-  passport.authenticate("token", { session: false }),
+  passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
     userController.userUpdateController(req, res, next);
   }
@@ -48,7 +48,7 @@ router.patch(
 router.get(
   "/me/projects",
   validateQuery(findUserProjectsSchema),
-  passport.authenticate("token", { session: false }),
+  passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
     userController.findUsedrProjectsController(req, res, next);
   }
@@ -56,7 +56,7 @@ router.get(
 router.get(
   "/me/tasks",
   validateQuery(findUserTasksSchema),
-  passport.authenticate("token", { session: false }),
+  passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
     userController.findUserTasksController(req, res, next);
   }
