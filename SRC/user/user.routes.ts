@@ -17,8 +17,8 @@ const router = express.Router();
 const userController = new UserController()
 router.get("/me",
     loginAuth,
-    validateBody(userInfoSchema),
     passport.authenticate("local",{session:false}),
+    validateBody(userInfoSchema),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.userInfoController(req, res, next)
 })
@@ -28,8 +28,8 @@ router.get("/me",
 
 router.patch("/me",
     loginAuth,
-    validateBody(updateUserSchema),
     passport.authenticate("local",{session:false}),
+    validateBody(updateUserSchema),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.userUpdateController(req, res, next)
 })
@@ -37,15 +37,15 @@ router.patch("/me",
 // 해당 유저가 참여중인 모든 프로젝트의 할일 목록 조회 API
 router.get("/me/projects",
     loginAuth,
-    validateParam(findUserProjectsSchema),
     passport.authenticate("local",{session:false}),
+    validateParam(findUserProjectsSchema),
     async(req: Request, res:Response, next:NextFunction)=>{ 
     userController.findUsedrProjectsController(req, res, next)
 })
 router.get("/me/tasks",
     loginAuth,
-    validateParam(findUserTasksSchema),
     passport.authenticate("local",{session:false}),
+    validateParam(findUserTasksSchema),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.findUserTasksController(req, res, next)
 })
