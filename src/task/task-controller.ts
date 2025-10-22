@@ -114,4 +114,22 @@ export class TaskController {
       next(error);
     }
   };
+
+  deleteTask = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = res.locals.user.id;
+
+      const { taskId: taskIdParam } = req.params;
+      const taskId = Number(taskIdParam);
+      if (Number.isNaN(taskId)) {
+        throw new Error("할 일 ID는 숫자여야 합니다.");
+      }
+
+      await this.taskService.deleteTask(userId, taskId);
+
+      return res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  };
 }
