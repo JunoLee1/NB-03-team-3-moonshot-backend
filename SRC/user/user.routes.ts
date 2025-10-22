@@ -32,13 +32,13 @@ router.patch("/me",
 
 // 해당 유저가 참여중인 모든 프로젝트의 할일 목록 조회 API
 router.get("/me/projects",
-    validateParam(findUserProjectsSchema),
+    validateQuery(findUserProjectsSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{ 
     userController.findUsedrProjectsController(req, res, next)
 })
 router.get("/me/tasks",
-    validateParam(findUserTasksSchema),
+    validateQuery(findUserTasksSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
     userController.findUserTasksController(req, res, next)
