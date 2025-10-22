@@ -9,12 +9,15 @@ interface OAuthStrategyVerify {
     profile?: Profile,
     cb: VerifyCallback
 }
+if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+  throw new Error("Missing Google OAuth credentials");
+}
 
 export const googleStrategy = new GoogleStrategy(
     {
-        clientID : GOOGLE_CLIENT_ID ?? "",
-        clientSecret: GOOGLE_CLIENT_SECRET ?? "",
-        callbackURL :'http://localhost:3000/auth/google/callback',
+        clientID : GOOGLE_CLIENT_ID ,
+        clientSecret: GOOGLE_CLIENT_SECRET,
+        callbackURL :'http://localhost:3001/auth/google/callback',
         passReqToCallback: false , // ⚡ 필수
 
     } as any,
