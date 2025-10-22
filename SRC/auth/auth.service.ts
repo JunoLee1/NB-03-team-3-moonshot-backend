@@ -37,15 +37,16 @@ export class AuthService {
   }
 
   async loginService({
+    id,
     email,
   }: AuthUserDTO): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.findUserEmail(email);
     if (!user) throw new HttpError(401, "이메일이 존재하지 않습니다");
-    const userId = user.id;
+    const userId = id;
     if (!userId) throw new HttpError(400, "유효하지 않는 인덱스");
 
-    const token = generateToken(userId);
-    return token;
+    const { refreshToken, accessToken } = generateToken(id);
+    return { refreshToken, accessToken };
   }
 
   async createNewUser({

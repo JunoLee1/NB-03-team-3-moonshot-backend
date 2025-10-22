@@ -11,19 +11,17 @@ export class AuthController {
   async loginController(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-
+      
       if (!req.user) throw new HttpError(401, "Unauthorized");
       if (!req.user.id) throw new HttpError(401, "Unauthorized");
+      // 인증된 유저 인덱스랑 유저 이메일, 비밀번호를 서비스로 보낸뒤 서비스 내에서 토큰 생성후, setTokenCookies 한다
 
-      const { refreshToken, accessToken } = generateToken(req.user.id);
-
-      setTokenCookies(res, accessToken, refreshToken);
-      if (typeof email !== "string")
-        throw new HttpError(400, "이메일이 문자열아닙니다");
-      await authService.loginService({ email, password });
-      return res.status(200).json({
-        message: "성공적인 로그인",
-      });
+      const userId = req.user.id
+      const token = await authService.loginService({ id:userId, email, password });
+      setTokenCookies(res, token.accessToken,token.refreshToken);
+        return res.status(200).json({
+          message: "성공적인 로그인",
+        });
     } catch (error) {
       next(error);
     }
