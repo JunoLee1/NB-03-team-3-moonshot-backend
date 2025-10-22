@@ -14,15 +14,6 @@ export default class UserController {
         email: unknown;
       }; //validation 미들웨어에서 req.body에 nickname, email 확인후 넣어주기
 
-      if (typeof email !== "string" || !email.includes("@"))
-        throw new HttpError(
-          400,
-          "해당 유저의 이메일은 문자열이어야하고 이메일 형식 이어야합니다"
-        );
-
-      if (typeof nickname !== "string")
-        throw new HttpError(400, "해당 유저의 닉네임은 문자열이어야합니다");
-
       if (!req.user?.id) throw new HttpError(401, "unauthorization");
 
       const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
