@@ -121,7 +121,7 @@ export default class UserController {
     res: Response,
     next: NextFunction
   ) {
-    const { from, to, project_id, assignee, keyword, status } = req.params;
+    const { from, to, project_id, assignee, keyword, status } = req.query;
     const validStatus = ["todo", "inprogress", "done"] as const;
     const statusValue = validStatus.includes(status as any)
       ? (status as "todo" | "inprogress" | "done")
