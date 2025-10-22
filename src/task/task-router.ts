@@ -20,7 +20,10 @@ export const nestedTaskRouter = (taskController: TaskController) => {
 export const mainRouter = (taskController: TaskController) => {
   const router = express.Router();
 
-  router.route("/:taskId").get(taskController.getTaskById);
+  router
+    .route("/:taskId")
+    .get(taskController.getTaskById)
+    .patch(taskController.updateTask);
 
   return router;
 };

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { TaskService } from "./task-service.js";
-import { TaskBodyDto } from "./task-dto.js";
+import { TaskBodyDto, UpdateTaskBodyDto } from "./task-dto.js";
 
 export class TaskController {
   constructor(private taskService: TaskService) {}
@@ -82,6 +82,35 @@ export class TaskController {
       return res.status(200).json(taskDetails);
     } catch (error) {
       // 5. 에러 처리 미들웨어로 전달
+      next(error);
+    }
+  };
+
+  updateTask = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = res.locals.user.id;
+
+      const { taskId: taskIdParam } = req.params;
+      const taskId = Number(taskIdParam);
+      if (Number.isNaN(taskId)) {
+        throw new Error("할 일 ID는 숫자여야 합니다.");
+      }
+
+      const updateTaskBodyDto: UpdateTaskBodyDto = req.body;
+
+      // 추후 미들웨어로 대체 가능, 빈 객체가 들어오는 것을 막고자 함
+      if (Object.keys(updateTaskBodyDto).length === 0) {
+        throw new Error("수정할 내용을 포함하여 요청해야 합니다.");
+      }
+
+      const updatedTask = await this.taskService.updateTask(
+        userId,
+        taskId,
+        updateTaskBodyDto
+      );
+
+      return res.status(200).json(updatedTask);
+    } catch (error) {
       next(error);
     }
   };
