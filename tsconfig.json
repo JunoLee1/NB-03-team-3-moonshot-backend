@@ -37,7 +37,6 @@
     "jsx": "react-jsx",
     //"verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
     "moduleResolution": "nodenext",
@@ -46,6 +45,6 @@
     //"forceConsistentCasingInFileNames": true
   },
   "typeRoots": ["./node_modules/@types", "./src/types"],
-  "include": ["SRC/**/*.ts", "prisma/seed.js","src/types/**/*.d.ts"],
+  "include": ["src/**/*.ts", "prisma/seed.js","src/types/**/*.d.ts"],
   "exclude": ["prisma/seed.js"]
 }
