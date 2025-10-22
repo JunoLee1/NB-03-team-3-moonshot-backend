@@ -1,5 +1,6 @@
 import express from "express";
 import { TaskController } from "./task-controller.js";
+import { ta } from "zod/locales";
 // 추후 인증 미들웨어 import
 
 // 프로젝트 중첩 라우터 (/projects/:projectId/tasks' 처리)
@@ -23,7 +24,8 @@ export const mainRouter = (taskController: TaskController) => {
   router
     .route("/:taskId")
     .get(taskController.getTaskById)
-    .patch(taskController.updateTask);
+    .patch(taskController.updateTask)
+    .delete(taskController.deleteTask);
 
   return router;
 };
