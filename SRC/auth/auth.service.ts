@@ -11,12 +11,12 @@ export class AuthService {
         email,
       },
     });
-    if (!user) throw new HttpError(400, "");
+    if (!user) throw new HttpError(400, "유저 정보가 존재하지 않습니다");
     if (
       user.provider &&
       !Object.values(ProviderType).includes(user.provider as ProviderType)
     ) {
-      throw new HttpError(500, "");
+      throw new HttpError(500, "잘못된 Provider");
     }
     return user as AuthUserDTO;
   }
