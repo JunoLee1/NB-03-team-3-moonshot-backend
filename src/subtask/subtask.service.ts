@@ -29,7 +29,7 @@ export default class SubtaskService {
   async getSubtasksByTaskId(task_id: number) {
     const subtasks = await prisma.subtask.findMany({
       where: { task_id },
-      orderBy: { created_at: "asc" },
+      orderBy: { createdAt: "asc" },
     });
     return subtasks;
   }
