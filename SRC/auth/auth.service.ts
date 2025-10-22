@@ -67,18 +67,4 @@ export class AuthService{
         return newUser as AuthUserDTO;
     }
 
-    verifyAccessToken(token: string){
-        const decoded = jwt.verify(token, JWT_ACCESS_TOKEN_SECRET);
-        return { userId: decoded.sub };
-    }
-    verifyRefreshToken(token: string){
-         const decoded = jwt.verify(token,JWT_REFRESH_TOKEN_SECRET);
-        return { userId: decoded.sub };
-    }
-/*
-     clearTokenCookies(res:Response) {
-        res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
-        res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
-    }
-*/
 }

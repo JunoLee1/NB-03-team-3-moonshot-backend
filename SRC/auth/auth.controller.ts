@@ -2,11 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import HttpError from "../lib/httpError.js";
 import { AuthService } from "./auth.service.js";
 import { generateToken } from "../lib/generateToken.js";
-import {
-  ACCESS_TOKEN_COOKIE_NAME,
-  REFRESH_TOKEN_COOKIE_NAME,
-} from '../lib/constants.js';
-
+import {setTokenCookies, clearTokenCookie} from "../lib/token.js"
 
 const authService =  new AuthService()
 export class AuthController{
@@ -22,7 +18,7 @@ export class AuthController{
         
         const{ refreshToken, accessToken } = generateToken(req.user.id);
        
-        this.setTokenCookies(res, accessToken, refreshToken);
+        setTokenCookies(res, accessToken, refreshToken);
         if(typeof email !== "string" )throw new HttpError(400,"이메일이 문자열아닙니다") 
         await authService.loginService({ email, password })
         return res.status(200).json({
@@ -36,7 +32,7 @@ export class AuthController{
     // logout controller
 
     async logoutController(req: Request, res: Response, next:NextFunction){
-      this.clearTokenCookie(res);
+      clearTokenCookie(res);
       return res.status(200).send()
     }
 
@@ -66,7 +62,7 @@ export class AuthController{
         const user = req.user
         if (!user) throw new HttpError(401,"unathorized")
         const {accessToken, refreshToken: newRefreshToken} = generateToken(Number(user.id))
-        this.setTokenCookies(res, accessToken, newRefreshToken);
+        setTokenCookies(res, accessToken, newRefreshToken);
         res.status(200).send();
 
       } catch (error) {
@@ -80,21 +76,11 @@ export class AuthController{
         const user = req.user
         if (!user) throw new HttpError(401,"unathorized")
         const {accessToken, refreshToken} = generateToken(Number(user.id))
-        this.setTokenCookies(res, accessToken,refreshToken);
+        setTokenCookies(res, accessToken,refreshToken);
         res.status(200).send();
       } catch (error) {
          next(error)
       }
-    }
-
-  setTokenCookies(res: Response, accessToken: string, refreshToken: string) {
-      res.cookie("access_token", accessToken, { httpOnly: true });
-      res.cookie("refresh_token", refreshToken, { httpOnly: true });
-    }
-
-    clearTokenCookie(res:Response){
-      res.clearCookie(ACCESS_TOKEN_COOKIE_NAME)
-      res.clearCookie(REFRESH_TOKEN_COOKIE_NAME)
     }
   }
 

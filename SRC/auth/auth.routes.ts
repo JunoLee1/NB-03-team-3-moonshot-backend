@@ -21,7 +21,8 @@ router.post('/auth',( req : Request, res:Response, next:NextFunction ) => {
 })
 
 // refresh
-router.post('/auth/refresh',passport.authenticate("refresh-token"),
+router.post('/auth/refresh',
+    passport.authenticate("refresh-token"),
      ( req : Request, res:Response, next:NextFunction ) => {
          authController.refreshtokenController(req, res, next)
      })
@@ -40,7 +41,8 @@ router.get('/auth/google',
     }))
 
 // google callback
-router.get('/auth/google/callback',passport.authenticate("google", { session:false }), 
+router.get('/auth/google/callback',
+    passport.authenticate("google", { session:false }), 
     ( req : Request, res:Response, next:NextFunction ) => {
     authController.googleCallbackController(req, res, next)
     })
