@@ -10,7 +10,7 @@ const router = express.Router();
 
 // login
 router.post(
-  "/auth",
+  "/login",
   passport.authenticate("local", { session: false }),
   validateBody(authLoginSchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -19,7 +19,7 @@ router.post(
 );
 
 // register
-router.post("/auth", (req: Request, res: Response, next: NextFunction) => {
+router.post("/register", (req: Request, res: Response, next: NextFunction) => {
   validateBody(authRegisterSchema);
   authController.registerController(req, res, next);
 });
