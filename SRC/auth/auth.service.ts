@@ -9,7 +9,6 @@ import { AuthUserDTO, ProviderType } from "./auth.dto.js"
 
 export class AuthService{
     async findUserEmail(email:string):Promise<AuthUserDTO | null>{
-        if (email.includes("@"))throw new HttpError(400,"올바르지 못한 이메일 형식 ")
         const user =  await prisma.user.findUnique({
             where:{
                 email

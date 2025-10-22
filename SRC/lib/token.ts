@@ -1,6 +1,10 @@
 import jwt from "jsonwebtoken";
 import {ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME, NODE_ENV, JWT_ACCESS_TOKEN_SECRET,JWT_REFRESH_TOKEN_SECRET} from "./constants.js";
 import { Response } from "express";
+
+import dotenv from 'dotenv';
+dotenv.config();
+
 export function setTokenCookies(
     res: Response,
     accessToken:string,

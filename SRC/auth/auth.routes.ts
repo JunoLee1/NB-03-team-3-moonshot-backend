@@ -2,6 +2,8 @@ import express from 'express';
 import passport from '../lib/passport/index.js';
 import {AuthController}from './auth.controller.js';
 import { Request,Response,NextFunction } from 'express';
+import { validateBody } from '../middleware/validationMiddle.js';
+import {authLoginSchema, authRegisterSchema} from "./auth.validation.js"
 
 const authController  = new AuthController()
 const router = express.Router();
@@ -9,14 +11,15 @@ const router = express.Router();
 // login 
 router.post('/auth',
     passport.authenticate('local',{session:false}),
+    validateBody(authLoginSchema),
     async (req: Request, res: Response, next: NextFunction) => {
-    authController.loginController.bind(AuthController) // ✅ this 바인딩 + 타입 안전
+    authController.loginController.bind(AuthController) 
   }
-
 )
 
 // register
 router.post('/auth',( req : Request, res:Response, next:NextFunction ) => {
+    validateBody(authRegisterSchema)
     authController.registerController(req, res, next)
 })
 

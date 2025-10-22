@@ -16,7 +16,7 @@ export interface FindUserTaskParam{
   keyword: string| undefined;
 }
 
-export interface findUserProjects{
+export interface findUserProjectsQuery{
   take:number,
   skip:number,
   order?:  `asc` | `desc` ,

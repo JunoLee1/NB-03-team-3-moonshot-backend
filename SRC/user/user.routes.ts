@@ -3,7 +3,6 @@ import type {Request,Response, NextFunction} from "express";
 import UserController from "./user.controller.js"
 import { userInfoSchema, updateUserSchema, findUserTasksSchema, findUserProjectsSchema } from "../user/user.validation.js";
 import {validateBody,validateParam, validateQuery } from"../middleware/validationMiddle.js"
-import { loginAuth } from "../auth/auth.validation.js";
 import passport from "../lib/passport/index.js"
 
 const router = express.Router();
@@ -13,10 +12,8 @@ const router = express.Router();
 // 해당 유저가 맞는지 아닌지 확인 하는 로직작성
 // error 핸들러 미들웨어에 작성후 쓰기 
 
-
 const userController = new UserController()
 router.get("/me",
-    loginAuth,
     validateBody(userInfoSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
@@ -27,7 +24,6 @@ router.get("/me",
 // 클라이언트의 정보가 존재하는지 확인 
 
 router.patch("/me",
-    loginAuth,
     validateBody(updateUserSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{
@@ -36,14 +32,12 @@ router.patch("/me",
 
 // 해당 유저가 참여중인 모든 프로젝트의 할일 목록 조회 API
 router.get("/me/projects",
-    loginAuth,
     validateParam(findUserProjectsSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{ 
     userController.findUsedrProjectsController(req, res, next)
 })
 router.get("/me/tasks",
-    loginAuth,
     validateParam(findUserTasksSchema),
     passport.authenticate("local",{session:false}),
     async(req: Request, res:Response, next:NextFunction)=>{

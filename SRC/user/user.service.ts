@@ -1,5 +1,5 @@
 import prisma from "../lib/prisma.js";
-import { IUser, findUserProjects, FindUserTaskParam, IUserDTO } from "./user.user_dto.js";
+import { IUser, findUserProjectsQuery, FindUserTaskParam, IUserDTO } from "./user.user_dto.js";
 
 
 export default class UserService {
@@ -41,7 +41,7 @@ export default class UserService {
         }
         
     }
-    async findUserProjects({skip, take, order,order_by, userId}:findUserProjects&{userId:number}):Promise<any>{
+    async findUserProjects({skip, take, order,order_by, userId}:findUserProjectsQuery&{userId:number}):Promise<any>{
         const projects = await prisma.project.findMany({
             where:{
                 id:userId,
