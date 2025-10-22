@@ -21,7 +21,7 @@ export const nestedTaskRouter = (
 };
 
 // 메인 라우터, 중첩 라우터와 함께 app.ts에 임포트하여 다른 경로에 연결
-export const mainRouter = (
+export const mainTaskRouter = (
   taskController: TaskController,
   authMiddleWare: RequestHandler
 ) => {

@@ -10,7 +10,7 @@ import projectRouter from "./project/project-router.js";
 import { TaskRepository } from "./task/task-repository.js";
 import { TaskService } from "./task/task-service.js";
 import { TaskController } from "./task/task-controller.js";
-import { nestedTaskRouter, mainRouter } from "./task/task-router.js";
+import { nestedTaskRouter, mainTaskRouter } from "./task/task-router.js";
 
 // 미들웨어 임포트
 import { authMiddleWare } from "./middleware/authMiddle.js";
@@ -60,7 +60,7 @@ class Container {
       this.taskController,
       this.authMiddleware
     );
-    const mainTaskRouterInstance = mainRouter(
+    const mainTaskRouterInstance = mainTaskRouter(
       this.taskController,
       this.authMiddleware
     );
