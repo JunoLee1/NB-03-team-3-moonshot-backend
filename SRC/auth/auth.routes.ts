@@ -14,7 +14,7 @@ router.post(
   passport.authenticate("local", { session: false }),
   validateBody(authLoginSchema),
   async (req: Request, res: Response, next: NextFunction) => {
-    authController.loginController.bind(AuthController);
+    authController.loginController(req, res, next);
   }
 );
 
