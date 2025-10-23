@@ -70,7 +70,7 @@ export class AuthService {
         comments: true,
       },
     });
-    if (!newUser) throw new HttpError(400, "유저 정보가 존재하지 않습니다");
+  
     if (
       newUser.provider &&
       !Object.values(ProviderType).includes(newUser.provider as ProviderType)
