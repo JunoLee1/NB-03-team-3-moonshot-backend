@@ -21,6 +21,7 @@ router.post(
 // register
 router.post("/register", (req: Request, res: Response, next: NextFunction) => {
   validateBody(authRegisterSchema);
+  console.log("요청들어옴:",req.body)
   authController.registerController(req, res, next);
 });
 
