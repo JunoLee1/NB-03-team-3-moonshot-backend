@@ -38,17 +38,17 @@ export class AuthController {
   // 데이터상 생성할 이메일 || nickname의 중복유무를 확인후, 중복 x? 데이터 DB에 보내기
   async registerController(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, nickname, image } = req.body as {
+      const { email, password, nickname, profileImage } = req.body as {
         email: string;
         password: string;
         nickname: string;
-        image: string;
+        profileImage: string;
       };
       const newUser = await authService.createNewUser({
         email,
         password,
         nickname,
-        image,
+        profileImage,
       });
       return res.status(201).json({
         message: "성공적인 데이터 생성",
