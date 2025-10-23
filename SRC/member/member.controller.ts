@@ -78,10 +78,10 @@ export default class MemberController {
     }
   }
 
-  // DELETE /members/:memberId/cancel - 초대 취소
+  // DELETE /invitations/:invitationId - 초대 취소
   async cancelInvitation(req: Request, res: Response, next: NextFunction) {
     try {
-      const member_id = parseInt(req.params.memberId as string);
+      const member_id = parseInt(req.params.invitationId as string);
       // TODO: 인증 미들웨어에서 user_id 가져오기
       const canceller_id = req.body.user_id;
 
