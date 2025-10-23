@@ -10,22 +10,23 @@ export class AuthController {
   // DB에서 해당 유저의 이메일/ 비밀번호를 확인후 로그인
   async loginController(req: Request, res: Response, next: NextFunction) {
     try {
-      if (!req.user || !req.user.id) {
-      throw new HttpError(401, "Unauthorized");
-    }
-      const { email } = req.body;
-      console.log("email:",email)
-      if (!req.user || !req.user.id) throw new HttpError(401, "Unauthorized");
+       if (!req.user || !req.user.id || !req.user.email) {
+        throw new HttpError(401, "Unauthorized");
+      }
+      const { id, email } = req.user
+      console.log(1234);
+     
       // 인증된 유저 인덱스랑 유저 이메일, 비밀번호를 서비스로 보낸뒤 서비스 내에서 토큰 생성후, setTokenCookies 한다
 
-      const userId = req.user.id
-      console.log(userId)
-      const token = await authService.loginService({ id:Number(userId), email });
-      setTokenCookies(res, token.accessToken,token.refreshToken);
-        return res.status(200).json({
-          accessToken :token.accessToken,
-          refreshToken :token.refreshToken
-        });
+      console.log(id);
+      const tokens = await authService.loginService({
+        id,
+        email,
+      });
+      res.setHeader("Authorization", `Bearer ${tokens.accessToken}`);
+      res.setHeader("X-Refresh-Token", tokens.refreshToken);
+      console.log(tokens)
+      return res.status(200).json({ message: "로그인 성공" });
     } catch (error) {
       next(error);
     }
@@ -71,12 +72,13 @@ export class AuthController {
   ) {
     try {
       const user = req.user;
-      
+
       if (!user) throw new HttpError(401, "unathorized");
-      if (!user.email) throw  new Error
-      const { accessToken, refreshToken: newRefreshToken } = generateToken(
-        {userId :Number(user.id), email: user.email}
-      );
+      if (!user.email) throw new Error();
+      const { accessToken, refreshToken: newRefreshToken } = generateToken({
+        userId: Number(user.id),
+        email: user.email,
+      });
       setTokenCookies(res, accessToken, newRefreshToken);
       res.status(200).send();
     } catch (error) {
@@ -93,8 +95,11 @@ export class AuthController {
     try {
       const user = req.user;
       if (!user) throw new HttpError(401, "unathorized");
-      if(!user.email) throw new Error
-      const { accessToken, refreshToken } = generateToken({userId :Number(user.id), email: user.email});
+      if (!user.email) throw new Error();
+      const { accessToken, refreshToken } = generateToken({
+        userId: Number(user.id),
+        email: user.email,
+      });
       setTokenCookies(res, accessToken, refreshToken);
       res.status(200).send();
     } catch (error) {

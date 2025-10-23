@@ -13,7 +13,7 @@ export default class UserController {
         nickname: unknown;
         email: unknown;
       }; //validation 미들웨어에서 req.body에 nickname, email 확인후 넣어주기
-
+      console.log("!!!!")
       if (!req.user?.id) throw new HttpError(401, "unauthorization");
 
       const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
@@ -27,6 +27,8 @@ export default class UserController {
       }
 
       const userInfo = await userService.getUserInfoById({ id });
+
+      console.log("!!!!!")
       return res.json({
         success: true,
         data: userInfo,

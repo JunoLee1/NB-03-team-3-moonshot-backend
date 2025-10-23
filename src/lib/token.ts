@@ -13,13 +13,13 @@ export function setTokenCookies(
     res.cookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,{
         httpOnly :true,
         secure:NODE_ENV ==="production",
-        sameSite: NODE_ENV === 'production' ? 'none' : 'lax',        
+        sameSite: "none",        
         maxAge: 1 * 60 * 60 * 1000,
     })
     res.cookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,{
        httpOnly :true,
         secure:NODE_ENV ==="production",
-        sameSite: NODE_ENV === 'production' ? 'none' : 'lax', 
+        sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path:'/auth/refresh'
     })

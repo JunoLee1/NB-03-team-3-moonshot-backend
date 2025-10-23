@@ -2,7 +2,6 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import UserController from "./user.controller.js";
 import {
-  userInfoSchema,
   updateUserSchema,
   findUserTasksSchema,
   findUserProjectsSchema,
@@ -49,6 +48,7 @@ router.get(
   validateQuery(findUserProjectsSchema),
   passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log("!")
     userController.findUsedrProjectsController(req, res, next);
   }
 );

@@ -15,7 +15,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
-app.use(cors())
+app.use(cors({
+    origin: "http://localhost:3000", // 프론트 주소 정확히 써야 함
+    credentials: true, 
+}
+))
 
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
