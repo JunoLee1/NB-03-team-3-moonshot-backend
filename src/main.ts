@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
 app.use(cors())
 
-app.use("/user", userRouter);
+app.use("/users", userRouter);
 app.use("/auth", authRouter);
 
 app.use(error_handler);

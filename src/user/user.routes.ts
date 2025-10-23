@@ -24,7 +24,6 @@ const router = express.Router();
 const userController = new UserController();
 router.get(
   "/me",
-  validateBody(userInfoSchema),
   passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
     userController.userInfoController(req, res, next);

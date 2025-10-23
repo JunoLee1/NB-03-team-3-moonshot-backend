@@ -14,6 +14,7 @@ router.post(
   passport.authenticate("local", { session: false }),
   validateBody(authLoginSchema),
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log("요청들어옴:",req.body)
     authController.loginController(req, res, next);
   }
 );
@@ -21,7 +22,6 @@ router.post(
 // register
 router.post("/register", (req: Request, res: Response, next: NextFunction) => {
   validateBody(authRegisterSchema);
-  console.log("요청들어옴:",req.body)
   authController.registerController(req, res, next);
 });
 

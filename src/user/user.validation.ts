@@ -30,12 +30,14 @@ export const findUserProjectsSchema = z.object({
     .number()
     .positive()
     .min(1, "1보다 크거나 같아야 합니다")
-    .max(99, "100 미만 이어야합니다"),
+    .max(99, "100 미만 이어야합니다")
+    .optional(),
   skip: z
     .number()
     .positive()
     .min(10, "10이상 합니다")
-    .max(99, "100 미만 이어야합니다"),
+    .max(99, "100 미만 이어야합니다")
+    .optional(),
 });
 // Infer the DTO type
 export type UserDTO = z.infer<typeof userInfoSchema>;
