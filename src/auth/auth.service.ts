@@ -53,7 +53,7 @@ export class AuthService {
     email,
     password,
     nickname,
-    image,
+    profileImage,
   }: AuthUserDTO): Promise<AuthUserDTO> {
     const salt = await bcrypt.genSalt(10);
     if (!password) throw new HttpError(400, "비밀번호가 없음");
@@ -64,7 +64,7 @@ export class AuthService {
         email: email ?? "",
         nickname: nickname ?? "",
         password: created_password ?? "",
-        image: image ?? "",
+        profileImage: profileImage ?? "",
       },
       include: {
         comments: true,

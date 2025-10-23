@@ -37,10 +37,10 @@ export default class UserController {
   }
 
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
-    const { email, password, image } = req.body as {
+    const { email, password, profileImage } = req.body as {
       email: string;
       password: string;
-      image: string;
+      profileImage: string;
     };
     try {
       if (!req.user?.id) throw new HttpError(401, "unauthorization");
@@ -57,7 +57,7 @@ export default class UserController {
       const updatedUser = await userService.updatedUser({
         id,
         email,
-        image,
+        profileImage,
       });
       return res.status(200).json({
         success: true,

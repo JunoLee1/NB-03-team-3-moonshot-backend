@@ -16,7 +16,7 @@ export default class UserService {
         id: true,
         email: true,
         nickname: true,
-        image: true,
+        profileImage: true,
       },
     });
     if (!userInfo) return null;
@@ -25,19 +25,19 @@ export default class UserService {
       id: userInfo.id,
       email: userInfo.email,
       nickname: userInfo.nickname ?? "",
-      image: userInfo.image ?? "",
+      profileImage: userInfo.profileImage ?? "",
     };
   }
   async updatedUser({
     id,
     nickname,
     email,
-    image,
+    profileImage,
   }: IUser): Promise<IUserDTO | null> {
     const data: Prisma.UserUpdateInput = {
       nickname: { set: nickname! },
       email: { set: email! },
-      image: { set: image! },
+      profileImage: { set: profileImage! },
     };
     const updatedUser = await prisma.user.update({
       where: { id },
