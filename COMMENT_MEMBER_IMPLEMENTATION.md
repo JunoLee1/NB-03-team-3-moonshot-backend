@@ -18,17 +18,17 @@
 ## API 엔드포인트
 
 ### 댓글
-- `POST /api/tasks/:taskId/comments` - 댓글 생성
-- `GET /api/tasks/:taskId/comments` - 댓글 목록
-- `PATCH /api/comments/:commentId` - 댓글 수정
-- `DELETE /api/comments/:commentId` - 댓글 삭제
+- `POST /tasks/:taskId/comments` - 댓글 생성
+- `GET /tasks/:taskId/comments` - 댓글 목록
+- `PATCH /comments/:commentId` - 댓글 수정
+- `DELETE /comments/:commentId` - 댓글 삭제
 
 ### 멤버
-- `GET /api/projects/:projectId/members` - 멤버 목록
-- `POST /api/projects/:projectId/invitations` - 멤버 초대
-- `POST /api/members/:memberId/accept` - 초대 수락
-- `DELETE /api/projects/:projectId/members/:userId` - 멤버 제외
-- `DELETE /api/members/:memberId/cancel` - 초대 취소
+- `GET /projects/:projectId/users` - 멤버 목록
+- `POST /projects/:projectId/invitations` - 멤버 초대
+- `POST /members/:memberId/accept` - 초대 수락
+- `DELETE /projects/:projectId/users/:userId` - 멤버 제외
+- `DELETE /invitations/:invitationId` - 초대 취소
 
 ## 통합 방법
 
@@ -37,8 +37,9 @@
 import commentRoutes from "./comment/comment.routes.js";
 import memberRoutes from "./member/member.routes.js";
 
-app.use("/api", commentRoutes);
-app.use("/api", memberRoutes);
+// /api prefix 없이 직접 라우트 등록
+app.use(commentRoutes);
+app.use(memberRoutes);
 ```
 
 ### 인증 미들웨어 연동 필요
