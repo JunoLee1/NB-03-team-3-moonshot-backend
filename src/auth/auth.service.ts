@@ -42,10 +42,10 @@ export class AuthService {
     console.log("id, email :", email)
     const user = await this.findUserEmail(email);
     console.log(1)
-    if (!user) throw new HttpError(401, "이메일이 존재하지 않습니다");
+    if (!user) throw new HttpError(401, "invalid user's email");
     const userId = user.id;
     console.log(12)
-    if (!userId) throw new HttpError(400, "유효하지 않는 인덱스");
+    if (!userId) throw new HttpError(400, "invalid id");
 
     const { refreshToken, accessToken } = generateToken({ userId, email});
     console.log(123)

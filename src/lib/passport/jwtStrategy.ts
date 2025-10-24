@@ -37,7 +37,13 @@ async function jwtVerify(payload:JwtPayload, done:VerifiedCallback){
         const user = await prisma.user.findUnique({
         where: { id: payload.sub },
         })
-        console.log(user)
+        
+        console.log("User found:", user);
+
+        if (!user) {
+            console.log("❌ No user found for this token");
+            return done(null, false, { message: "User not found" });
+        }
         done(null, user)
     } catch (error) {
         done(error, false)

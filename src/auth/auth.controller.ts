@@ -24,9 +24,12 @@ export class AuthController {
         email,
       });
       res.setHeader("Authorization", `Bearer ${tokens.accessToken}`);
-      res.setHeader("X-Refresh-Token", tokens.refreshToken);
-      console.log(tokens)
-      return res.status(200).json({ message: "로그인 성공" });
+      res.setHeader("Refresh-Token", tokens.refreshToken);
+      
+      return res.status(200).json({ 
+        accessToken: tokens.accessToken,
+        refreshToken:  tokens.refreshToken
+      });
     } catch (error) {
       next(error);
     }
