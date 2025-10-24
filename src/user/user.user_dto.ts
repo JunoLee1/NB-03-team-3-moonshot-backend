@@ -20,7 +20,7 @@ export interface findUserProjectsQuery{
   take:number,
   skip:number,
   order?:  `asc` | `desc` ,
-  order_by?: `created_at` | `name`
+  order_by?: `createdAt` | `name`
 }
 
 export interface IUser{

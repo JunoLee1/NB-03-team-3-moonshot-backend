@@ -5,8 +5,7 @@ import userRouter from "./user/user.routes.js";
 import authRouter from "./auth/auth.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors"
-
-
+import passport from "passport";
 const PORT = process.env.PORT || 3000;
 dotenv.config();
 
@@ -20,7 +19,7 @@ app.use(cors({
     credentials: true, 
 }
 ))
-
+app.use(passport.initialize());
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 
