@@ -14,11 +14,8 @@ export class AuthController {
         throw new HttpError(401, "Unauthorized");
       }
       const { id, email } = req.user
-      console.log(1234);
      
       // 인증된 유저 인덱스랑 유저 이메일, 비밀번호를 서비스로 보낸뒤 서비스 내에서 토큰 생성후, setTokenCookies 한다
-
-      console.log(id);
       const tokens = await authService.loginService({
         id,
         email,

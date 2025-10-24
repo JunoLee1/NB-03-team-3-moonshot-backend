@@ -14,8 +14,7 @@ router.post(
   validateBody(authLoginSchema),
   passport.authenticate("local", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("요청들어옴:",req.body)
-     authController.loginController(req, res, next);
+    authController.loginController(req, res, next);
   }
 );
 

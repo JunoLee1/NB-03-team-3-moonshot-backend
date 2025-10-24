@@ -19,9 +19,7 @@ if (!JWT_REFRESH_TOKEN_SECRET) throw new Error("JWT_REFRESH_TOKEN_SECRET is miss
 
 const accessTokenOptions: StrategyOptions = {
   jwtFromRequest: (req) => {
-    console.log("Headers:", req.headers);
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-    console.log("Token:", token);
     return token;
   },
   secretOrKey: JWT_ACCESS_TOKEN_SECRET,
@@ -33,15 +31,10 @@ const refreshTokenOptions: StrategyOptions = {
 };
 async function jwtVerify(payload:JwtPayload, done:VerifiedCallback){
     try {
-        console.log("JWT payload:", payload);
         const user = await prisma.user.findUnique({
         where: { id: payload.sub },
         })
-        
-        console.log("User found:", user);
-
         if (!user) {
-            console.log("❌ No user found for this token");
             return done(null, false, { message: "User not found" });
         }
         done(null, user)
