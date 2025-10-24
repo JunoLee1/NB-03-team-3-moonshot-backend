@@ -13,7 +13,6 @@ export default class UserController {
         nickname: unknown;
         email: unknown;
       }; //validation 미들웨어에서 req.body에 nickname, email 확인후 넣어주기
-
       if (!req.user?.id) throw new HttpError(401, "unauthorization");
 
       const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
@@ -83,21 +82,21 @@ export default class UserController {
       if (!req.user?.id) throw new HttpError(401, "unauthorization"); // 인증 미들웨어에서 req.query id넣어주기
 
       const v_order = [`asc`, `desc`] as const;
-      const v_order_by = [`created_at`, `name`] as const;
+      const v_order_by = [`createdAt`, `name`] as const;
       function isOrder(value: any): value is "asc" | "desc" {
         return (v_order as readonly string[]).includes(value);
       }
 
-      function isOrderBy(value: any): value is "created_at" | "name" {
+      function isOrderBy(value: any): value is "createdAt" | "name" {
         return (v_order_by as readonly string[]).includes(value);
       }
 
       const orderQuery = req.query.order;
       const orderByQuery = req.query.order_by;
       const order: "asc" | "desc" = isOrder(orderQuery) ? orderQuery : "asc";
-      const order_by: `created_at` | `name` = isOrderBy(orderByQuery)
+      const order_by: `createdAt` | `name` = isOrderBy(orderByQuery)
         ? orderByQuery
-        : `created_at`;
+        : `createdAt`;
 
       const userId = req.user.id;
       const projects = await userService.findUserProjects({

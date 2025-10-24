@@ -11,8 +11,8 @@ const router = express.Router();
 // login
 router.post(
   "/login",
-  passport.authenticate("local", { session: false }),
   validateBody(authLoginSchema),
+  passport.authenticate("local", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
     authController.loginController(req, res, next);
   }
@@ -21,32 +21,24 @@ router.post(
 // register
 router.post("/register", (req: Request, res: Response, next: NextFunction) => {
   validateBody(authRegisterSchema);
-  console.log("요청들어옴:",req.body)
   authController.registerController(req, res, next);
 });
 
 // refresh
 router.post(
   "/refresh",
-  passport.authenticate("refresh-token"),
+  passport.authenticate("refresh-token", {session:false}),
   (req: Request, res: Response, next: NextFunction) => {
     authController.refreshtokenController(req, res, next);
   }
 ),
-  // logout
-  router.post(
-    "/logout",
-    (req: Request, res: Response, next: NextFunction) => {
-      authController.logoutController(req, res, next);
-    }
-  );
 
 // google get
 router.get(
   "/google",
   passport.authenticate("google", {
     scope: ["email", "profile"],
-  })
+  }),
 );
 
 // google callback

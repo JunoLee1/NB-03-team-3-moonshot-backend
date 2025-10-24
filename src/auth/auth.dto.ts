@@ -6,7 +6,7 @@ export enum ProviderType {
 export interface AuthUserDTO {
   id?: number;
   email: string;
-  password: string | null;
+  password?: string | null;
   nickname?: string | null;
   profileImage?: string | null;
   provider?: ProviderType | null;

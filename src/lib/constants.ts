@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config()
 
 
-const NODE_ENV = process.env.NODE_ENV|| "development";
+const NODE_ENV = process.env.NODE_ENV;
 const PORT = process.env.PORT || 3001;
 const JWT_ACCESS_TOKEN_SECRET = 
     process.env.JWT_ACCESS_TOKEN_SECRET ||'your_jwt_access_token_secret'

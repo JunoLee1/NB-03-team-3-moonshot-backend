@@ -2,6 +2,7 @@ import { Strategy as GoogleStrategy, VerifyCallback} from 'passport-google-oauth
 import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '../constants.js';
 import prisma from "../prisma.js"
 import { Profile } from 'passport-google-oauth20';
+import { generateToken } from '../generateToken.js';
 
 interface OAuthStrategyVerify {
     accessToken?: string,
@@ -17,7 +18,7 @@ export const googleStrategy = new GoogleStrategy(
     {
         clientID : GOOGLE_CLIENT_ID ,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL :'http://localhost:3001/auth/google/callback',
+        callbackURL : process.env.REDIRECT_URI,
         passReqToCallback: false , // ⚡ 필수
 
     } as any,
@@ -30,6 +31,7 @@ export const googleStrategy = new GoogleStrategy(
         });
         if (user)
             return cb(null, user);
+
         const newUser = await prisma.user.create({
             data:{
                 provider: 'google',

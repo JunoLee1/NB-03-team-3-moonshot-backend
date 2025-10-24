@@ -2,7 +2,6 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import UserController from "./user.controller.js";
 import {
-  userInfoSchema,
   updateUserSchema,
   findUserTasksSchema,
   findUserProjectsSchema,
@@ -24,7 +23,6 @@ const router = express.Router();
 const userController = new UserController();
 router.get(
   "/me",
-  validateBody(userInfoSchema),
   passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
     userController.userInfoController(req, res, next);

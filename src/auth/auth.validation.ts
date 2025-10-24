@@ -1,4 +1,4 @@
-import { Request,Response,NextFunction } from "express";
+
 import {z} from "zod";
 // auth schema
 export const authRegisterSchema = z.object({
