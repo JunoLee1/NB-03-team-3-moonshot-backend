@@ -300,4 +300,35 @@ export class TaskService {
       throw error;
     }
   };
+
+  deleteTask = async (userId: number, taskId: number): Promise<void> => {
+    try {
+      // 검증을 위해 할 일과 프로젝트 멤버 목록 조회
+      const taskData = await this.taskRepository.findTaskById(taskId);
+
+      // 할 일 존재 여부 검증
+      if (!taskData) {
+        throw new NotFoundException("삭제하려는 할 일을 찾을 수 없습니다.");
+      }
+
+      // 권한 검사를 위해 프로젝트 및 멤버 정보 존재 확인 (타입 안정성)
+      if (!taskData.projects || !taskData.projects.members) {
+        throw new Error("권한 검사에 필요한 프로젝트 멤버 정보가 없습니다");
+      }
+
+      // 요청자가 프로젝트 멤버인지 검증
+      const projectMembers = taskData.projects.members;
+      const isRequesterMember = projectMembers.some(
+        (member) => member.user_id === userId
+      );
+      if (!isRequesterMember) {
+        throw new ForbiddenException("할 일을 삭제할 권한이 없습니다");
+      }
+
+      await this.taskRepository.deleteTaskById(taskId);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 }

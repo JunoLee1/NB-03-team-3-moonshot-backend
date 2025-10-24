@@ -270,4 +270,15 @@ export class TaskRepository {
       });
     });
   };
+
+  /**
+   * ID를 기준으로 할 일을 삭제합니다
+   * @param taskId 삭제할 할 일의 ID
+   * @returns 삭제된 할 일 정보 (Prisma delete 반환값)
+   */
+  deleteTaskById = async (taskId: number) => {
+    return this.prisma.task.delete({
+      where: { id: taskId },
+    });
+  };
 }

@@ -7,8 +7,10 @@ export class ProjectController {
 
   createProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // 추후 인증 미들웨어가 res.locals.user에 사용자 정보를 넣어줄 것으로 가정
-      const userId = res.locals.user.id;
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
 
       // req body에 대한 유효성 검사도 별도 미들웨어로 분리하여 진행하는 것이 좋을 것 같음
       const projectBodyDto: ProjectBodyDto = req.body;
@@ -26,7 +28,10 @@ export class ProjectController {
   getProjectById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 추후 인증 미들웨어가 res.locals.user에 사용자 정보를 넣어줄 것으로 가정
-      const userId = res.locals.user.id;
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
       const { projectId: projectIdParam } = req.params;
 
       const projectId = Number(projectIdParam);
@@ -49,7 +54,10 @@ export class ProjectController {
   updateProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 사용자 ID와 경로 파라미터 가져오기
-      const userId = res.locals.user.id;
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
       const { projectId: projectIdParam } = req.params;
 
       // request body 가져오기
@@ -80,7 +88,10 @@ export class ProjectController {
 
   deleteProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = res.locals.user.id;
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
       const { projectId: projectIdParam } = req.params;
 
       const projectId = Number(projectIdParam);
