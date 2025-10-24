@@ -22,7 +22,8 @@ export class AuthController {
       });
       res.setHeader("Authorization", `Bearer ${tokens.accessToken}`);
       res.setHeader("Refresh-Token", tokens.refreshToken);
-      
+      console.log("accessToken: ", tokens.accessToken)
+      console.log("refresh:", tokens.refreshToken)
       return res.status(200).json({ 
         accessToken: tokens.accessToken,
         refreshToken:  tokens.refreshToken
@@ -80,7 +81,7 @@ export class AuthController {
         email: user.email,
       });
       setTokenCookies(res, accessToken, newRefreshToken);
-      res.status(200).send();
+      res.status(200).send({accessToken, newRefreshToken});
     } catch (error) {
       next(error);
     }
@@ -101,7 +102,7 @@ export class AuthController {
         email: user.email,
       });
       setTokenCookies(res, accessToken, refreshToken);
-      res.status(200).send();
+      res.redirect('/');
     } catch (error) {
       next(error);
     }

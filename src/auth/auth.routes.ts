@@ -27,25 +27,18 @@ router.post("/register", (req: Request, res: Response, next: NextFunction) => {
 // refresh
 router.post(
   "/refresh",
-  passport.authenticate("refresh-token"),
+  passport.authenticate("refresh-token", {session:false}),
   (req: Request, res: Response, next: NextFunction) => {
     authController.refreshtokenController(req, res, next);
   }
 ),
-  // logout
-  router.post(
-    "/logout",
-    (req: Request, res: Response, next: NextFunction) => {
-      authController.logoutController(req, res, next);
-    }
-  );
 
 // google get
 router.get(
   "/google",
   passport.authenticate("google", {
     scope: ["email", "profile"],
-  })
+  }),
 );
 
 // google callback

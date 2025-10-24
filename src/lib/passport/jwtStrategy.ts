@@ -26,7 +26,10 @@ const accessTokenOptions: StrategyOptions = {
 };
 
 const refreshTokenOptions: StrategyOptions = {
-  jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(), 
+  jwtFromRequest:(req) => {
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+    return token;
+  }, 
   secretOrKey: JWT_REFRESH_TOKEN_SECRET,
 };
 async function jwtVerify(payload:JwtPayload, done:VerifiedCallback){
