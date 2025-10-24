@@ -39,16 +39,12 @@ export class AuthService {
   async loginService({
     email,
   }: AuthUserDTO): Promise<{ accessToken: string; refreshToken: string }> {
-    console.log("id, email :", email)
     const user = await this.findUserEmail(email);
-    console.log(1)
     if (!user) throw new HttpError(401, "invalid user's email");
     const userId = user.id;
-    console.log(12)
     if (!userId) throw new HttpError(400, "invalid id");
 
     const { refreshToken, accessToken } = generateToken({ userId, email});
-    console.log(123)
     return { refreshToken, accessToken };
   }
 

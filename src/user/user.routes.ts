@@ -48,7 +48,6 @@ router.get(
   validateQuery(findUserProjectsSchema),
   passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("!")
     userController.findUsedrProjectsController(req, res, next);
   }
 );
