@@ -8,7 +8,10 @@ export class TaskController {
   createTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 인증된 사용자 ID 가져오기
-      const userId = res.locals.user.id;
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
 
       // 경로 파라미터 가져오기 및 검증
       const { projectId: projectIdParam } = req.params;
@@ -41,7 +44,10 @@ export class TaskController {
   getTasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 인증된 사용자 ID 가져오기
-      const userId = res.locals.user.id;
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
 
       // URL 경로 파라미터 가져오기 및 검증
       const { projectId: projectIdParam } = req.params;
@@ -68,7 +74,10 @@ export class TaskController {
   getTaskById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       // 인증된 사용자 ID 가져오기
-      const userId = res.locals.user.id;
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
 
       //경로 파라미터 가져오기 및 검증
       const { taskId: taskIdParam } = req.params;
@@ -88,7 +97,10 @@ export class TaskController {
 
   updateTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = res.locals.user.id;
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
 
       const { taskId: taskIdParam } = req.params;
       const taskId = Number(taskIdParam);
@@ -110,6 +122,27 @@ export class TaskController {
       );
 
       return res.status(200).json(updatedTask);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  deleteTask = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const userId = req.user.id;
+
+      const { taskId: taskIdParam } = req.params;
+      const taskId = Number(taskIdParam);
+      if (Number.isNaN(taskId)) {
+        throw new Error("할 일 ID는 숫자여야 합니다.");
+      }
+
+      await this.taskService.deleteTask(userId, taskId);
+
+      return res.status(204).send();
     } catch (error) {
       next(error);
     }
