@@ -1,9 +1,9 @@
 import express from "express";
 import passport from "../lib/passport/index.js";
-import { AuthController } from "./auth-controller.js";
+import { AuthController } from "./auth.controller.js";
 import { Request, Response, NextFunction } from "express";
 import { validateBody } from "../middleware/validationMiddle.js";
-import { authLoginSchema, authRegisterSchema } from "./auth-validation.js";
+import { authLoginSchema, authRegisterSchema } from "./auth.validation.js";
 
 const authController = new AuthController();
 const router = express.Router();

@@ -5,7 +5,7 @@ import {
   findUserProjectsQuery,
   FindUserTaskParam,
   IUserDTO,
-} from "./user-user_dto.js";
+} from "./user.user.dto.js";
 
 export default class UserService {
   async getUserInfoById({ id }: IUser): Promise<IUserDTO | null> {
@@ -85,8 +85,8 @@ export default class UserService {
           },
         },
         AND: [
-          from ? { createdAt: { gte: from } } : {},
-          to ? { createdAt: { lte: to } } : {},
+          from ? { created_at: { gte: from } } : {},
+          to ? { created_at: { lte: to } } : {},
           project_id ? { project_id } : {},
           assignee ? { member_id: assignee } : {},
           status ? { task_status: status } : {},

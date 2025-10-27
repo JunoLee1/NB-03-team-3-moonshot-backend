@@ -93,7 +93,7 @@ export default class CommentService {
           },
         },
       },
-      orderBy: { createdAt: "asc" },
+      orderBy: { created_at: "asc" },
     });
 
     return comments;

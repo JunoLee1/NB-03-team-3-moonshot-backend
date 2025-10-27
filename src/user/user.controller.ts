@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import UserService from "./user-service.js";
+import UserService from "./user.service.js";
 import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
-import { FindUserTaskParam } from "./user-user_dto.js";
+import { FindUserTaskParam } from "./user.user.dto.js";
 
 const userService = new UserService();
 export default class UserController {

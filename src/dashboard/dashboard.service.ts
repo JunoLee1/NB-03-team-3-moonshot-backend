@@ -11,7 +11,7 @@ export default class DashboardService {
           ? { title: { contains: keyword, mode: "insensitive" } }
           : {}),
       },
-      orderBy: { taskStatus: "asc" },
+      orderBy: { task_status: "asc" },
       include: {
         projects: { select: { id: true, name: true } },
         members: { select: { id: true, role: true } },
@@ -21,7 +21,7 @@ export default class DashboardService {
     // 상태별 그룹화
     return tasks.reduce(
       (acc: Record<string, typeof tasks>, task) => {
-        const status = task.taskStatus ?? "todo";
+        const status = task.task_status ?? "todo";
         if (!acc[status]) acc[status] = [];
         acc[status]!.push(task);
         return acc;
@@ -54,7 +54,7 @@ export default class DashboardService {
           ? { title: { contains: keyword, mode: "insensitive" } }
           : {}),
       },
-      orderBy: [{ start_day: "asc" }, { taskStatus: "asc" }],
+      orderBy: [{ start_day: "asc" }, { task_status: "asc" }],
       include: {
         projects: { select: { id: true, name: true } },
         members: { select: { id: true, role: true } },

@@ -2,7 +2,7 @@ import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
 import { generateToken } from "../lib/generate-token.js";
 import bcrypt from "bcrypt";
-import { AuthUserDTO, ProviderType } from "./auth-dto.js";
+import { AuthUserDTO, ProviderType } from "./auth.dto.js";
 
 export class AuthService {
   async findUserEmail(email: string): Promise<AuthUserDTO | null> {

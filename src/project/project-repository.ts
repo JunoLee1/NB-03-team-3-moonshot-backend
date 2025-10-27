@@ -26,8 +26,8 @@ export class ProjectRepository {
       await tx.member.create({
         data: {
           user_id: userId,
-          projectId: project.id, // 스키마 수정 필요 projectId -> project_id
-          joinedAt: new Date(),
+          project_id: project.id, // 스키마 수정 필요 projectId -> project_id
+          joined_at: new Date(),
           status: status.accepted, // 스키마 수정 필요, member.status가 Status, 이름 변경이 좋아보임
           role: "CREATOR", // 생성자를 확인하기 위한 코드, 추후 역할 이름 변경 가능
         },
@@ -62,7 +62,7 @@ export class ProjectRepository {
         members: true,
         tasks: {
           select: {
-            taskStatus: true,
+            task_status: true,
           },
         },
       },
@@ -96,7 +96,7 @@ export class ProjectRepository {
           members: true,
           tasks: {
             select: {
-              taskStatus: true,
+              task_status: true,
             },
           },
         },

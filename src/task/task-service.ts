@@ -76,8 +76,8 @@ export class TaskService {
       assignee: assignee,
       tags: rawTaskData.tags,
       attachments: rawTaskData.attachments,
-      createdAt: rawTaskData.createdAt,
-      updatedAt: rawTaskData.updatedAt,
+      createdAt: rawTaskData.created_at,
+      updatedAt: rawTaskData.created_at,
     };
   }
 
@@ -97,7 +97,7 @@ export class TaskService {
       const member = await this.prisma.member.findFirst({
         where: {
           user_id: userId,
-          projectId: projectId,
+          project_id: projectId,
         },
       });
 

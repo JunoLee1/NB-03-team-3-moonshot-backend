@@ -82,11 +82,11 @@ export class ProjectService {
 
       const taskCounts = projectData.tasks.reduce(
         (counts, task) => {
-          if (task.taskStatus === "todo") {
+          if (task.task_status === "todo") {
             counts.todoCount++;
-          } else if (task.taskStatus === "inprogress") {
+          } else if (task.task_status === "inprogress") {
             counts.inProgressCount++;
-          } else if (task.taskStatus === "done") {
+          } else if (task.task_status === "done") {
             counts.doneCount++;
           }
           return counts;
@@ -156,9 +156,9 @@ export class ProjectService {
       const memberCount = updatedProjectData.members.length;
       const taskCounts = updatedProjectData.tasks.reduce(
         (counts, task) => {
-          if (task.taskStatus === "todo") counts.todoCount++;
-          else if (task.taskStatus === "inprogress") counts.inProgressCount++;
-          else if (task.taskStatus === "done") counts.doneCount++;
+          if (task.task_status === "todo") counts.todoCount++;
+          else if (task.task_status === "inprogress") counts.inProgressCount++;
+          else if (task.task_status === "done") counts.doneCount++;
           return counts;
         },
         { todoCount: 0, inProgressCount: 0, doneCount: 0 }

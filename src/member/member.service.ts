@@ -3,7 +3,7 @@ import prisma from "../lib/prisma.js";
 
 export interface InviteMemberDTO {
   email: string;
-  project_id: number;
+  projectId: number;
   inviter_id: number;
 }
 
@@ -27,7 +27,7 @@ export default class MemberService {
     const isMember = await prisma.member.findFirst({
       where: {
         user_id: user_id,
-        projectId: projectId,
+        project_id: projectId,
       },
     });
 
@@ -41,7 +41,7 @@ export default class MemberService {
 
     const [members, total] = await Promise.all([
       prisma.member.findMany({
-        where: { projectId: projectId },
+        where: { project_id: projectId },
         include: {
           users: {
             select: {
@@ -54,10 +54,10 @@ export default class MemberService {
         },
         skip,
         take: limit,
-        orderBy: { joinedAt: "desc" },
+        orderBy: { joined_at: "desc" },
       }),
       prisma.member.count({
-        where: { projectId: projectId },
+        where: { project_id: projectId },
       }),
     ]);
 
@@ -102,7 +102,7 @@ export default class MemberService {
     const inviterMember = await prisma.member.findFirst({
       where: {
         user_id: inviter_id,
-        projectId: projectId,
+        project_id: projectId,
         role: "owner",
       },
     });
@@ -122,7 +122,7 @@ export default class MemberService {
     const existingMember = await prisma.member.findFirst({
       where: {
         user_id: invitedUser.id,
-        projectId: projectId,
+        project_id: projectId,
       },
     });
 
@@ -133,10 +133,10 @@ export default class MemberService {
     const member = await prisma.member.create({
       data: {
         user_id: invitedUser.id,
-        projectId: projectId,
+        project_id: projectId,
         role: "member",
         status: "pending",
-        joinedAt: new Date(),
+        joined_at: new Date(),
       },
       include: {
         users: {
@@ -211,7 +211,7 @@ export default class MemberService {
     const removerMember = await prisma.member.findFirst({
       where: {
         user_id: remover_id,
-        projectId: project_id,
+        project_id: project_id,
         role: "owner",
       },
     });
@@ -224,7 +224,7 @@ export default class MemberService {
     const memberToRemove = await prisma.member.findFirst({
       where: {
         user_id: member_user_id,
-        projectId: project_id,
+        project_id: project_id,
       },
     });
 
@@ -260,7 +260,7 @@ export default class MemberService {
     const cancellerMember = await prisma.member.findFirst({
       where: {
         user_id: canceller_id,
-        projectId: member.projectId,
+        project_id: member.project_id,
         role: "owner",
       },
     });
