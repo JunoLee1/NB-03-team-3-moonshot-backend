@@ -188,7 +188,7 @@ export default class MemberService {
             id: true,
             email: true,
             nickname: true,
-            profileImage: true,
+            profile_image: true,
           },
         },
       },

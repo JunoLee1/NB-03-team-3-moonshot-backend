@@ -58,7 +58,7 @@ export class TaskService {
           id: assigneeUser.id,
           name: assigneeUser.nickname, // DTO는 name: string | null 임
           email: assigneeUser.email,
-          profileImage: assigneeUser.profileImage, // DTO는 profileImage: string | null 임
+          profile_image: assigneeUser.profile_image, // DTO는 profileImage: string | null 임
         }
       : null;
 
@@ -72,7 +72,7 @@ export class TaskService {
       endYear: rawTaskData.end_year,
       endMonth: rawTaskData.end_month,
       endDay: rawTaskData.end_date,
-      status: rawTaskData.taskStatus as TaskStatusType,
+      status: rawTaskData.task_status as TaskStatusType,
       assignee: assignee,
       tags: rawTaskData.tags,
       attachments: rawTaskData.attachments,
