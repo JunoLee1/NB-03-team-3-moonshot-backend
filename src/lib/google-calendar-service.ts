@@ -41,7 +41,7 @@ export class GoogleCalendarService {
 
     return {
       summary: taskDto.title,
-      description: `[Moonshot Task] 상태: ${taskDto.status}\n프로젝트 ID: ${taskDto.projectId}`,
+      description: `[Moonshot Task] 상태: ${taskDto.taskStatus}\n프로젝트 ID: ${taskDto.projectId}`,
       start: { date: startDate },
       end: { date: endDate ?? null },
     };
