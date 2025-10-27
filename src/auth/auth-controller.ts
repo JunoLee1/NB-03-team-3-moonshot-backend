@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import HttpError from "../lib/httpError.js";
-import { AuthService } from "./auth.service.js";
+import { AuthService } from "./auth-service.js";
 import { generateToken } from "../lib/generateToken.js";
 import { setTokenCookies, clearTokenCookie } from "../lib/token.js";
 
@@ -44,17 +44,17 @@ export class AuthController {
   // 데이터상 생성할 이메일 || nickname의 중복유무를 확인후, 중복 x? 데이터 DB에 보내기
   async registerController(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, password, nickname, profileImage } = req.body as {
+      const { email, password, nickname, profile_image } = req.body as {
         email: string;
         password: string;
         nickname: string;
-        profileImage: string;
+        profile_image: string;
       };
       const newUser = await authService.createNewUser({
         email,
         password,
         nickname,
-        profileImage,
+        profile_image,
       });
       return res.status(201).json({
         message: "성공적인 데이터 생성",

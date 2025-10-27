@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import UserService from "./user.service.js";
+import UserService from "./user-service.js";
 import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
-import { FindUserTaskParam } from "./user.user_dto.js";
+import { FindUserTaskParam } from "./user-user_dto.js";
 
 const userService = new UserService();
 export default class UserController {
@@ -36,10 +36,10 @@ export default class UserController {
   }
 
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
-    const { email, password, profileImage, nickname} = req.body as {
+    const { email, password, profile_image, nickname} = req.body as {
       email: string;
       password: string;
-      profileImage: string;
+      profile_image: string;
       nickname:string;
     };
     try {
@@ -56,7 +56,7 @@ export default class UserController {
       const updatedUser = await userService.updatedUser({
         id,
         email,
-        profileImage,
+        profile_image,
         nickname
       });
       return res.status(200).json({

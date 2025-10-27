@@ -27,7 +27,7 @@ export default class CommentService {
     const isMember = await prisma.member.findFirst({
       where: {
         user_id: user_id,
-        projectId: task.project_id,
+        project_id: task.project_id,
         status: "accepted",
       },
     });
@@ -72,7 +72,7 @@ export default class CommentService {
     const isMember = await prisma.member.findFirst({
       where: {
         user_id: user_id,
-        projectId: task.project_id,
+        project_id: task.project_id,
         status: "accepted",
       },
     });

@@ -8,7 +8,7 @@ export interface AuthUserDTO {
   email: string;
   password?: string | null;
   nickname?: string | null;
-  profileImage?: string | null;
+  profile_image?: string | null;
   provider?: ProviderType | null;
-  providerId?: string | null;
+  provider_id?: string | null;
 }

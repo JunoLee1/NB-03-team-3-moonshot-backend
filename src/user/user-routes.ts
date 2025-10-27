@@ -1,11 +1,11 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
-import UserController from "./user.controller.js";
+import UserController from "./user-controller.js";
 import {
   updateUserSchema,
   findUserTasksSchema,
   findUserProjectsSchema,
-} from "../user/user.validation.js";
+} from "./user-validation.js";
 import {
   validateBody,
   validateQuery,
