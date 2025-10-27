@@ -26,8 +26,14 @@ model User {
 
   provider   String?
   providerId String?
-  members    Member[]
-  comments   Comment[]
+
+  // Google Auth 토큰 저장(할 일 구글 캘린더 연동)
+  googleAccessToken    String?
+  googleRefreshToken   String?
+  googleTokenExpiresAt DateTime?
+
+  members  Member[]
+  comments Comment[]
 }
 
 //--------------------------------------------------------------------
@@ -90,6 +96,8 @@ model Task {
   taskStatus  Status   @map("status")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  googleEventId String? // 구글 캘린더 이벤트 ID 저장
 
   project_id  Int
   member_id   Int
