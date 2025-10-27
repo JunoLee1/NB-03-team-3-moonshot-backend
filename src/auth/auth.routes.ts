@@ -44,7 +44,10 @@ router.get(
 // google callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { session: false }),
+  passport.authenticate("google", {
+    session:false,
+    failureRedirect: "/login"
+  }),
   (req: Request, res: Response, next: NextFunction) => {
     authController.googleCallbackController(req, res, next);
   }
