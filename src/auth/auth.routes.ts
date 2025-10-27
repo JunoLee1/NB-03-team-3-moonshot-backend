@@ -27,19 +27,20 @@ router.post("/register", (req: Request, res: Response, next: NextFunction) => {
 // refresh
 router.post(
   "/refresh",
-  passport.authenticate("refresh-token", {session:false}),
+  passport.authenticate("refresh-token", { session: false }),
   (req: Request, res: Response, next: NextFunction) => {
     authController.refreshtokenController(req, res, next);
   }
 ),
-
-// google get
-router.get(
-  "/google",
-  passport.authenticate("google", {
-    scope: ["email", "profile"],
-  }),
-);
+  // google get
+  router.get(
+    "/google",
+    passport.authenticate("google", {
+      scope: ["email", "profile", "https://www.googleapis.com/auth/calendar"], // calendar scope 추가
+      accessType: "offline",
+      prompt: "consent",
+    })
+  );
 
 // google callback
 router.get(
