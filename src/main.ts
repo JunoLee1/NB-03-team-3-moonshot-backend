@@ -29,7 +29,7 @@ app.use(passport.initialize());
 const { projectRouterInstance, mainTaskRouterInstance } =
   container.getRouters();
 
-app.use("/user", userRouter);
+app.use("/users", userRouter);
 app.use("/auth", authRouter);
 app.use("/projects", projectRouterInstance);
 app.use("/tasks", mainTaskRouterInstance);

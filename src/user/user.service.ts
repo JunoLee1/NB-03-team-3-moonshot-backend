@@ -34,11 +34,10 @@ export default class UserService {
     email,
     profileImage,
   }: IUser): Promise<IUserDTO | null> {
-    const data: Prisma.UserUpdateInput = {
-      nickname: { set: nickname! },
-      email: { set: email! },
-      profileImage: { set: profileImage! },
-    };
+   const data : Prisma.UserUpdateInput = {};
+    if (nickname) data.nickname = { set: nickname };
+    if (email) data.email = { set: email };
+    if (profileImage) data.profileImage = { set: profileImage };
     const updatedUser = await prisma.user.update({
       where: { id },
       data: data,
