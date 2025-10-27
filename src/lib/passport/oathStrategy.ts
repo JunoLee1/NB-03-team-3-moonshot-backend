@@ -26,7 +26,7 @@ export const googleStrategy = new GoogleStrategy(
         const user = await prisma.user.findFirst({
             where:{
                 provider:"google",
-                providerId:profile.id
+                provider_id:profile.id
             }
         });
         if (user)
@@ -35,7 +35,7 @@ export const googleStrategy = new GoogleStrategy(
         const newUser = await prisma.user.create({
             data:{
                 provider: 'google',
-                providerId: profile.id,
+                provider_id: profile.id,
                 email: profile.displayName || profile.id,
                 password: null
             }

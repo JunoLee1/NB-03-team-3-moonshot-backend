@@ -20,12 +20,12 @@ model User {
   email        String   @unique
   password     String?
   nickname     String?  @unique @default("")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
   profileImage String?
 
   provider   String?
-  providerId String?
+  provider_id String?
   members    Member[]
   comments   Comment[]
 }
