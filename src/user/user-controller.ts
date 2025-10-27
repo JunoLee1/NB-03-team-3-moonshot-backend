@@ -82,14 +82,14 @@ export default class UserController {
 
       if (!req.user?.id) throw new HttpError(401, "unauthorization"); // 인증 미들웨어에서 req.query id넣어주기
 
-      const v_order = [`asc`, `desc`] as const;
-      const v_order_by = [`createdAt`, `name`] as const;
+      const vOrder = [`asc`, `desc`] as const;
+      const vOrderBy = [`createdAt`, `name`] as const;
       function isOrder(value: any): value is "asc" | "desc" {
-        return (v_order as readonly string[]).includes(value);
+        return (vOrder as readonly string[]).includes(value);
       }
 
       function isOrderBy(value: any): value is "createdAt" | "name" {
-        return (v_order_by as readonly string[]).includes(value);
+        return (vOrderBy as readonly string[]).includes(value);
       }
 
       const orderQuery = req.query.order;
@@ -152,10 +152,10 @@ export default class UserController {
       if (!validatedTask) {
         throw new HttpError(404, "존재하지 않는 task 입니다");
       }
-      const string_project = req.query.projectId;
+      const stringProject = req.query.projectId;
 
        console.log(1234)
-      if (typeof string_project !== "string") {
+      if (typeof stringProject !== "string") {
         throw new HttpError(404, "Bad request");
       }
       const result = await userService.findUserTasks({ ...filters, userId });

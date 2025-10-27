@@ -23,7 +23,7 @@ export interface AssigneeDto {
   id: number;
   name: string | null;
   email: string;
-  profileImage: string | null;
+  profile_image: string | null;
 }
 
 // 할 일 태그 정보 DTO
