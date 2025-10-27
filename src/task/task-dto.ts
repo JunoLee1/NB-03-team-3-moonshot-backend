@@ -11,7 +11,7 @@ export interface TaskBodyDto {
   endYear: number;
   endMonth: number;
   endDay: number;
-  taskStatus: TaskStatusType;
+  status: TaskStatusType;
   tags: string[];
   attachments: string[];
 }
@@ -49,7 +49,7 @@ export interface TaskResponseDto {
   endYear: number;
   endMonth: number;
   endDay: number;
-  taskStatus: TaskStatusType;
+  status: TaskStatusType;
   assignee: AssigneeDto | null; // 담당자 수정을 위함
   tags: TagDto[];
   attachments: AttachmentDto[];
@@ -62,7 +62,7 @@ export interface TaskResponseDto {
 export interface TaskQueryDto {
   page?: number;
   limit?: number;
-  taskStatus?: TaskStatusType;
+  status?: TaskStatusType;
   assignee?: number; // 담당자의 member-id
   keyword?: string;
   order?: "asc" | "desc";
@@ -84,7 +84,7 @@ export interface UpdateTaskBodyDto {
   endYear?: number;
   endMonth?: number;
   endDay?: number;
-  taskStatus?: TaskStatusType;
+  status?: TaskStatusType;
   assigneeId?: number; // 담당자 변경을 위한 필드
   tags?: string[];
   attachments?: string[];
