@@ -38,7 +38,9 @@ router.patch(
   validateBody(updateUserSchema),
   passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
-    userController.userUpdateController(req, res, next);
+        console.log("요청들어옴:",req.body)
+        userController.userUpdateController(req, res, next);
+        //console.log("결과:",res)
   }
 );
 

@@ -36,27 +36,32 @@ export default class UserController {
   }
 
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
-    const { email, password, profileImage } = req.body as {
+    const { email, password, profileImage, nickname} = req.body as {
       email: string;
       password: string;
       profileImage: string;
+      nickname:string;
     };
     try {
+      console.log(123)
       if (!req.user?.id) throw new HttpError(401, "unauthorization");
-
+      console.log(1234)
       const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
       const id = Number(userId);
+      
       const unique_check = await userService.getUserInfoById({
         id,
       });
+      console.log(12345)
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       }
-
+      console.log(123456)
       const updatedUser = await userService.updatedUser({
         id,
         email,
         profileImage,
+        nickname
       });
       return res.status(200).json({
         success: true,
