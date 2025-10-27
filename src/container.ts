@@ -12,7 +12,6 @@ import { TaskRepository } from "./task/task-repository.js";
 import { TaskService } from "./task/task-service.js";
 import { TaskController } from "./task/task-controller.js";
 import { nestedTaskRouter, mainTaskRouter } from "./task/task-router.js";
-import { GoogleCalendarService } from "./lib/google-calendar-service.js";
 
 // 미들웨어 임포트
 import { authMiddleWare } from "./middleware/authMiddle.js";
@@ -30,7 +29,6 @@ class Container {
   public readonly projectService: ProjectService;
   public readonly emailService: EmailService;
   public readonly taskService: TaskService;
-  public readonly googleCalendarService: GoogleCalendarService;
 
   // Controller
   public readonly projectController: ProjectController;
@@ -52,12 +50,7 @@ class Container {
       prisma,
       this.emailService
     );
-    this.googleCalendarService = new GoogleCalendarService();
-    this.taskService = new TaskService(
-      this.taskRepository,
-      prisma,
-      this.googleCalendarService
-    );
+    this.taskService = new TaskService(this.taskRepository, prisma);
 
     // Controller 인스턴스 생성
     this.projectController = new ProjectController(this.projectService);
