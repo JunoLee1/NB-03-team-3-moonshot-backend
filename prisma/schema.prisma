@@ -20,8 +20,8 @@ model User {
   email        String   @unique
   password     String?
   nickname     String?  @unique @default("")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
   profile_image String?
 
   provider   String?
@@ -35,7 +35,7 @@ model User {
 model Member {
   id        Int      @id @default(autoincrement())
   role      String?
-  joinedAt  DateTime
+  joined_at  DateTime
   status    status   @map("status")
   user_id   Int
   users     User     @relation(fields: [user_id], references: [id])
@@ -55,8 +55,8 @@ enum status {
 model Comment {
   id        Int      @id @default(autoincrement())
   content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
   task_id   Int
   user_id   Int
   tasks     Task     @relation(fields: [task_id], references: [id], onDelete: Cascade)
@@ -69,8 +69,8 @@ model Project {
   id          Int      @id @default(autoincrement())
   name        String
   description String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
   tasks       Task[]
   members     Member[]
 }
@@ -88,8 +88,8 @@ model Task {
   end_month   Int
   end_date    Int
   task_status  Status   @map("status")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
   project_id  Int
   member_id   Int
@@ -124,8 +124,8 @@ model Subtask {
   tasks        Task     @relation(fields: [task_id], references: [id], onDelete: Cascade)
   title        String
   is_completed Boolean
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 }
 
 //--------------------------------------------------------------------
