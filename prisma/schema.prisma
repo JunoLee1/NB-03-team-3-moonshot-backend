@@ -22,10 +22,10 @@ model User {
   nickname     String?  @unique @default("")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  profileImage String?
+  profile_image String?
 
   provider   String?
-  providerId String?
+  provider_id String?
   members    Member[]
   comments   Comment[]
 }
@@ -40,8 +40,8 @@ model Member {
   user_id   Int
   users     User     @relation(fields: [user_id], references: [id])
   tasks     Task[]
-  projects  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId Int // 컨벤션 통일 필요
+  projects  Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  project_id Int // 컨벤션 통일 필요
 }
 
 enum status {
@@ -87,7 +87,7 @@ model Task {
   end_year    Int
   end_month   Int
   end_date    Int
-  taskStatus  Status   @map("status")
+  task_status  Status   @map("status")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

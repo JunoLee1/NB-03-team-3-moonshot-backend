@@ -14,9 +14,9 @@ export interface GetMembersQuery {
 
 export default class MemberService {
   // 멤버 목록 조회
-  async getProjectMembers(project_id: number, user_id: number, query: GetMembersQuery) {
+  async getProjectMembers(projectId: number, user_id: number, query: GetMembersQuery) {
     const project = await prisma.project.findUnique({
-      where: { id: project_id },
+      where: { id: projectId },
     });
 
     if (!project) {
@@ -27,7 +27,7 @@ export default class MemberService {
     const isMember = await prisma.member.findFirst({
       where: {
         user_id: user_id,
-        projectId: project_id,
+        projectId: projectId,
       },
     });
 
@@ -41,7 +41,7 @@ export default class MemberService {
 
     const [members, total] = await Promise.all([
       prisma.member.findMany({
-        where: { projectId: project_id },
+        where: { projectId: projectId },
         include: {
           users: {
             select: {
@@ -57,7 +57,7 @@ export default class MemberService {
         orderBy: { joinedAt: "desc" },
       }),
       prisma.member.count({
-        where: { projectId: project_id },
+        where: { projectId: projectId },
       }),
     ]);
 
@@ -66,7 +66,7 @@ export default class MemberService {
         const taskCount = await prisma.task.count({
           where: {
             member_id: member.id,
-            project_id: project_id,
+            project_id: projectId,
           },
         });
 
@@ -89,9 +89,9 @@ export default class MemberService {
   }
 
   // 멤버 초대
-  async inviteMember({ email, project_id, inviter_id }: InviteMemberDTO) {
+  async inviteMember({ email, projectId, inviter_id }: InviteMemberDTO) {
     const project = await prisma.project.findUnique({
-      where: { id: project_id },
+      where: { id: projectId },
     });
 
     if (!project) {
@@ -102,7 +102,7 @@ export default class MemberService {
     const inviterMember = await prisma.member.findFirst({
       where: {
         user_id: inviter_id,
-        projectId: project_id,
+        projectId: projectId,
         role: "owner",
       },
     });
@@ -122,7 +122,7 @@ export default class MemberService {
     const existingMember = await prisma.member.findFirst({
       where: {
         user_id: invitedUser.id,
-        projectId: project_id,
+        projectId: projectId,
       },
     });
 
@@ -133,7 +133,7 @@ export default class MemberService {
     const member = await prisma.member.create({
       data: {
         user_id: invitedUser.id,
-        projectId: project_id,
+        projectId: projectId,
         role: "member",
         status: "pending",
         joinedAt: new Date(),

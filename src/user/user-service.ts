@@ -5,7 +5,7 @@ import {
   findUserProjectsQuery,
   FindUserTaskParam,
   IUserDTO,
-} from "./user.user_dto.js";
+} from "./user-user_dto.js";
 
 export default class UserService {
   async getUserInfoById({ id }: IUser): Promise<IUserDTO | null> {
@@ -16,7 +16,7 @@ export default class UserService {
         id: true,
         email: true,
         nickname: true,
-        profileImage: true,
+        profile_image: true,
       },
     });
     if (!userInfo) return null;
@@ -25,19 +25,19 @@ export default class UserService {
       id: userInfo.id,
       email: userInfo.email,
       nickname: userInfo.nickname ?? "",
-      profileImage: userInfo.profileImage ?? "",
+      profile_image: userInfo.profile_image ?? "",
     };
   }
   async updatedUser({
     id,
     nickname,
     email,
-    profileImage,
+    profile_image,
   }: IUser): Promise<IUserDTO | null> {
    const data : Prisma.UserUpdateInput = {};
     if (nickname) data.nickname = { set: nickname };
     if (email) data.email = { set: email };
-    if (profileImage) data.profileImage = { set: profileImage };
+    if (profile_image) data.profile_image = { set: profile_image };
     const updatedUser = await prisma.user.update({
       where: { id },
       data: data,
@@ -89,7 +89,7 @@ export default class UserService {
           to ? { createdAt: { lte: to } } : {},
           project_id ? { project_id } : {},
           assignee ? { member_id: assignee } : {},
-          status ? { taskStatus: status } : {},
+          status ? { task_status: status } : {},
           keyword ? { title: { contains: keyword, mode: "insensitive" } } : {},
         ],
       },

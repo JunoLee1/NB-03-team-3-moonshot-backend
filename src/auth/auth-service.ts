@@ -2,7 +2,7 @@ import HttpError from "../lib/httpError.js";
 import prisma from "../lib/prisma.js";
 import { generateToken } from "../lib/generateToken.js";
 import bcrypt from "bcrypt";
-import { AuthUserDTO, ProviderType } from "./auth.dto.js";
+import { AuthUserDTO, ProviderType } from "./auth-dto.js";
 
 export class AuthService {
   async findUserEmail(email: string): Promise<AuthUserDTO | null> {
@@ -52,18 +52,18 @@ export class AuthService {
     email,
     password,
     nickname,
-    profileImage,
+    profile_image,
   }: AuthUserDTO): Promise<AuthUserDTO> {
     const salt = await bcrypt.genSalt(10);
     if (!password) throw new HttpError(400, "비밀번호가 없음");
     const hashedPassword = await bcrypt.hash(password, salt);
-    const created_password = hashedPassword;
+    const createdPassword = hashedPassword;
     const newUser = await prisma.user.create({
       data: {
         email: email ?? "",
         nickname: nickname ?? "",
-        password: created_password ?? "",
-        profileImage: profileImage ?? "",
+        password: createdPassword ?? "",
+        profile_image: profile_image ?? "",
       },
       include: {
         comments: true,
