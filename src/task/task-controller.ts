@@ -24,7 +24,7 @@ export class TaskController {
       const taskBodyDto: TaskBodyDto = req.body;
 
       // Body 유효성 검사, 추후 zod 같은 미들웨어가 좋을 거 같음
-      if (!taskBodyDto.title || !taskBodyDto.status) {
+      if (!taskBodyDto.title || !taskBodyDto.taskStatus) {
         throw new Error("할 일 제목과 상태는 필수입니다.");
       }
 
