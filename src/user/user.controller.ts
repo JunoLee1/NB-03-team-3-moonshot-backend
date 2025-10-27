@@ -43,20 +43,16 @@ export default class UserController {
       nickname:string;
     };
     try {
-      console.log(123)
       if (!req.user?.id) throw new HttpError(401, "unauthorization");
-      console.log(1234)
       const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
       const id = Number(userId);
       
       const unique_check = await userService.getUserInfoById({
         id,
       });
-      console.log(12345)
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       }
-      console.log(123456)
       const updatedUser = await userService.updatedUser({
         id,
         email,
@@ -138,6 +134,7 @@ export default class UserController {
       assignee: assignee ? Number(assignee) : undefined,
       keyword: keyword ? (keyword as string) : undefined,
     };
+    
     if (!req.user) throw new HttpError(401, "unauthorization");
     // 인증 미들웨어에서 req.user id넣어주기
 
@@ -149,14 +146,15 @@ export default class UserController {
         throw new HttpError(404, "Bad request");
       }
       const projectId = Number(raw_ProjectId);
-      const validatedTask = await prisma.task.findUnique({
-        where: { id: projectId },
+      const validatedTask = await prisma.task.findFirst({
+        where: { project_id: projectId },
       });
       if (!validatedTask) {
-        throw new HttpError(404, "존재하지 않는 project입니다");
+        throw new HttpError(404, "존재하지 않는 task 입니다");
       }
       const string_project = req.query.projectId;
 
+       console.log(1234)
       if (typeof string_project !== "string") {
         throw new HttpError(404, "Bad request");
       }
