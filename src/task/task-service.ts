@@ -17,6 +17,7 @@ import {
   Tag,
   Attachment,
 } from "@prisma/client"; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
+import { GoogleCalendarService } from "../lib/google-calendar-service.js";
 
 // 추후 별도 에러 파일로 분리하는 것이 좋을 거 같음
 class ForbiddenException extends Error {
@@ -43,7 +44,8 @@ type RawTaskData = Task & {
 export class TaskService {
   constructor(
     private taskRepository: TaskRepository,
-    private prisma: PrismaClient
+    private prisma: PrismaClient,
+    private googleCalendarService: GoogleCalendarService
   ) {}
 
   /**
@@ -120,7 +122,32 @@ export class TaskService {
         throw new Error("할 일 생성 후 데이터 조회하는데 실패했습니다.");
       }
 
-      return this._transformTaskToDto(rawTaskData);
+      const taskDto = this._transformTaskToDto(rawTaskData);
+
+      const eventId = await this.googleCalendarService.createEvent(
+        userId,
+        taskDto
+      );
+      if (eventId) {
+        try {
+          await this.prisma.task.update({
+            where: { id: taskDto.id },
+            data: { googleEventId: eventId },
+          });
+          console.log(
+            `[DB] Task ${taskDto.id}에 googleEventId ${eventId} 저장 완료`
+          );
+        } catch (dbError) {
+          console.error(
+            `[DB 오류] Task ${taskDto.id}의 googleEventId 저장 실패:`,
+            dbError
+          );
+          // 생성된 캘린더 이벤트 삭제 시도
+          await this.googleCalendarService.deleteEvent(userId, eventId);
+        }
+      }
+
+      return taskDto;
     } catch (error) {
       console.error(error);
       throw error;
@@ -294,7 +321,39 @@ export class TaskService {
         throw new Error("할 일 수정 과정에서 예기치 못한 오류가 발생했습니다.");
       }
 
-      return this._transformTaskToDto(updateRawTaskData);
+      const updatedTaskDto = this._transformTaskToDto(updateRawTaskData);
+
+      // 캘린더 연동
+      const task = await this.prisma.task.findUnique({
+        where: { id: updatedTaskDto.id },
+        select: { googleEventId: true },
+      });
+
+      if (task?.googleEventId) {
+        // 캘린더 이벤트 ID가 있으면 업데이트
+        await this.googleCalendarService.updateEvent(
+          userId,
+          task.googleEventId,
+          updatedTaskDto
+        );
+      } else {
+        // 없으면 새로 생성
+        console.warn(
+          `[Calendar 경고] Task ${updatedTaskDto.id}에 googleEventId가 없습니다. 새 이벤트 생성을 시도합니다.`
+        );
+        const newEventId = await this.googleCalendarService.createEvent(
+          userId,
+          updatedTaskDto
+        );
+        if (newEventId) {
+          await this.prisma.task.update({
+            where: { id: updatedTaskDto.id },
+            data: { googleEventId: newEventId },
+          });
+        }
+      }
+
+      return updatedTaskDto;
     } catch (error) {
       console.error(error);
       throw error;
@@ -303,6 +362,13 @@ export class TaskService {
 
   deleteTask = async (userId: number, taskId: number): Promise<void> => {
     try {
+      // 삭제 전 event ID 가져오기
+      const task = await this.prisma.task.findUnique({
+        where: { id: taskId },
+        select: { googleEventId: true },
+      });
+      const googleEventId = task?.googleEventId;
+
       // 검증을 위해 할 일과 프로젝트 멤버 목록 조회
       const taskData = await this.taskRepository.findTaskById(taskId);
 
@@ -326,6 +392,15 @@ export class TaskService {
       }
 
       await this.taskRepository.deleteTaskById(taskId);
+
+      // 구글 캘린더 연동
+      if (googleEventId) {
+        await this.googleCalendarService.deleteEvent(userId, googleEventId);
+      } else {
+        console.log(
+          `[Calendar] 삭제된 Task ${taskId}에 해당하는 googleEventId를 찾을 수 없습니다.`
+        );
+      }
     } catch (error) {
       console.error(error);
       throw error;
