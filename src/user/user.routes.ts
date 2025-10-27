@@ -39,7 +39,6 @@ router.patch(
   passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
         userController.userUpdateController(req, res, next);
-        //console.log("결과:",res)
   }
 );
 
@@ -56,8 +55,7 @@ router.get(
   "/me/tasks",
   validateQuery(findUserTasksSchema),
   passport.authenticate("access-token", { session: false }),
-  async (req: Request, res: Response, next: NextFunction) => {
-    
+  async (req: Request, res: Response, next: NextFunction) => { 
     userController.findUserTasksController(req, res, next);
   }
 );

@@ -40,8 +40,8 @@ model Member {
   user_id   Int
   users     User     @relation(fields: [user_id], references: [id])
   tasks     Task[]
-  projects  Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId Int // 컨벤션 통일 필요
+  projects  Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  project_id Int // 컨벤션 통일 필요
 }
 
 enum status {
