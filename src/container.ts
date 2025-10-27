@@ -5,6 +5,7 @@ import { ProjectRepository } from "./project/project-repository.js";
 import { ProjectService } from "./project/project-service.js";
 import { ProjectController } from "./project/project-controller.js";
 import projectRouter from "./project/project-router.js";
+import emailService, { EmailService } from "./lib/email-service.js";
 
 // 할 일 관련 모듈 임포트
 import { TaskRepository } from "./task/task-repository.js";
@@ -26,6 +27,7 @@ class Container {
 
   // Service
   public readonly projectService: ProjectService;
+  public readonly emailService: EmailService;
   public readonly taskService: TaskService;
 
   // Controller
@@ -42,7 +44,12 @@ class Container {
     this.taskRepository = new TaskRepository(prisma);
 
     // Service 인스턴스 생성
-    this.projectService = new ProjectService(this.projectRepository, prisma);
+    this.emailService = emailService;
+    this.projectService = new ProjectService(
+      this.projectRepository,
+      prisma,
+      this.emailService
+    );
     this.taskService = new TaskService(this.taskRepository, prisma);
 
     // Controller 인스턴스 생성
