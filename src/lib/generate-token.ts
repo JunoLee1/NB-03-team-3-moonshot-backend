@@ -1,4 +1,4 @@
-import { JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET} from"../lib/constants.js"
+import { JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET} from"./constants.js"
 import jwt  from "jsonwebtoken"
 
 export function generateToken({userId, email} : {userId: number, email:string}){ 

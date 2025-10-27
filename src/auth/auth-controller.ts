@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import HttpError from "../lib/httpError.js";
 import { AuthService } from "./auth-service.js";
-import { generateToken } from "../lib/generateToken.js";
+import { generateToken } from "../lib/generate-token.js";
 import { setTokenCookies, clearTokenCookie } from "../lib/token.js";
 
 const authService = new AuthService();

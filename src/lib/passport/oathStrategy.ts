@@ -2,7 +2,7 @@ import { Strategy as GoogleStrategy, VerifyCallback} from 'passport-google-oauth
 import {GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '../constants.js';
 import prisma from "../prisma.js"
 import { Profile } from 'passport-google-oauth20';
-import { generateToken } from '../generateToken.js';
+import { generateToken } from '../generate-token.js';
 
 interface OAuthStrategyVerify {
     accessToken?: string,
