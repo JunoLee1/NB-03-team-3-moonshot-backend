@@ -41,7 +41,7 @@ export interface AttachmentDto {
 // 할 일 생성, 조회, 수정 시 사용될 최종 response DTO
 export interface TaskResponseDto {
   id: number;
-  projectId: number;
+  project_id: number;
   title: string;
   startYear: number;
   startMonth: number;
