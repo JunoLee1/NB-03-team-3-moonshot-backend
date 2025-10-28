@@ -110,7 +110,7 @@ export class TaskRepository {
 
     // 정렬을 위한 ORDER BY 절 동적 생성
     const orderByMap = {
-      created_at: "createdAt",
+      created_at: "created_at",
       name: "title",
       end_date: "end_date",
     };
