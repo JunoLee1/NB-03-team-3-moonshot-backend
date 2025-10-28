@@ -36,17 +36,17 @@ export default class UserController {
   }
 
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
-    const { email, password, profile_image, nickname} = req.body as {
+    const { email, password, profile_image, nickname } = req.body as {
       email: string;
       password: string;
       profile_image: string;
-      nickname:string;
+      nickname: string;
     };
     try {
       if (!req.user?.id) throw new HttpError(401, "unauthorization");
       const userId = req.user.id; // 인증 미들웨어에서 req.query id넣어주기
       const id = Number(userId);
-      
+
       const unique_check = await userService.getUserInfoById({
         id,
       });
@@ -57,7 +57,7 @@ export default class UserController {
         id,
         email,
         profile_image,
-        nickname
+        nickname,
       });
       return res.status(200).json({
         success: true,
@@ -88,16 +88,16 @@ export default class UserController {
         return (vOrder as readonly string[]).includes(value);
       }
 
-      function isOrderBy(value: any): value is "createdAt" | "name" {
+      function isOrderBy(value: any): value is "created_at" | "name" {
         return (vOrderBy as readonly string[]).includes(value);
       }
 
       const orderQuery = req.query.order;
       const orderByQuery = req.query.order_by;
       const order: "asc" | "desc" = isOrder(orderQuery) ? orderQuery : "asc";
-      const order_by: `createdAt` | `name` = isOrderBy(orderByQuery)
+      const order_by: `created_at` | `name` = isOrderBy(orderByQuery)
         ? orderByQuery
-        : `createdAt`;
+        : `created_at`;
 
       const userId = req.user.id;
       const projects = await userService.findUserProjects({
@@ -108,8 +108,8 @@ export default class UserController {
         userId,
       });
       return res.json({
-        success: true,
         data: projects,
+        total: projects.length,
       });
     } catch (error) {
       next(error);
@@ -134,7 +134,7 @@ export default class UserController {
       assignee: assignee ? Number(assignee) : undefined,
       keyword: keyword ? (keyword as string) : undefined,
     };
-    
+
     if (!req.user) throw new HttpError(401, "unauthorization");
     // 인증 미들웨어에서 req.user id넣어주기
 
@@ -154,7 +154,7 @@ export default class UserController {
       }
       const stringProject = req.query.projectId;
 
-       console.log(1234)
+      console.log(1234);
       if (typeof stringProject !== "string") {
         throw new HttpError(404, "Bad request");
       }

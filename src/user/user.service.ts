@@ -34,7 +34,7 @@ export default class UserService {
     email,
     profile_image,
   }: IUser): Promise<IUserDTO | null> {
-   const data : Prisma.UserUpdateInput = {};
+    const data: Prisma.UserUpdateInput = {};
     if (nickname) data.nickname = { set: nickname };
     if (email) data.email = { set: email };
     if (profile_image) data.profile_image = { set: profile_image };
