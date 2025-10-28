@@ -99,5 +99,6 @@ export default class UserService {
       },
       include: { projects: true },
     });
+    return tasks;
   }
 }
