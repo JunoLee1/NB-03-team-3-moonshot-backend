@@ -72,7 +72,7 @@ export class TaskService {
       endYear: rawTaskData.end_year,
       endMonth: rawTaskData.end_month,
       endDay: rawTaskData.end_date,
-      status: rawTaskData.task_status as TaskStatusType,
+      task_status: rawTaskData.task_status as TaskStatusType,
       assignee: assignee,
       tags: rawTaskData.tags,
       attachments: rawTaskData.attachments,
@@ -165,7 +165,7 @@ export class TaskService {
 
       // 값이 존재하면 객체에 속성 추가
       if (query.status) {
-        options.status = query.status as TaskStatusType;
+        options.task_status = query.status as TaskStatusType;
       }
       if (query.assignee) {
         options.assignee = parseInt(String(query.assignee), 10);
