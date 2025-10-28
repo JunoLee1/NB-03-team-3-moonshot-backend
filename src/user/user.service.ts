@@ -53,7 +53,11 @@ export default class UserService {
   }: findUserProjectsQuery & { userId: number }): Promise<any> {
     const projects = await prisma.project.findMany({
       where: {
-        id: userId,
+        members: {
+          some: {
+            user_id: userId,
+          },
+        },
       },
       skip,
       take,

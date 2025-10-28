@@ -74,7 +74,7 @@ export default class UserController {
     next: NextFunction
   ) {
     try {
-      const { page, limit } = req.params;
+      const { page, limit } = req.query;
       const pageNum = Number(page) || 1;
       const limitNum = Number(limit) || 10;
       const take = limitNum;
@@ -154,7 +154,6 @@ export default class UserController {
       }
       const stringProject = req.query.projectId;
 
-      console.log(1234);
       if (typeof stringProject !== "string") {
         throw new HttpError(404, "Bad request");
       }
