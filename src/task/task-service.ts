@@ -143,7 +143,7 @@ export class TaskService {
       const member = await this.prisma.member.findFirst({
         where: {
           user_id: userId,
-          projectId: projectId,
+          project_id: projectId,
         },
       });
 
