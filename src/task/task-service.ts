@@ -72,7 +72,7 @@ export class TaskService {
       endYear: rawTaskData.end_year,
       endMonth: rawTaskData.end_month,
       endDay: rawTaskData.end_date,
-      status: rawTaskData.task_status as TaskStatusType,
+      task_status: rawTaskData.task_status as TaskStatusType,
       assignee: assignee,
       tags: rawTaskData.tags,
       attachments: rawTaskData.attachments,
@@ -165,7 +165,7 @@ export class TaskService {
 
       // 값이 존재하면 객체에 속성 추가
       if (query.status) {
-        options.status = query.status as TaskStatusType;
+        options.task_status = query.status as TaskStatusType;
       }
       if (query.assignee) {
         options.assignee = parseInt(String(query.assignee), 10);
@@ -329,6 +329,46 @@ export class TaskService {
     } catch (error) {
       console.error(error);
       throw error;
+    }
+  };
+
+  /**
+   * 시작 날짜와 종료 날짜를 기준으로 할 일 상태를 결정
+   * @param startYear 시작 연도
+   * @param startMonth 시작 월 (1 ~ 12)
+   * @param startDay 시작 일
+   * @param endYear 종료 연도
+   * @param endMonth 종료 월 (1 ~ 12)
+   * @param endDay 종료 일
+   * @returns 'todo', 'inprogress', 'done' 중 하나의 상태
+   */
+  determineTaskStatus = (
+    startYear: number,
+    startMonth: number,
+    startDay: number,
+    endYear: number,
+    endMonth: number,
+    endDay: number
+  ): TaskStatusType => {
+    const now = new Date();
+    // 현재 날짜의 연, 월, 일 (시간은 00:00:00으로 설정하여 날짜만 비교)
+    const currentDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+
+    // 시작 날짜 (월은 0부터 시작하므로 -1)
+    const startDate = new Date(startYear, startMonth - 1, startDay);
+    // 종료 날짜 (월은 0부터 시작하므로 -1)
+    const endDate = new Date(endYear, endMonth - 1, endDay);
+
+    if (currentDate < startDate) {
+      return "todo"; // 현재 날짜가 시작 날짜보다 이전이면 'todo'
+    } else if (currentDate >= startDate && currentDate <= endDate) {
+      return "inprogress"; // 현재 날짜가 시작 날짜와 종료 날짜 사이면 'inprogress'
+    } else {
+      return "done"; // 현재 날짜가 종료 날짜보다 이후면 'done'
     }
   };
 }

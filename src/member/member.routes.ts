@@ -1,6 +1,7 @@
 import { Router } from "express";
 import MemberController from "./member.controller.js";
 import { validateInviteMember } from "./member.validation.js";
+import { authMiddleWare } from "../middleware/authMiddle.js";
 
 const router = Router();
 const memberController = new MemberController();
@@ -8,6 +9,7 @@ const memberController = new MemberController();
 // GET /projects/:projectId/users - 프로젝트 멤버 목록 조회
 router.get(
   "/projects/:projectId/users",
+  authMiddleWare,
   memberController.getProjectMembers.bind(memberController)
 );
 

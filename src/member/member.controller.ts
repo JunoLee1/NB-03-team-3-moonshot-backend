@@ -9,14 +9,21 @@ export default class MemberController {
     try {
       const project_id = parseInt(req.params.projectId as string);
       // TODO: 인증 미들웨어에서 user_id 가져오기
-      const user_id = parseInt(req.query.user_id as string);
+
+      if (!req.user || !req.user.id) {
+        throw new Error("사용자 인증 정보가 없습니다.");
+      }
+      const user_id = req.user.id;
 
       const query: { page?: number; limit?: number } = {};
       if (req.query.page) query.page = parseInt(req.query.page as string);
       if (req.query.limit) query.limit = parseInt(req.query.limit as string);
 
-      const result = await memberService.getProjectMembers(project_id, user_id, query);
-
+      const result = await memberService.getProjectMembers(
+        project_id,
+        user_id,
+        query
+      );
       res.status(200).json(result);
     } catch (error) {
       next(error);
@@ -85,7 +92,10 @@ export default class MemberController {
       // TODO: 인증 미들웨어에서 user_id 가져오기
       const canceller_id = req.body.user_id;
 
-      const result = await memberService.cancelInvitation(member_id, canceller_id);
+      const result = await memberService.cancelInvitation(
+        member_id,
+        canceller_id
+      );
 
       res.status(200).json(result);
     } catch (error) {

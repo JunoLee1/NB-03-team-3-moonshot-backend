@@ -14,7 +14,11 @@ export interface GetMembersQuery {
 
 export default class MemberService {
   // 멤버 목록 조회
-  async getProjectMembers(project_id: number, user_id: number, query: GetMembersQuery) {
+  async getProjectMembers(
+    project_id: number,
+    user_id: number,
+    query: GetMembersQuery
+  ) {
     const project = await prisma.project.findUnique({
       where: { id: project_id },
     });
@@ -62,7 +66,7 @@ export default class MemberService {
     ]);
 
     const membersWithTaskCount = await Promise.all(
-      members.map(async (member: typeof members[0]) => {
+      members.map(async (member: (typeof members)[0]) => {
         const taskCount = await prisma.task.count({
           where: {
             member_id: member.id,
@@ -82,9 +86,6 @@ export default class MemberService {
     return {
       data: membersWithTaskCount,
       total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
     };
   }
 
@@ -174,7 +175,7 @@ export default class MemberService {
     }
 
     if (member.status === "accepted") {
-      throw new HttpError(400,"Invitation has already been accepted")
+      throw new HttpError(400, "Invitation has already been accepted");
     }
 
     const updatedMember = await prisma.member.update({
@@ -198,13 +199,17 @@ export default class MemberService {
   }
 
   // 멤버 제외
-  async removeMember(project_id: number, member_user_id: number, remover_id: number) {
+  async removeMember(
+    project_id: number,
+    member_user_id: number,
+    remover_id: number
+  ) {
     const project = await prisma.project.findUnique({
       where: { id: project_id },
     });
 
     if (!project) {
-      throw new HttpError(404, "Project not found");//throw new Error("Project not found");
+      throw new HttpError(404, "Project not found"); //throw new Error("Project not found");
     }
 
     // 프로젝트 소유자만 제외 가능
@@ -216,7 +221,6 @@ export default class MemberService {
       },
     });
 
-    
     if (!removerMember) {
       throw new Error("Only project owner can remove members");
     }
@@ -229,12 +233,12 @@ export default class MemberService {
     });
 
     if (!memberToRemove) {
-       throw new HttpError(404,"Member not found in this project")//throw new Error("Member not found in this project");
+      throw new HttpError(404, "Member not found in this project"); //throw new Error("Member not found in this project");
     }
 
     // 소유자는 제외 불가
     if (memberToRemove.role === "owner") {
-      throw new HttpError(400,"Cannot remove project owner")//throw new Error("Cannot remove project owner");
+      throw new HttpError(400, "Cannot remove project owner"); //throw new Error("Cannot remove project owner");
     }
 
     await prisma.member.delete({
@@ -252,7 +256,7 @@ export default class MemberService {
     });
 
     if (!member) {
-      throw new HttpError(404,"Invitation not found")
+      throw new HttpError(404, "Invitation not found");
       //throw new Error("Invitation not found");
     }
 
@@ -271,7 +275,7 @@ export default class MemberService {
 
     // pending 상태만 취소 가능
     if (member.status !== "pending") {
-      throw new HttpError(400, "Can only cancel pending invitations")
+      throw new HttpError(400, "Can only cancel pending invitations");
       //throw new Error("Can only cancel pending invitations");
     }
 
