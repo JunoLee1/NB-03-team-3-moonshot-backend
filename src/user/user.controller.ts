@@ -36,10 +36,10 @@ export default class UserController {
   }
 
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
-    const { email, password, profile_image, nickname } = req.body as {
+    const { email, password, profileImage, nickname } = req.body as {
       email: string;
       password: string;
-      profile_image: string;
+      profileImage: string;
       nickname: string;
     };
     try {
@@ -56,7 +56,7 @@ export default class UserController {
       const updatedUser = await userService.updatedUser({
         id,
         email,
-        profile_image,
+        profileImage,
         nickname,
       });
       return res.status(200).json({

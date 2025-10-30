@@ -22,7 +22,7 @@ model User {
   nickname     String?  @unique @default("")
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
-  profile_image String?
+  profileImage String?
 
   provider   String?
   provider_id String?

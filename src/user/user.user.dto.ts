@@ -2,7 +2,7 @@ export interface IUserDTO {
   id: number;
   nickname?: string | null;
   email: string;
-  profile_image: string | null;
+  profileImage: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -27,7 +27,7 @@ export interface IUser {
   id: number;
   nickname?: string | null;
   email?: string | null;
-  profile_image?: string | null;
+  profileImage?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }

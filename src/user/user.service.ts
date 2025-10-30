@@ -7,6 +7,7 @@ import {
   IUserDTO,
 } from "./user.user.dto.js";
 
+
 export default class UserService {
   async getUserInfoById({ id }: IUser): Promise<IUserDTO | null> {
     const user_id = id;
@@ -16,7 +17,7 @@ export default class UserService {
         id: true,
         email: true,
         nickname: true,
-        profile_image: true,
+        profileImage: true,
       },
     });
     if (!userInfo) return null;
@@ -25,19 +26,19 @@ export default class UserService {
       id: userInfo.id,
       email: userInfo.email,
       nickname: userInfo.nickname ?? "",
-      profile_image: userInfo.profile_image ?? "",
+      profileImage: userInfo.profileImage ?? "",
     };
   }
   async updatedUser({
     id,
     nickname,
     email,
-    profile_image,
+    profileImage,
   }: IUser): Promise<IUserDTO | null> {
     const data: Prisma.UserUpdateInput = {};
     if (nickname) data.nickname = { set: nickname };
     if (email) data.email = { set: email };
-    if (profile_image) data.profile_image = { set: profile_image };
+    if (profileImage) data.profileImage = { set: profileImage };
     const updatedUser = await prisma.user.update({
       where: { id },
       data: data,
