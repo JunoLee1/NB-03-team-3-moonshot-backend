@@ -1,6 +1,6 @@
 import { Attachment, Task } from "@prisma/client";
 // 할 일의 Status 타입 정의
-export type TaskStatusType = "todo" | "inprogress" | "done";
+export type TaskStatusType = "todo" | "in_progress" | "done";
 
 // 할 일 생성 및 수정 시 사용될 request body DTO
 export interface TaskBodyDto {

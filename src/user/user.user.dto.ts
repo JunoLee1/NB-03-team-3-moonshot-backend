@@ -11,7 +11,7 @@ export interface FindUserTaskParam {
   from: Date | undefined;
   to: Date | undefined;
   project_id: number | undefined;
-  status: `todo` | `inprogress` | `done` | undefined;
+  status: `todo` | `in_progress` | `done` | undefined;
   assignee: number | undefined;
   keyword: string | undefined;
 }

@@ -103,7 +103,7 @@ model Task {
 
 enum Status {
   todo
-  inprogress
+  in_progress
   done
 }
 

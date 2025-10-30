@@ -366,7 +366,7 @@ export class TaskService {
     if (currentDate < startDate) {
       return "todo"; // 현재 날짜가 시작 날짜보다 이전이면 'todo'
     } else if (currentDate >= startDate && currentDate <= endDate) {
-      return "inprogress"; // 현재 날짜가 시작 날짜와 종료 날짜 사이면 'inprogress'
+      return "in_progress"; // 현재 날짜가 시작 날짜와 종료 날짜 사이면 'inprogress'
     } else {
       return "done"; // 현재 날짜가 종료 날짜보다 이후면 'done'
     }

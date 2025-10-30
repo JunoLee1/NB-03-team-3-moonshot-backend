@@ -130,7 +130,7 @@ export default class UserController {
       from: from ? new Date(from as string) : undefined,
       to: to ? new Date(to as string) : undefined,
       project_id: project_id ? Number(project_id) : undefined,
-      status: status as "todo" | "inprogress" | "done" | undefined,
+      status: status as "todo" | "in_progress" | "done" | undefined,
       assignee: assignee ? Number(assignee) : undefined,
       keyword: keyword ? (keyword as string) : undefined,
     };
