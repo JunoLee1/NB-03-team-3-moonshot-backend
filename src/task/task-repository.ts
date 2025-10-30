@@ -25,7 +25,7 @@ export class TaskRepository {
           content: "", // request body로 받지 않음. 추후 확인 필요
           project_id: projectId,
           member_id: memberId, // 담당자는 생성한 멤버로 자동 지정
-          task_status: taskBodyDto.status,
+          task_status: taskBodyDto.task_status,
           start_year: taskBodyDto.startYear,
           start_month: taskBodyDto.startMonth,
           start_day: taskBodyDto.startDay,
@@ -83,7 +83,7 @@ export class TaskRepository {
     const {
       page = 1,
       limit = 10,
-      status,
+      task_status,
       assignee,
       keyword,
       order = "desc",
@@ -98,8 +98,8 @@ export class TaskRepository {
     const where: Prisma.TaskWhereInput = {
       project_id: projectId, // 해당 프로젝트 ID로 필터링
     };
-    if (status) {
-      where.task_status = status; // 상태 필터
+    if (task_status) {
+      where.task_status = task_status; // 상태 필터
     }
     if (assignee) {
       where.member_id = assignee; // 담당자 필터
@@ -110,7 +110,7 @@ export class TaskRepository {
 
     // 정렬을 위한 ORDER BY 절 동적 생성
     const orderByMap = {
-      created_at: "createdAt",
+      created_at: "created_at",
       name: "title",
       end_date: "end_date",
     };
@@ -243,8 +243,8 @@ export class TaskRepository {
       if (updateTaskBodyDto.endDay !== undefined) {
         dataToUpdate.end_date = updateTaskBodyDto.endDay;
       }
-      if (updateTaskBodyDto.status !== undefined) {
-        dataToUpdate.task_status = updateTaskBodyDto.status;
+      if (updateTaskBodyDto.task_status !== undefined) {
+        dataToUpdate.task_status = updateTaskBodyDto.task_status;
       }
       if (updateTaskBodyDto.assigneeId !== undefined) {
         dataToUpdate.members = {

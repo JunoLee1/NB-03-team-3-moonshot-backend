@@ -23,8 +23,19 @@ export class TaskController {
       // Request Body 데이터 가져오기
       const taskBodyDto: TaskBodyDto = req.body;
 
+      if (!taskBodyDto.task_status) {
+        taskBodyDto.task_status = this.taskService.determineTaskStatus(
+          taskBodyDto.startYear,
+          taskBodyDto.startMonth,
+          taskBodyDto.startDay,
+          taskBodyDto.endYear,
+          taskBodyDto.endMonth,
+          taskBodyDto.endDay
+        );
+      }
+
       // Body 유효성 검사, 추후 zod 같은 미들웨어가 좋을 거 같음
-      if (!taskBodyDto.title || !taskBodyDto.status) {
+      if (!taskBodyDto.title || !taskBodyDto.task_status) {
         throw new Error("할 일 제목과 상태는 필수입니다.");
       }
 
