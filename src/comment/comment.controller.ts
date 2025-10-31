@@ -10,7 +10,6 @@ export default class CommentController {
     try {
       console.log(123)
       const task_id = parseInt(req.params.taskId as string);
-      console.log("task_id:",task_id)
 
       const user_id = Number(req.user?.id)
       console.log("user_id:",user_id)
