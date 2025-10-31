@@ -3,7 +3,6 @@ import prisma from "../lib/prisma.js";
 import {
   IUser,
   findUserProjectsQuery,
-  FindUserTaskParam,
   IUserDTO,
 } from "./user.user.dto.js";
 
@@ -79,88 +78,46 @@ export default class UserService {
     });
     return result;
   }
-  async findUserTasks({
-    from,
-    to,
-    project_id,
-    assignee,
-    keyword,
-    status,
-    userId,
-  }: FindUserTaskParam & { userId: number }): Promise<any> {
-    const membersInclude = {
-      members:{
-        include:{
-          users:{ select :{ id: true, nickname: true, profileImage: true } 
-        }
-      }
+  async findUserTasks(
+    {user_id, ...filters}:Prisma.TaskWhereInput&{user_id :number}
+  ){
+    const selectUser = {
+       users:{ select:{ id: true, email:true, nickname:true, profileImage:true } }
     }
-  }
-    const extraInclude = { 
-      tags: true,
-      attachments: true,
+    const extraInclude ={
+      tags:true,
+      attachments:true,
     }
-    const filters: Prisma.TaskWhereInput = { 
-      ...(project_id? { project_id } : {}),
-      ...(status ? {task_status : status}:{}),
-      ...(keyword ? { title: { contains: keyword, mode: "insensitive" } } : {}),
-      ...(from || to
-        ? {
-            created_at: {
-              ...(from ? { gte: from } : {}),
-              ...(to ? { lte: to } : {}),
-            },
-          }: {}),
-        
-        ...(assignee ? { member_id: assignee } : {})
-      
-    }
-       
     const tasks = await prisma.task.findMany({
-      where: filters,
-      include: {
-        ...membersInclude,
-        ...extraInclude,
-      },
-      orderBy: { created_at: "desc" }
-    })
-    const projectIds = tasks.map((t) => t.project_id);
-    const members = await prisma.member.findMany({
-      where: {
-        project_id: { in: projectIds  },
-        user_id: userId,
-      },
-      include: {
-        users: {
-          select: { id: true, email: true, nickname: true, profileImage: true },
+      where:filters,
+      include:{
+        members: {
+          include:{
+            ...selectUser,
+          },
         },
+         ...extraInclude,
       },
-    });
+     
+    })
+    const projectIds = tasks.map( t => t.project_id )// 모든 해야할일의 project_id 객체화 시키기 
+    const members = await prisma.member.findMany({// 해당 유저가 참가한 모든 해야할일의
+      where:{
+        id: user_id,
+        project_id:{in: projectIds} // 
+      },
+      include:{
+        users:
+        { select:{ id: true, email:true, nickname:true, profileImage:true } } 
+      }
+    })
 
-    const result = tasks.map((t) => {
-      const member = members.find((m) => m.project_id === t.project_id);
-      return {
-        id: t.id,
-        title: t.title,
-        taskStatus: t.task_status,
-        projectId: t.project_id,
-        createdAt: t.created_at,
-        updatedAt: t.updated_at,
-        member: member
-          ? {
-              id: member.id,
-              status: member.status,
-              user: {
-                id: member.users.id,
-                email: member.users.email,
-                nickname: member.users.nickname,
-                profileImage:
-                  member.users.profileImage || "/default-profile.png",
-              },
-            }
-          : null,
-      };
-    });
-    return result;
+    const membersMap = new Map<number, typeof members[0]>();  
+    members.map((m) => membersMap.set(m.project_id,m));
+    const result = tasks.map((t) => ({
+      ...t,
+      member:membersMap.get(t.project_id) || null
+    }))
+    return result
   }
 }

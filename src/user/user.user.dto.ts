@@ -6,8 +6,8 @@ export interface IUserDTO {
   createdAt?: Date;
   updatedAt?: Date;
 }
-
-export interface FindUserTaskParam {
+/*
+export interface FindUserTaskQuery{
   from: Date | undefined;
   to: Date | undefined;
   project_id: number | undefined;
@@ -15,7 +15,7 @@ export interface FindUserTaskParam {
   assignee: number | undefined;
   keyword: string | undefined;
 }
-
+*/
 export interface findUserProjectsQuery {
   take: number;
   skip: number;
