@@ -25,7 +25,7 @@ export const updateUserSchema = z.object({
 export const findUserTasksSchema = z.object({
   from: z.string().datetime().optional(),
   to: z.string().datetime().optional(),
-  project_id: z.coerce.number().positive("양의 정수여야 합니다").refine((val) => !isNaN(val), "유효한 숫자를 입력하세요"),
+  project_id: z.coerce.number().positive("양의 정수여야 합니다").optional(),
   status: z.enum(["todo", "inprogress", "done"]).optional(),
   keyword: z.string().optional(),
 });

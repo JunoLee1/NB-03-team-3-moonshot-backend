@@ -121,10 +121,11 @@ export default class UserController {
     res: Response,
     next: NextFunction
   ) {
-    const { from, to, project_id, assignee, keyword, status } = req.query;
-    const validStatus = ["todo", "inprogress", "done"] as const;
+    const { from, to, projectId, assignee, keyword, status } = req.query;
+    const project_id = projectId ? Number(projectId) : undefined; // Prisma에서 쓰는 snake_case
+    const validStatus = ["todo", "in_progress", "done"] as const;
     const statusValue = validStatus.includes(status as any)
-      ? (status as "todo" | "inprogress" | "done")
+      ? (status as "todo" | "in_progress" | "done")
       : undefined;
     const filters: FindUserTaskParam = {
       from: from ? new Date(from as string) : undefined,
@@ -134,30 +135,25 @@ export default class UserController {
       assignee: assignee ? Number(assignee) : undefined,
       keyword: keyword ? (keyword as string) : undefined,
     };
-
     if (!req.user) throw new HttpError(401, "unauthorization");
     // 인증 미들웨어에서 req.user id넣어주기
 
     const userId = req.user.id;
     if (!userId) throw new HttpError(401, "unauthorization");
+    
     try {
       const raw_ProjectId = req.query.project_id;
-      if (typeof raw_ProjectId !== "string" && isNaN(Number(raw_ProjectId))) {
+      if (!raw_ProjectId ||  isNaN(Number(raw_ProjectId))) {
         throw new HttpError(404, "Bad request");
       }
       const projectId = Number(raw_ProjectId);
-      const validatedTask = await prisma.task.findFirst({
-        where: { project_id: projectId },
+      const validatedProject = await prisma.project.findUnique({
+        where: { id: projectId },
       });
-      if (!validatedTask) {
+      if (!validatedProject) {
         throw new HttpError(404, "존재하지 않는 task 입니다");
       }
-      const stringProject = req.query.projectId;
-
-      if (typeof stringProject !== "string") {
-        throw new HttpError(404, "Bad request");
-      }
-      const result = await userService.findUserTasks({ ...filters, userId });
+      const result = await userService.findUserTasks({ ...filters, userId});
       return res.json({
         success: true,
         data: result,
