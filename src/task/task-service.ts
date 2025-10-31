@@ -58,7 +58,7 @@ export class TaskService {
           id: assigneeUser.id,
           name: assigneeUser.nickname, // DTO는 name: string | null 임
           email: assigneeUser.email,
-          profile_image: assigneeUser.profileImage, // DTO는 profileImage: string | null 임
+          profileImage: assigneeUser.profileImage, // DTO는 profileImage: string | null 임
         }
       : null;
 

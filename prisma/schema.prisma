@@ -35,7 +35,7 @@ model User {
 model Member {
   id        Int      @id @default(autoincrement())
   role      String?
-  joined_at  DateTime
+  joinedAt  DateTime
   status    status   @map("status")
   user_id   Int
   users     User     @relation(fields: [user_id], references: [id])

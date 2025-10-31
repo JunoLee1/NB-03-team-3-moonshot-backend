@@ -58,7 +58,7 @@ export default class MemberService {
         },
         skip,
         take: limit,
-        orderBy: { joined_at: "desc" },
+        orderBy: { joinedAt: "desc" },
       }),
       prisma.member.count({
         where: { project_id: project_id },
@@ -137,7 +137,7 @@ export default class MemberService {
         project_id: project_id,
         role: "member",
         status: "pending",
-        joined_at: new Date(),
+        joinedAt: new Date(),
       },
       include: {
         users: {
