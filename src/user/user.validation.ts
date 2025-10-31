@@ -5,7 +5,7 @@ import { z } from "zod";
 export const userInfoSchema = z.object({
   id: z.number().int().positive().optional(),
   email: z.string().email("이메일 형식이 아닙니다."),
-  password: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다."),
+  password: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다."),
   nickname: z
     .string()
     .min(2, "닉네임은 최소 2자 이상")

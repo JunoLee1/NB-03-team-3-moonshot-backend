@@ -1,5 +1,7 @@
 export interface IUserDTO {
   id: number;
+  password?:string| null;
+  newPassword?:string|null;
   nickname?: string | null;
   email: string;
   profileImage: string | null;
@@ -26,6 +28,8 @@ export interface findUserProjectsQuery {
 export interface IUser {
   id: number;
   nickname?: string | null;
+  newPassword?:string| null;
+  password?:string| null;
   email?: string | null;
   profileImage?: string | null;
   createdAt?: Date;
