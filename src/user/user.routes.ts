@@ -38,7 +38,7 @@ router.patch(
   validateBody(updateUserSchema),
   passport.authenticate("access-token", { session: false }),
   async (req: Request, res: Response, next: NextFunction) => {
-        userController.userUpdateController(req, res, next);
+      userController.userUpdateController(req, res, next);
   }
 );
 

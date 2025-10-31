@@ -14,6 +14,7 @@ export default class UserService {
         email: true,
         nickname: true,
         profileImage: true,
+        password:true,
       },
     });
     if (!userInfo) return null;
@@ -33,25 +34,38 @@ export default class UserService {
     profileImage,
     password,
     newPassword,
+    currentPassword
   }: IUser): Promise<IUserDTO | null> {
-    const data: Prisma.UserUpdateInput = {};
-    const user = await this.getUserInfoById({ id: userId });
-
+  
+  const data: Partial<Prisma.UserUpdateInput> = {};
+  const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        nickname: true,
+        password: true,  // 👈 반드시 포함
+      },
+  })
+    if (!user) throw new HttpError(404, "해당 유저가 존재하지 않습니다");
+    const finalPassword = password || currentPassword;
     if (nickname) data.nickname = { set: nickname };
     if (email) data.email = { set: email };
     if (profileImage) data.profileImage = { set: profileImage };
-    if (!user) throw new HttpError(404, "해당 유저가 존재하지 않습니다");
-
+    
+    console.log(finalPassword)
     if (newPassword) {
-      if (!password) throw new HttpError(404, "올바르지 못한 비밀번호 입니다");
-      if (!user.password)
-        throw new HttpError(400, "비밀번호가 설정되어 있지 않습니다");
-      const validatePassword = await bcrypt.compare(password, user.password);
-      if (!validatePassword) throw new Error();
+  
+      if (!finalPassword) throw new HttpError(404, "올바르지 못한 비밀번호 입니다");
+      if (!user.password) throw new HttpError(400, "비밀번호가 설정되어 있지 않습니다");
+      const validatePassword = await bcrypt.compare(finalPassword, user.password);
+     
+      if (!validatePassword) throw new HttpError(401, "비밀번호가 일치하지 않습니다.");
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       data.password = { set: hashedPassword };
     }
 
+    console.log(126)
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data,
@@ -59,7 +73,7 @@ export default class UserService {
     return updatedUser;
   }
 
-  
+
   // --------------------------------------------------------------------------
   async findUserProjects({
     skip,

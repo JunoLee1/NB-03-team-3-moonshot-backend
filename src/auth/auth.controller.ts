@@ -22,8 +22,7 @@ export class AuthController {
       });
       res.setHeader("Authorization", `Bearer ${tokens.accessToken}`);
       res.setHeader("Refresh-Token", tokens.refreshToken);
-      console.log("accessToken: ", tokens.accessToken)
-      console.log("refresh:", tokens.refreshToken)
+      
       return res.status(200).json({ 
         accessToken: tokens.accessToken,
         refreshToken:  tokens.refreshToken

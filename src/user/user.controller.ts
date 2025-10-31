@@ -35,12 +35,13 @@ export default class UserController {
   }
 
   async userUpdateController(req: Request, res: Response, next: NextFunction) {
-    const { email, password, profileImage, nickname, newPassword } = req.body as {
+    const { email,password, currentPassword, profileImage, nickname, newPassword } = req.body as {
       email: string;
-      password: string;
+      currentPassword: string;
       profileImage: string;
       nickname: string;
       newPassword:string;
+      password:string;
     };
     try {
       if (!req.user?.id) throw new HttpError(401, "unauthorization");
@@ -50,15 +51,18 @@ export default class UserController {
       const unique_check = await userService.getUserInfoById({
         id: userId,
       });
+      
       if (!unique_check) {
         throw new HttpError(404, "해당 유저가 존재하지 않습니다");
       }
+
       const updatedUser = await userService.updatedUser({
         id: userId,
         email,
         profileImage,
         nickname,
         password,
+        currentPassword,
         newPassword
       });
       return res.status(200).json({
