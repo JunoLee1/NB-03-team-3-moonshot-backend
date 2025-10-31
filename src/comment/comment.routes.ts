@@ -11,10 +11,6 @@ router.post(
   "/tasks/:taskId/comments",
   validateCreateComment,
   authMiddleWare,
-  (req:Request, res:Response, next : NextFunction) =>{
-    console.log(req.body)
-    next()
-  },
   commentController.createComment.bind(commentController)
 );
 

@@ -5,7 +5,7 @@ import { z } from "zod";
 export const userInfoSchema = z.object({
   id: z.number().int().positive().optional(),
   email: z.string().email("이메일 형식이 아닙니다."),
-  password: z.string().min(6, "비밀번호는 최소 6자 이상이어야 합니다."),
+  password: z.string().min(8, "비밀번호는 최소 8자 이상이어야 합니다."),
   nickname: z
     .string()
     .min(2, "닉네임은 최소 2자 이상")
@@ -14,12 +14,14 @@ export const userInfoSchema = z.object({
 });
 
 export const updateUserSchema = z.object({
-  email: z.string().email("이메일 형식이 아닙니다."),
+  email: z.string().email("이메일 형식이 아닙니다.").optional(),
   image: z.string().optional(),
   nickname: z
     .string()
     .min(2, "닉네임은 최소 2자 이상")
-    .max(20, "닉네임은 최대 20자 이하여야 합니다.")
+    .max(20, "닉네임은 최대 20자 이하여야 합니다.").optional(),
+  currentPassword: z.string().min(8, "현재 비밀번호는 8자리 이상이어야 합니다."),
+  newPassword: z.string().min(8, "새 비밀번호는 8자리 이상이어야 합니다."),
 });
 
 export const findUserTasksSchema = z.object({

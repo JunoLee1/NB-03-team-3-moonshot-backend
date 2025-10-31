@@ -7,7 +7,7 @@ export default class SubtaskController {
   // 생성
   async createSubtask(req: Request, res: Response, next: NextFunction) {
     try {
-      const task_id = parseInt(req.params.taskId as string);
+      const task_id = Number(req.params.taskId);
       const { title } = req.body;
 
       const subtask = await subtaskService.createSubtask({
@@ -24,7 +24,7 @@ export default class SubtaskController {
   // 조회
   async getSubtasksByTaskId(req: Request, res: Response, next: NextFunction) {
     try {
-      const task_id = parseInt(req.params.taskId as string);
+      const task_id = Number(req.params.taskId);
       const subtasks = await subtaskService.getSubtasksByTaskId(task_id);
       res.status(200).json(subtasks);
     } catch (error) {
@@ -35,7 +35,7 @@ export default class SubtaskController {
   // 수정
   async toggleSubtaskStatus(req: Request, res: Response, next: NextFunction) {
     try {
-      const id = parseInt(req.params.id as string);
+      const id = Number(req.params.id);
       const updatedSubtask = await subtaskService.toggleSubtaskStatus(id);
       res.status(200).json(updatedSubtask);
     } catch (error) {
@@ -46,7 +46,7 @@ export default class SubtaskController {
   // 삭제
   async deleteSubtask(req: Request, res: Response, next: NextFunction) {
     try {
-      const id = parseInt(req.params.id as string);
+      const id = Number(req.params.id);
       const result = await subtaskService.deleteSubtask(id);
       res.status(200).json(result);
     } catch (error) {

@@ -8,12 +8,9 @@ export default class CommentController {
   // POST /tasks/:taskId/comments - 댓글 생성
   async createComment(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log(123)
-      const task_id = parseInt(req.params.taskId as string);
-      console.log("task_id:",task_id)
+      const task_id = Number(req.params.taskId);
 
       const user_id = Number(req.user?.id)
-      console.log("user_id:",user_id)
 
       if (!user_id) throw new Error("Invalid user_id");
 
@@ -35,15 +32,14 @@ export default class CommentController {
   // GET /tasks/:taskId/comments - 댓글 목록 조회
   async getCommentsByTaskId(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log(12334)
       if(!req.user) throw new HttpError(401, "unathurized")
   
-      const task_id = parseInt(req.params.taskId as string);
+      const task_id = Number(req.params.taskId );
   
       const user_id = Number(req.user.id);
 
       const comments = await commentService.getCommentsByTaskId(task_id, user_id);
-      console.log(JSON.stringify(comments))
+    
       res.status(200).json(comments);
     } catch (error) {
       next(error);
@@ -53,7 +49,7 @@ export default class CommentController {
   // PATCH /comments/:commentId - 댓글 수정
   async updateComment(req: Request, res: Response, next: NextFunction) {
     try {
-      const comment_id = parseInt(req.params.commentId as string);
+      const comment_id = Number(req.params.commentId );
       const { content } = req.body;
   
       const user_id = Number(req.user?.id)
@@ -69,7 +65,7 @@ export default class CommentController {
   // DELETE /comments/:commentId - 댓글 삭제
   async deleteComment(req: Request, res: Response, next: NextFunction) {
     try {
-      const comment_id = parseInt(req.params.commentId as string);
+      const comment_id = Number(req.params.commentId);
       
       const user_id = Number(req.user?.id)
 
