@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 import { IUser, findUserProjectsQuery, IUserDTO } from "./user.user.dto.js";
+import HttpError from "../lib/httpError.js";
 
 export default class UserService {
   async getUserInfoById({ id }: IUser): Promise<IUserDTO | null> {
@@ -24,6 +25,7 @@ export default class UserService {
       profileImage: userInfo.profileImage ?? "",
     };
   }
+  // ---------------------------------------------
   async updatedUser({
     id: userId,
     nickname,
@@ -33,33 +35,32 @@ export default class UserService {
     newPassword,
   }: IUser): Promise<IUserDTO | null> {
     const data: Prisma.UserUpdateInput = {};
+    const user = await this.getUserInfoById({ id: userId });
 
     if (nickname) data.nickname = { set: nickname };
     if (email) data.email = { set: email };
     if (profileImage) data.profileImage = { set: profileImage };
-
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (!user) throw new Error();
+    if (!user) throw new HttpError(404, "해당 유저가 존재하지 않습니다");
 
     if (newPassword) {
-      if (!password) throw new Error();
-      if (!user.password) throw new Error();
+      if (!password) throw new HttpError(404, "올바르지 못한 비밀번호 입니다");
+      if (!user.password)
+        throw new HttpError(400, "비밀번호가 설정되어 있지 않습니다");
       const validatePassword = await bcrypt.compare(password, user.password);
       if (!validatePassword) throw new Error();
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       data.password = { set: hashedPassword };
     }
-    
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data,
     });
     return updatedUser;
   }
+
+  
+  // --------------------------------------------------------------------------
   async findUserProjects({
     skip,
     take,
@@ -95,6 +96,8 @@ export default class UserService {
     });
     return result;
   }
+
+  //--------------------------------------------
   async findUserTasks({
     user_id,
     ...filters
