@@ -2,20 +2,20 @@ export interface IUserDTO {
   id: number;
   nickname?: string | null;
   email: string;
-  profile_image: string | null;
+  profileImage: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }
-
-export interface FindUserTaskParam {
+/*
+export interface FindUserTaskQuery{
   from: Date | undefined;
   to: Date | undefined;
   project_id: number | undefined;
-  status: `todo` | `inprogress` | `done` | undefined;
+  status: `todo` | `in_progress` | `done` | undefined;
   assignee: number | undefined;
   keyword: string | undefined;
 }
-
+*/
 export interface findUserProjectsQuery {
   take: number;
   skip: number;
@@ -27,7 +27,7 @@ export interface IUser {
   id: number;
   nickname?: string | null;
   email?: string | null;
-  profile_image?: string | null;
+  profileImage?: string | null;
   createdAt?: Date;
   updatedAt?: Date;
 }

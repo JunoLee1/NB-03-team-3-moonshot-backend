@@ -17,6 +17,10 @@ router.post(
 // 조회
 router.get(
   "/tasks/:taskId/subtasks",
+  (req, res, next) => {
+    console.log(req.params)
+    console.log(req.query)
+  },
   subtaskController.getSubtasksByTaskId.bind(subtaskController)
 );
 

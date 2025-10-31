@@ -4,13 +4,13 @@ import { z } from "zod";
 // 댓글 생성 스키마
 const createCommentSchema = z.object({
   content: z.string().min(1, "Content is required"),
-  user_id: z.number().int().positive(), // TODO: 인증 미들웨어 구현 후 제거
+  //user_id: z.number().int().positive(), // TODO: 인증 미들웨어 구현 후 제거
 });
 
 // 댓글 수정 스키마
 const updateCommentSchema = z.object({
   content: z.string().min(1, "Content is required"),
-  user_id: z.number().int().positive(), // TODO: 인증 미들웨어 구현 후 제거
+  //user_id: z.number().int().positive(), // TODO: 인증 미들웨어 구현 후 제거
 });
 
 // 댓글 생성 유효성 검사 미들웨어

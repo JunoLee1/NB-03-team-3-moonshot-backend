@@ -22,7 +22,7 @@ model User {
   nickname     String?  @unique @default("")
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
-  profile_image String?
+  profileImage String?
 
   provider   String?
   provider_id String?
@@ -35,7 +35,7 @@ model User {
 model Member {
   id        Int      @id @default(autoincrement())
   role      String?
-  joined_at  DateTime
+  joinedAt  DateTime
   status    status   @map("status")
   user_id   Int
   users     User     @relation(fields: [user_id], references: [id])
@@ -103,7 +103,7 @@ model Task {
 
 enum Status {
   todo
-  inprogress
+  in_progress
   done
 }
 

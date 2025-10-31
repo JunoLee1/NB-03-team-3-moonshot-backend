@@ -3,7 +3,7 @@ import prisma from "../lib/prisma.js";
 export interface CreateCommentDTO {
   content: string;
   task_id: number;
-  user_id: number;
+  user_id:number;
 }
 
 export interface UpdateCommentDTO {
@@ -37,6 +37,7 @@ export default class CommentService {
     }
 
     // 댓글 생성
+    
     const comment = await prisma.comment.create({
       data: {
         content,
@@ -49,13 +50,21 @@ export default class CommentService {
             id: true,
             email: true,
             nickname: true,
-            profile_image: true,
+            profileImage:true,
           },
         },
       },
     });
+    const result = {
+      id : comment.id,
+      content: comment.content,
+      taskId: comment.task_id,
+      author: comment.users,
+      createdAt: comment.created_at,
+      updatedAt: comment.updated_at,
+    }
 
-    return comment;
+    return result;
   }
 
   // 태스크별 댓글 목록 조회
@@ -71,7 +80,7 @@ export default class CommentService {
     // 프로젝트 멤버만 조회 가능
     const isMember = await prisma.member.findFirst({
       where: {
-        user_id: user_id,
+        user_id: user_id,// 수정바람
         project_id: task.project_id,
         status: "accepted",
       },
@@ -89,14 +98,22 @@ export default class CommentService {
             id: true,
             email: true,
             nickname: true,
-            profile_image: true,
+            profileImage: true,
           },
         },
       },
       orderBy: { created_at: "asc" },
     });
 
-    return comments;
+    const result = comments.map(comment => ({
+      id : comment.id,
+      content: comment.content,
+      taskId: comment.task_id,
+      author: comment.users,
+      createdAt: comment.created_at,
+      updatedAt: comment.updated_at,
+    }))
+    return result;
   }
 
   // 댓글 수정
@@ -123,7 +140,7 @@ export default class CommentService {
             id: true,
             email: true,
             nickname: true,
-            profile_image: true,
+            profileImage: true,
           },
         },
       },
