@@ -70,7 +70,7 @@ app.use("/auth", authRouter);
 app.use("/projects", projectRouterInstance);
 app.use("/tasks", mainTaskRouterInstance);
 
-app.use("/api", (req, res) => {
+app.get("/", (req, res) => {
     res.json({ message: "Welcome to the API!" });
 });
 
