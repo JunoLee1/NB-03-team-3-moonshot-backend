@@ -43,6 +43,8 @@ app.use(passport.initialize());
 const { projectRouterInstance, mainTaskRouterInstance } =
   container.getRouters();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const uploadDir = path.join(__dirname, "..", "uploads"); // dist 폴더 기준 상위 폴더에 uploads 생성
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true }); // recursive: true 추가
