@@ -21,10 +21,6 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import HttpError from "./lib/httpError.js";
 
-const MONGO_URI = process.env.MONGODB_URI;
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const PORT = process.env.PORT || 3001;
 
 dotenv.config();
@@ -103,11 +99,6 @@ const fileUploadHandler: RequestHandler = (req, res, next) => {
   }
 };
 app.post("/files", upload.single("file"), fileUploadHandler);
-
-app.use(error_handler);
-if (!MONGO_URI) {
-  throw new Error("❌ MONGODB_URI is not defined in environment variables");
-}
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
