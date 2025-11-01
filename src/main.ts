@@ -20,7 +20,6 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import HttpError from "./lib/httpError.js";
-import mongoose from "mongoose";
 
 const MONGO_URI = process.env.MONGODB_URI;
 const __filename = fileURLToPath(import.meta.url);
@@ -109,10 +108,6 @@ app.use(error_handler);
 if (!MONGO_URI) {
   throw new Error("❌ MONGODB_URI is not defined in environment variables");
 }
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
