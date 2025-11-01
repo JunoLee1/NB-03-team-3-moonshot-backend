@@ -70,6 +70,10 @@ app.use("/auth", authRouter);
 app.use("/projects", projectRouterInstance);
 app.use("/tasks", mainTaskRouterInstance);
 
+app.use("/api", (req, res) => {
+    res.json({ message: "Welcome to the API!" });
+});
+
 app.use("/", memberRouter);
 app.use("/", commentRouter);
 app.use("/", subtaskRouter);
