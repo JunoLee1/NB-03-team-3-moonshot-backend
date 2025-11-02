@@ -106,6 +106,6 @@ const fileUploadHandler: RequestHandler = (req, res, next) => {
 };
 app.post("/files", upload.single("file"), fileUploadHandler);
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server is running on http://localhost:${PORT}, ${HOST}`);
+app.listen(PORT,'0.0.0.0', () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
