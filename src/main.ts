@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // 프론트 주소 정확히 써야 함
+    origin: "moonshotproject.netlify.app", // 프론트 주소 정확히 써야 함
     credentials: true,
   })
 );
