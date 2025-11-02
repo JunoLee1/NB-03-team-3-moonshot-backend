@@ -43,7 +43,7 @@ async function seed() {
       end_month: 1,
       end_date: 1,
       projects: { connect: { id: project.id } },
-      taskStatus: "done",
+      task_status: "done",
       members: { connect: { id: member.id } },
     },
   });
