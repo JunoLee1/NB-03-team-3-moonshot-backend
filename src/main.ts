@@ -21,7 +21,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import HttpError from "./lib/httpError.js";
 
-const PORT = parseInt (process.env.PORT || "3001");
+const PORT = parseInt (process.env.PORT || "8080");
 dotenv.config();
 
 const app = express();
