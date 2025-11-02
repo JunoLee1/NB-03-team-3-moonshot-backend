@@ -64,7 +64,7 @@ model Task {
   end_year    Int
   end_month   Int
   end_date    Int
-  task_status Status       @map("status")
+  task_status task_status       @map("status")
   project_id  Int
   member_id   Int
   created_at  DateTime     @default(now())
@@ -109,7 +109,7 @@ enum status {
   rejected
 }
 
-enum Status {
+enum task_status {
   todo
   in_progress
   done
