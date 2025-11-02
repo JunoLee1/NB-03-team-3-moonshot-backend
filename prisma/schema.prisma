@@ -25,7 +25,7 @@ model Member {
   id         Int      @id @default(autoincrement())
   role       String?
   user_id    Int
-  status     status   @map("status")
+  status     Status   @map("status")
   project_id Int
   joinedAt   DateTime
   projects   Project  @relation(fields: [project_id], references: [id], onDelete: Cascade)
@@ -64,7 +64,7 @@ model Task {
   end_year    Int
   end_month   Int
   end_date    Int
-  task_status task_status       @map("status")
+  task_status  Task_status       @map("status")
   project_id  Int
   member_id   Int
   created_at  DateTime     @default(now())
@@ -103,13 +103,13 @@ model Attachment {
   tasks       Task     @relation(fields: [task_id], references: [id], onDelete: Cascade)
 }
 
-enum status {
+enum Status {
   pending
   accepted
   rejected
 }
 
-enum task_status {
+enum Task_status {
   todo
   in_progress
   done
