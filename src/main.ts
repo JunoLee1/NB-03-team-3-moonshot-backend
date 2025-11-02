@@ -21,8 +21,8 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import HttpError from "./lib/httpError.js";
 
-const PORT = process.env.PORT || 3001;
-
+const PORT = parseInt (process.env.PORT || "3001");
+const HOST =  process.env.HOST || '0.0.0.0'
 dotenv.config();
 
 const app = express();
@@ -106,6 +106,6 @@ const fileUploadHandler: RequestHandler = (req, res, next) => {
 };
 app.post("/files", upload.single("file"), fileUploadHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server is running on http://localhost:${PORT}, ${HOST}`);
 });
