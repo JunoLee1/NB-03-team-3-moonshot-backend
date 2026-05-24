@@ -17,18 +17,19 @@ import {
   Tag,
   Attachment,
 } from "@prisma/client"; // prisma 추후 레포지토리 계층에서만 사용할 수 있도록 리팩토링 하는게 좋을 것 같음. (관심사 분리)
+import HttpError from "../lib/httpError.js";
 
 // 추후 별도 에러 파일로 분리하는 것이 좋을 거 같음
-class ForbiddenException extends Error {
+class ForbiddenException extends HttpError {
   constructor(message: string) {
-    super(message);
+    super(403, message);
     this.name = "ForbiddenException";
   }
 }
 
-class NotFoundException extends Error {
+class NotFoundException extends HttpError {
   constructor(message: string) {
-    super(message);
+    super(404, message);
     this.name = "NotFoundException";
   }
 }
